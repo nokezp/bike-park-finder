@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { colors, typography, spacing, shadows } from '../utils/theme';
+import { colors, typography, spacing, getShadow } from '../utils/theme';
 import { useAuth } from '../contexts/AuthContext';
 
 interface CustomHeaderProps {
@@ -75,7 +75,9 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.card,
-    ...shadows.small,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    ...getShadow('small'),
   },
   header: {
     height: 56,
@@ -95,12 +97,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: typography.fontSizes.lg,
     fontWeight: typography.fontWeights.bold,
-    color: colors.text.primary,
+    fontFamily: typography.fontFamily.accent,
+    color: colors.primary,
     textAlign: 'center',
   },
   username: {
     fontSize: typography.fontSizes.xs,
-    color: colors.text.secondary,
+    fontFamily: typography.fontFamily.secondary,
+    color: colors.secondary,
     textAlign: 'center',
   },
   rightContainer: {

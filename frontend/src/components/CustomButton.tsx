@@ -8,7 +8,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { colors, typography, spacing, borderRadius, shadows } from '../utils/theme';
+import { colors, typography, spacing, borderRadius, getShadow } from '../utils/theme';
 
 interface CustomButtonProps {
   title: string;
@@ -139,7 +139,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
   const iconSize = size === 'small' ? 16 : size === 'medium' ? 20 : 24;
   const iconColor = variant === 'outline' ? colors.primary : 
-                   (variant === 'primary' ? colors.dark.primary : colors.card);
+                   (variant === 'primary' || variant === 'secondary' ? colors.card : colors.card);
 
   return (
     <TouchableOpacity
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: borderRadius.md,
-    ...shadows.small,
+    ...getShadow('small'),
   },
   primaryButton: {
     backgroundColor: colors.primary,
@@ -214,10 +214,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: typography.fontWeights.bold,
+    fontFamily: typography.fontFamily.primary,
     textAlign: 'center',
   },
   primaryButtonText: {
-    color: colors.dark.primary,
+    color: colors.card,
   },
   secondaryButtonText: {
     color: colors.card,

@@ -8,7 +8,7 @@ import {
   Animated,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typography, spacing, borderRadius, shadows } from '../utils/theme';
+import { colors, typography, spacing, borderRadius, getShadow } from '../utils/theme';
 
 type BikePark = {
   _id: string;
@@ -91,7 +91,7 @@ const BikeParkCard: React.FC<BikeParkCardProps> = ({ bikePark, onPress }) => {
         <View style={styles.parkInfo}>
           <Text style={styles.parkName}>{bikePark.name}</Text>
           <View style={styles.locationContainer}>
-            <Ionicons name="location" size={16} color={colors.text.secondary} />
+            <Ionicons name="location" size={16} color={colors.primary} />
             <Text style={styles.parkLocation}>{bikePark.location}</Text>
           </View>
           <View style={styles.ratingContainer}>
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
     borderRadius: borderRadius.md,
     marginBottom: spacing.lg,
-    ...shadows.medium,
+    ...getShadow('medium'),
     overflow: 'hidden',
     borderLeftWidth: 4,
     borderLeftColor: colors.primary,
@@ -169,8 +169,9 @@ const styles = StyleSheet.create({
   parkName: {
     fontSize: typography.fontSizes.lg,
     fontWeight: typography.fontWeights.bold,
+    fontFamily: typography.fontFamily.accent,
     marginBottom: spacing.xs,
-    color: colors.text.primary,
+    color: colors.secondary,
   },
   locationContainer: {
     flexDirection: 'row',
@@ -179,6 +180,7 @@ const styles = StyleSheet.create({
   },
   parkLocation: {
     fontSize: typography.fontSizes.sm,
+    fontFamily: typography.fontFamily.secondary,
     color: colors.text.secondary,
     marginLeft: spacing.xs,
   },
@@ -189,6 +191,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: typography.fontSizes.sm,
+    fontFamily: typography.fontFamily.secondary,
     color: colors.text.secondary,
   },
   difficultyContainer: {
@@ -198,6 +201,7 @@ const styles = StyleSheet.create({
   },
   difficultyLabel: {
     fontSize: typography.fontSizes.sm,
+    fontFamily: typography.fontFamily.secondary,
     color: colors.text.secondary,
     marginRight: spacing.xs,
   },
@@ -206,6 +210,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs / 2,
     borderRadius: borderRadius.sm,
     fontSize: typography.fontSizes.xs,
+    fontFamily: typography.fontFamily.primary,
     fontWeight: typography.fontWeights.bold,
     color: colors.card,
     backgroundColor: colors.text.light,
@@ -227,22 +232,25 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   featureBadge: {
-    backgroundColor: colors.border,
+    backgroundColor: colors.accent + '20',
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs / 2,
     borderRadius: borderRadius.sm,
     fontSize: typography.fontSizes.xs,
+    fontFamily: typography.fontFamily.primary,
     marginRight: spacing.xs,
     marginBottom: spacing.xs,
-    color: colors.text.secondary,
+    color: colors.secondary,
   },
   moreFeatures: {
     fontSize: typography.fontSizes.xs,
-    color: colors.text.secondary,
+    fontFamily: typography.fontFamily.primary,
+    color: colors.accent,
     marginLeft: spacing.xs,
   },
   noFeatures: {
     fontSize: typography.fontSizes.xs,
+    fontFamily: typography.fontFamily.secondary,
     color: colors.text.secondary,
     marginLeft: spacing.xs,
   },

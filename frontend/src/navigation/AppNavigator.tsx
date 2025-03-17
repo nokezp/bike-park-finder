@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -16,7 +16,39 @@ import AdminScreen from '../screens/AdminScreen';
 
 // Import auth context
 import { useAuth } from '../contexts/AuthContext';
-import { colors } from '../utils/colors';
+import { colors, typography } from '../utils/theme';
+
+// Create a custom theme
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: colors.primary,
+    background: colors.background,
+    card: colors.card,
+    text: colors.text.primary,
+    border: colors.border,
+    notification: colors.accent,
+  },
+  fonts: {
+    regular: {
+      fontFamily: typography.fontFamily.secondary,
+      fontWeight: 'normal',
+    },
+    medium: {
+      fontFamily: typography.fontFamily.primary,
+      fontWeight: '500',
+    },
+    light: {
+      fontFamily: typography.fontFamily.secondary,
+      fontWeight: '300',
+    },
+    thin: {
+      fontFamily: typography.fontFamily.secondary,
+      fontWeight: '100',
+    },
+  },
+};
 
 // Define navigation types
 export type AuthStackParamList = {
@@ -77,8 +109,15 @@ const MainTabNavigator = () => {
           
           return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: colors.dark.primary,
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.text.light,
+        tabBarStyle: {
+          backgroundColor: colors.card,
+          borderTopColor: colors.border,
+          paddingTop: 5,
+          paddingBottom: 5,
+        },
+        headerShown: false,
       })}
     >
       <MainTab.Screen 
@@ -110,51 +149,48 @@ const AppNavigator = () => {
   }
   
   return (
-    <RootStack.Navigator>
-      {!user ? (
-        <>
-          <RootStack.Screen
-            name="Landing"
-            component={LandingScreen}
-            options={{ headerShown: false }}
-          />
-          <RootStack.Screen
-            name="Auth"
-            component={AuthNavigator}
-            options={{ headerShown: false }}
-          />
-        </>
-      ) : (
-        <>
-          <RootStack.Screen
-            name="Landing"
-            component={LandingScreen}
-            options={{ headerShown: false }}
-          />
-          <RootStack.Screen
-            name="Main"
-            component={MainTabNavigator}
-            options={{ headerShown: false }}
-          />
-          <RootStack.Screen
-            name="BikeParkDetail"
-            component={BikeParkDetailScreen}
-            options={({ route }) => ({
-              title: 'Bike Park Details',
-              headerBackTitleVisible: false,
-              headerShown: false,
-            })}
-          />
-          <RootStack.Screen
-            name="Map"
-            component={MapScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-        </>
-      )}
-    </RootStack.Navigator>
+    <NavigationContainer theme={MyTheme}>
+      <RootStack.Navigator>
+        {!user ? (
+          <>
+            <RootStack.Screen
+              name="Landing"
+              component={LandingScreen}
+              options={{ headerShown: false }}
+            />
+            <RootStack.Screen
+              name="Auth"
+              component={AuthNavigator}
+              options={{ headerShown: false }}
+            />
+          </>
+        ) : (
+          <>
+            <RootStack.Screen
+              name="Main"
+              component={MainTabNavigator}
+              options={{ headerShown: false }}
+            />
+            <RootStack.Screen
+              name="BikeParkDetail"
+              component={BikeParkDetailScreen}
+              options={({ route }) => ({
+                title: 'Bike Park Details',
+                headerBackTitleVisible: false,
+                headerShown: false,
+              })}
+            />
+            <RootStack.Screen
+              name="Map"
+              component={MapScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </>
+        )}
+      </RootStack.Navigator>
+    </NavigationContainer>
   );
 };
 
