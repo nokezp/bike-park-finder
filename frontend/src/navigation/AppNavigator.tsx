@@ -13,6 +13,10 @@ import ProfileScreen from '../screens/ProfileScreen';
 import MapScreen from '../screens/MapScreen';
 import LandingScreen from '../screens/LandingScreen';
 import AdminScreen from '../screens/AdminScreen';
+import EventsScreen from '../screens/EventsScreen';
+import AboutScreen from '../screens/AboutScreen';
+import ContactScreen from '../screens/ContactScreen';
+import { MainHeader } from '../components';
 
 // Import auth context
 import { useAuth } from '../contexts/AuthContext';
@@ -68,6 +72,9 @@ export type RootStackParamList = {
   BikeParkDetail: { parkId: string };
   Map: undefined;
   Landing: undefined;
+  Events: undefined;
+  About: undefined;
+  Contact: undefined;
 };
 
 // Create navigators
@@ -183,6 +190,27 @@ const AppNavigator = () => {
             <RootStack.Screen
               name="Map"
               component={MapScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <RootStack.Screen
+              name="Events"
+              component={EventsScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <RootStack.Screen
+              name="About"
+              component={AboutScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <RootStack.Screen
+              name="Contact"
+              component={ContactScreen}
               options={{
                 headerShown: false,
               }}

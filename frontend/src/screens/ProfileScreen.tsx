@@ -1,240 +1,357 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
+  TouchableOpacity,
   Image,
-  Alert,
+  ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useAuth } from '../contexts/AuthContext';
 import { useNavigation } from '@react-navigation/native';
-import { colors } from '../utils/colors';
-import { MainTabParamList } from '../navigation/AppNavigator';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-
-type ProfileScreenNavigationProp = BottomTabNavigationProp<MainTabParamList>;
+import { MainHeader } from '../components';
+import { colors, typography, spacing, getShadow } from '../utils/theme';
+import { useAuth } from '../contexts/AuthContext';
 
 const ProfileScreen = () => {
   const { user, logout } = useAuth();
-  const navigation = useNavigation<ProfileScreenNavigationProp>();
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   const handleLogout = async () => {
+    setLoading(true);
     try {
       await logout();
+      // Navigation will be handled by the AuthContext
     } catch (error) {
       console.error('Logout error:', error);
-      Alert.alert('Error', 'Failed to log out. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   if (!user) {
     return (
       <View style={styles.container}>
-        <Text>Loading profile...</Text>
+        <MainHeader currentScreen="Profile" />
+        <View style={styles.notLoggedInContainer}>
+          <MaterialCommunityIcons
+            name="account-off"
+            size={60}
+            color={colors.text.light}
+          />
+          <Text style={styles.notLoggedInText}>
+            You need to be logged in to view your profile
+          </Text>
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={() => navigation.navigate('Auth' as never)}
+          >
+            <Text style={styles.loginButtonText}>Log In</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.profileImageContainer}>
-          {user.profileImageUrl ? (
-            <Image
-              source={{ uri: user.profileImageUrl }}
-              style={styles.profileImage}
-            />
-          ) : (
-            <View style={styles.profileImagePlaceholder}>
-              <Text style={styles.profileImagePlaceholderText}>
-                {user.username.charAt(0).toUpperCase()}
+    <View style={styles.container}>
+      <MainHeader currentScreen="Profile" />
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.content}>
+          <View style={styles.profileHeader}>
+            <View style={styles.avatarContainer}>
+              {user.profileImageUrl ? (
+                <Image source={{ uri: user.profileImageUrl }} style={styles.avatar} />
+              ) : (
+                <View style={styles.avatarPlaceholder}>
+                  <Text style={styles.avatarText}>
+                    {(user.username || user.email).charAt(0).toUpperCase()}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <View style={styles.userInfo}>
+              <Text style={styles.username}>{user.username || user.email}</Text>
+              <Text style={styles.userRole}>
+                {user.isAdmin ? 'Administrator' : 'User'}
+              </Text>
+              <Text style={styles.email}>{user.email}</Text>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Account Information</Text>
+            <View style={styles.infoItem}>
+              <MaterialCommunityIcons
+                name="account"
+                size={20}
+                color={colors.primary}
+              />
+              <Text style={styles.infoLabel}>Username:</Text>
+              <Text style={styles.infoValue}>{user.username || 'Not set'}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <MaterialCommunityIcons
+                name="email"
+                size={20}
+                color={colors.primary}
+              />
+              <Text style={styles.infoLabel}>Email:</Text>
+              <Text style={styles.infoValue}>{user.email}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <MaterialCommunityIcons
+                name="calendar"
+                size={20}
+                color={colors.primary}
+              />
+              <Text style={styles.infoLabel}>Joined:</Text>
+              <Text style={styles.infoValue}>
+                {new Date(user.createdAt).toLocaleDateString()}
               </Text>
             </View>
-          )}
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Activity</Text>
+            <View style={styles.activityStats}>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>0</Text>
+                <Text style={styles.statLabel}>Check-ins</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>0</Text>
+                <Text style={styles.statLabel}>Reviews</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statValue}>0</Text>
+                <Text style={styles.statLabel}>Photos</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Account Actions</Text>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => {
+                // @ts-ignore - We know this screen exists
+                navigation.navigate('EditProfile');
+              }}
+            >
+              <MaterialCommunityIcons
+                name="account-edit"
+                size={20}
+                color={colors.card}
+              />
+              <Text style={styles.actionButtonText}>Edit Profile</Text>
+            </TouchableOpacity>
+            
+            {user.isAdmin && (
+              <TouchableOpacity
+                style={[styles.actionButton, styles.adminButton]}
+                onPress={() => {
+                  // @ts-ignore - We know this screen exists
+                  navigation.navigate('Admin');
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="shield-account"
+                  size={20}
+                  color={colors.card}
+                />
+                <Text style={styles.actionButtonText}>Admin Dashboard</Text>
+              </TouchableOpacity>
+            )}
+            
+            <TouchableOpacity
+              style={[styles.actionButton, styles.logoutButton]}
+              onPress={handleLogout}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color={colors.card} />
+              ) : (
+                <>
+                  <MaterialCommunityIcons
+                    name="logout"
+                    size={20}
+                    color={colors.card}
+                  />
+                  <Text style={styles.actionButtonText}>Log Out</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
-        <Text style={styles.username}>{user.username}</Text>
-        <Text style={styles.email}>{user.email}</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
-        
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => Alert.alert('Coming Soon', 'This feature is under development.')}
-        >
-          <MaterialCommunityIcons name="account-outline" size={24} color="#333" />
-          <Text style={styles.menuItemText}>Edit Profile</Text>
-          <MaterialCommunityIcons name="chevron-right" size={20} color="#ccc" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => Alert.alert('Coming Soon', 'This feature is under development.')}
-        >
-          <MaterialCommunityIcons name="lock-outline" size={24} color="#333" />
-          <Text style={styles.menuItemText}>Change Password</Text>
-          <MaterialCommunityIcons name="chevron-right" size={20} color="#ccc" />
-        </TouchableOpacity>
-        
-        {user.isAdmin && (
-          <TouchableOpacity 
-            style={styles.menuItem}
-            onPress={() => navigation.navigate('Admin')}
-          >
-            <MaterialCommunityIcons name="shield-account" size={24} color={colors.dark.primary} />
-            <Text style={[styles.menuItemText, { color: colors.dark.primary }]}>Admin Dashboard</Text>
-            <MaterialCommunityIcons name="chevron-right" size={20} color={colors.dark.primary} />
-          </TouchableOpacity>
-        )}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Activity</Text>
-        
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => Alert.alert('Coming Soon', 'This feature is under development.')}
-        >
-          <MaterialCommunityIcons name="check-circle-outline" size={24} color="#333" />
-          <Text style={styles.menuItemText}>My Check-ins</Text>
-          <MaterialCommunityIcons name="chevron-right" size={20} color="#ccc" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => Alert.alert('Coming Soon', 'This feature is under development.')}
-        >
-          <MaterialCommunityIcons name="star-outline" size={24} color="#333" />
-          <Text style={styles.menuItemText}>My Reviews</Text>
-          <MaterialCommunityIcons name="chevron-right" size={20} color="#ccc" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => Alert.alert('Coming Soon', 'This feature is under development.')}
-        >
-          <MaterialCommunityIcons name="heart-outline" size={24} color="#333" />
-          <Text style={styles.menuItemText}>Favorite Bike Parks</Text>
-          <MaterialCommunityIcons name="chevron-right" size={20} color="#ccc" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Settings</Text>
-        
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => Alert.alert('Coming Soon', 'This feature is under development.')}
-        >
-          <MaterialCommunityIcons name="bell-outline" size={24} color="#333" />
-          <Text style={styles.menuItemText}>Notifications</Text>
-          <MaterialCommunityIcons name="chevron-right" size={20} color="#ccc" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.menuItem}
-          onPress={() => Alert.alert('Coming Soon', 'This feature is under development.')}
-        >
-          <MaterialCommunityIcons name="earth" size={24} color="#333" />
-          <Text style={styles.menuItemText}>Language</Text>
-          <MaterialCommunityIcons name="chevron-right" size={20} color="#ccc" />
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity 
-        style={styles.logoutButton}
-        onPress={handleLogout}
-      >
-        <Text style={styles.logoutButtonText}>Log Out</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
   },
-  header: {
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    padding: spacing.md,
+  },
+  profileHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    marginBottom: spacing.lg,
   },
-  profileImageContainer: {
-    marginBottom: 15,
+  avatarContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    overflow: 'hidden',
+    backgroundColor: colors.primary,
+    ...getShadow('medium'),
   },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  avatar: {
+    width: '100%',
+    height: '100%',
   },
-  profileImagePlaceholder: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: colors.dark.primary,
+  avatarPlaceholder: {
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  profileImagePlaceholderText: {
-    fontSize: 40,
-    color: '#fff',
-    fontWeight: 'bold',
+  avatarText: {
+    fontSize: typography.fontSizes.xl,
+    fontWeight: typography.fontWeights.bold,
+    color: colors.card,
+  },
+  userInfo: {
+    marginLeft: spacing.md,
+    flex: 1,
   },
   username: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    fontFamily: typography.fontFamily.primary,
+    fontSize: typography.fontSizes.lg,
+    fontWeight: typography.fontWeights.bold,
+    color: colors.text.primary,
+  },
+  userRole: {
+    fontFamily: typography.fontFamily.secondary,
+    fontSize: typography.fontSizes.sm,
+    color: colors.primary,
+    marginBottom: spacing.xs,
   },
   email: {
-    fontSize: 16,
-    color: '#666',
+    fontFamily: typography.fontFamily.secondary,
+    fontSize: typography.fontSizes.sm,
+    color: colors.text.secondary,
   },
   section: {
-    marginTop: 20,
-    backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#eee',
+    backgroundColor: colors.card,
+    borderRadius: 8,
+    padding: spacing.md,
+    marginBottom: spacing.lg,
+    ...getShadow('small'),
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#666',
-    padding: 15,
-    paddingBottom: 5,
+    fontFamily: typography.fontFamily.primary,
+    fontSize: typography.fontSizes.md,
+    fontWeight: typography.fontWeights.bold,
+    color: colors.text.primary,
+    marginBottom: spacing.md,
   },
-  menuItem: {
+  infoItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
+    marginBottom: spacing.sm,
   },
-  menuItemText: {
+  infoLabel: {
+    fontFamily: typography.fontFamily.primary,
+    fontSize: typography.fontSizes.sm,
+    fontWeight: typography.fontWeights.medium,
+    color: colors.text.secondary,
+    marginLeft: spacing.sm,
+    width: 80,
+  },
+  infoValue: {
+    fontFamily: typography.fontFamily.secondary,
+    fontSize: typography.fontSizes.sm,
+    color: colors.text.primary,
     flex: 1,
-    marginLeft: 15,
-    fontSize: 16,
-    color: '#333',
   },
-  logoutButton: {
-    margin: 20,
-    padding: 15,
-    backgroundColor: '#ff3b30',
-    borderRadius: 8,
+  activityStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  statItem: {
     alignItems: 'center',
   },
-  logoutButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  statValue: {
+    fontFamily: typography.fontFamily.primary,
+    fontSize: typography.fontSizes.lg,
+    fontWeight: typography.fontWeights.bold,
+    color: colors.primary,
+  },
+  statLabel: {
+    fontFamily: typography.fontFamily.secondary,
+    fontSize: typography.fontSizes.sm,
+    color: colors.text.secondary,
+  },
+  actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    padding: spacing.sm,
+    marginBottom: spacing.sm,
+    ...getShadow('small'),
+  },
+  adminButton: {
+    backgroundColor: colors.secondary,
+  },
+  logoutButton: {
+    backgroundColor: colors.accent,
+  },
+  actionButtonText: {
+    fontFamily: typography.fontFamily.primary,
+    fontSize: typography.fontSizes.sm,
+    fontWeight: typography.fontWeights.medium,
+    color: colors.card,
+    marginLeft: spacing.xs,
+  },
+  notLoggedInContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.xl,
+  },
+  notLoggedInText: {
+    fontFamily: typography.fontFamily.secondary,
+    fontSize: typography.fontSizes.md,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginTop: spacing.md,
+    marginBottom: spacing.lg,
+  },
+  loginButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    ...getShadow('small'),
+  },
+  loginButtonText: {
+    fontFamily: typography.fontFamily.primary,
+    fontSize: typography.fontSizes.md,
+    fontWeight: typography.fontWeights.medium,
+    color: colors.card,
   },
 });
 
