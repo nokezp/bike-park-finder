@@ -1,8 +1,9 @@
 import React from 'react';
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, LinkingOptions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Platform } from 'react-native';
 
 // Import screens
 import LoginScreen from '../screens/LoginScreen';
@@ -82,6 +83,37 @@ const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const MainTab = createBottomTabNavigator<MainTabParamList>();
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
+// Configure deep linking
+const linking: LinkingOptions<RootStackParamList> = {
+  prefixes: ['https://bikeparkfinder.com', 'bikeparkfinder://'],
+  config: {
+    initialRouteName: 'Landing',
+    screens: {
+      Landing: '',
+      Auth: {
+        screens: {
+          Login: 'login',
+          Register: 'register',
+        },
+      },
+      Main: {
+        screens: {
+          BikeParks: 'parks',
+          Profile: 'profile',
+          Admin: 'admin',
+        },
+      },
+      BikeParkDetail: 'park/:parkId',
+      Map: 'map',
+      Events: 'events',
+      About: 'about',
+      Contact: 'contact',
+    },
+  },
+  // Enable client-side routing for web
+  enabled: Platform.OS === 'web',
+};
+
 // Auth navigator
 const AuthNavigator = () => {
   return (
@@ -123,6 +155,8 @@ const MainTabNavigator = () => {
           borderTopColor: colors.border,
           paddingTop: 5,
           paddingBottom: 5,
+          // Hide tab bar on web for cleaner navigation
+          display: Platform.OS === 'web' ? 'none' : 'flex',
         },
         headerShown: false,
       })}
@@ -156,7 +190,7 @@ const AppNavigator = () => {
   }
   
   return (
-    <NavigationContainer theme={MyTheme}>
+    <NavigationContainer theme={MyTheme} linking={linking}>
       <RootStack.Navigator>
         {!user ? (
           <>
@@ -174,6 +208,11 @@ const AppNavigator = () => {
         ) : (
           <>
             <RootStack.Screen
+              name="Landing"
+              component={LandingScreen}
+              options={{ headerShown: false }}
+            />
+            <RootStack.Screen
               name="Main"
               component={MainTabNavigator}
               options={{ headerShown: false }}
@@ -181,39 +220,27 @@ const AppNavigator = () => {
             <RootStack.Screen
               name="BikeParkDetail"
               component={BikeParkDetailScreen}
-              options={({ route }) => ({
-                title: 'Bike Park Details',
-                headerBackTitleVisible: false,
-                headerShown: false,
-              })}
+              options={{ headerShown: false }}
             />
             <RootStack.Screen
               name="Map"
               component={MapScreen}
-              options={{
-                headerShown: false,
-              }}
+              options={{ headerShown: false }}
             />
             <RootStack.Screen
               name="Events"
               component={EventsScreen}
-              options={{
-                headerShown: false,
-              }}
+              options={{ headerShown: false }}
             />
             <RootStack.Screen
               name="About"
               component={AboutScreen}
-              options={{
-                headerShown: false,
-              }}
+              options={{ headerShown: false }}
             />
             <RootStack.Screen
               name="Contact"
               component={ContactScreen}
-              options={{
-                headerShown: false,
-              }}
+              options={{ headerShown: false }}
             />
           </>
         )}

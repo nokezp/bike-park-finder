@@ -8,7 +8,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useLinkTo } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors, typography, spacing, getShadow } from '../utils/theme';
 import { useAuth } from '../contexts/AuthContext';
@@ -24,6 +24,7 @@ const ICON_MAPPING: Record<string, keyof typeof MaterialCommunityIcons.glyphMap>
   'calendar': 'calendar',
   'information': 'information',
   'email': 'email',
+  'home': 'home',
 };
 
 interface MainHeaderProps {
@@ -32,21 +33,39 @@ interface MainHeaderProps {
 
 const MainHeader: React.FC<MainHeaderProps> = ({ currentScreen }) => {
   const navigation = useNavigation();
+  const linkTo = useLinkTo();
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleNavigation = (screen: string) => {
+  const handleNavigation = (screen: string, path?: string) => {
     setMenuOpen(false);
-    // @ts-ignore - We know these screens exist
-    navigation.navigate(screen);
+    
+    if (isWeb && path) {
+      // Use linkTo for web to prevent page reload
+      linkTo(`/${path}`);
+    } else {
+      // Use navigate for native
+      // @ts-ignore - We know these screens exist
+      navigation.navigate(screen);
+    }
+  };
+
+  const goToLandingPage = () => {
+    if (isWeb) {
+      linkTo('/');
+    } else {
+      // @ts-ignore - We know this screen exists
+      navigation.navigate('Landing');
+    }
   };
 
   const renderNavLinks = () => {
     const links = [
-      { name: 'Parks', screen: 'BikeParks', icon: 'bike' },
-      { name: 'Events', screen: 'Events', icon: 'calendar' },
-      { name: 'About', screen: 'About', icon: 'information' },
-      { name: 'Contact', screen: 'Contact', icon: 'email' },
+      { name: 'Home', screen: 'Landing', icon: 'home', path: '' },
+      { name: 'Parks', screen: 'BikeParks', icon: 'bike', path: 'parks' },
+      { name: 'Events', screen: 'Events', icon: 'calendar', path: 'events' },
+      { name: 'About', screen: 'About', icon: 'information', path: 'about' },
+      { name: 'Contact', screen: 'Contact', icon: 'email', path: 'contact' },
     ];
 
     return links.map((link) => (
@@ -56,7 +75,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({ currentScreen }) => {
           styles.navLink,
           currentScreen === link.screen && styles.activeNavLink,
         ]}
-        onPress={() => handleNavigation(link.screen)}
+        onPress={() => handleNavigation(link.screen, link.path)}
       >
         {isMobile && (
           <MaterialCommunityIcons
@@ -86,7 +105,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({ currentScreen }) => {
       return (
         <TouchableOpacity
           style={styles.userSection}
-          onPress={() => handleNavigation('Profile')}
+          onPress={() => handleNavigation('Profile', 'profile')}
         >
           <View style={styles.userInfo}>
             <Text style={styles.username}>{username}</Text>
@@ -106,7 +125,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({ currentScreen }) => {
     return (
       <TouchableOpacity
         style={styles.signInButton}
-        onPress={() => handleNavigation('Auth')}
+        onPress={() => handleNavigation('Auth', 'login')}
       >
         <MaterialCommunityIcons
           name="login"
@@ -124,7 +143,7 @@ const MainHeader: React.FC<MainHeaderProps> = ({ currentScreen }) => {
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.logoContainer}
-          onPress={() => handleNavigation('BikeParks')}
+          onPress={goToLandingPage}
         >
           <MaterialCommunityIcons
             name="bike"

@@ -16,11 +16,14 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
-import { colors, typography, spacing, borderRadius, shadows } from '../utils/theme';
+import { colors, typography, spacing, borderRadius, shadows, getShadow } from '../utils/theme';
 import CustomButton from '../components/CustomButton';
 import { useAuth } from '../contexts/AuthContext';
+import { MainHeader } from '../components';
 
 const { width } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
+const isMobile = width < 768;
 
 type LandingScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -57,9 +60,20 @@ const LandingScreen = () => {
     } as any);
   };
 
+  const handleGetStarted = () => {
+    // @ts-ignore - We know this screen exists
+    navigation.navigate('BikeParks');
+  };
+
+  const handleSignIn = () => {
+    // @ts-ignore - We know this screen exists
+    navigation.navigate('Auth');
+  };
+
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor={colors.dark.primary} />
+      <MainHeader currentScreen="Landing" />
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
         {/* Header Section */}
         <View style={styles.header}>
@@ -86,7 +100,7 @@ const LandingScreen = () => {
               {!user ? (
                 <TouchableOpacity 
                   style={[styles.navItem, styles.loginButton]}
-                  onPress={() => navigation.navigate('Auth')}
+                  onPress={handleSignIn}
                 >
                   <Text style={styles.loginButtonText}>Login</Text>
                 </TouchableOpacity>
@@ -113,7 +127,7 @@ const LandingScreen = () => {
               <View style={styles.headerButtonsContainer}>
                 <CustomButton 
                   title="Explore Bike Parks" 
-                  onPress={handleExploreParks}
+                  onPress={handleGetStarted}
                   variant="primary"
                   size="large"
                   icon="bicycle"
@@ -328,14 +342,14 @@ const LandingScreen = () => {
               <View style={styles.ctaButtons}>
                 <TouchableOpacity 
                   style={styles.ctaPrimaryButton}
-                  onPress={handleExploreParks}
+                  onPress={handleGetStarted}
                 >
                   <Text style={styles.ctaPrimaryButtonText}>Explore Parks</Text>
                 </TouchableOpacity>
                 {!user ? (
                   <TouchableOpacity 
                     style={styles.ctaSecondaryButton}
-                    onPress={() => navigation.navigate('Auth')}
+                    onPress={handleSignIn}
                   >
                     <Text style={styles.ctaSecondaryButtonText}>Sign Up</Text>
                   </TouchableOpacity>

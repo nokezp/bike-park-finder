@@ -3,15 +3,8 @@ module.exports = function(api) {
   return {
     presets: ['babel-preset-expo'],
     plugins: [
-      [
-        'module-resolver',
-        {
-          extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
-          alias: {
-            // Add any aliases you need here
-          },
-        },
-      ],
+      'expo-router/babel',
+      'react-native-reanimated/plugin',
     ],
   };
 }; 
