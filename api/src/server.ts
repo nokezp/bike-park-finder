@@ -1,13 +1,13 @@
 import { createYoga } from 'graphql-yoga';
-import { typeDefs } from './schema/schema.js';
-import { resolvers } from './resolvers/resolvers.js';
+import { typeDefs } from './schema/schema';
+import { resolvers } from './resolvers/resolvers';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { bikeParkRouter } from './routes/bikeParkRoutes.js';
-import { authRouter } from './routes/authRoutes.js';
+import { bikeParkRouter } from './routes/bikeParkRoutes';
+import { authRouter } from './routes/authRoutes';
 
 // Load environment variables
 dotenv.config();
@@ -19,10 +19,13 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:3001',],
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  exposedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
 // Middleware
@@ -38,7 +41,7 @@ const schema = makeExecutableSchema({
 const yoga = createYoga({
   schema,
   graphiql: true,
-  cors: corsOptions,
+  cors: false, // Disable yoga's CORS handling since we're using express cors
   context: async ({ request }) => {
     // Get the user token from the headers
     const token = request.headers.get('authorization')?.replace('Bearer ', '');

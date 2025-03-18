@@ -4,7 +4,27 @@ import { useState } from 'react';
 import Map, { Marker, Popup } from 'react-map-gl';
 import type { ViewState } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Park } from '@/types/park';
+
+interface Park {
+  _id: string;
+  name: string;
+  description: string;
+  location: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  difficulty: string;
+  features: string[];
+  amenities: string[];
+  hasLiftAccess: boolean;
+  hasTechnicalSections: boolean;
+  hasJumps: boolean;
+  hasDrops: boolean;
+  images: string[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface MapViewProps {
   parks: Park[];
@@ -55,9 +75,9 @@ export default function MapView({ parks }: MapViewProps) {
           anchor="bottom"
           onClose={() => setPopupInfo(null)}
         >
-          <div className="p-2 bg-white rounded-lg shadow-md">
-            <h3 className="font-display font-bold text-primary">{popupInfo.name}</h3>
-            <p className="font-body text-sm text-accent">{popupInfo.difficulty}</p>
+          <div className="card">
+            <h3 className="font-bold">{popupInfo.name}</h3>
+            <p className="text-sm text-accent">{popupInfo.difficulty}</p>
           </div>
         </Popup>
       )}

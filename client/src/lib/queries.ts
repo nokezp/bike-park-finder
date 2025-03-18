@@ -14,16 +14,11 @@ export const GET_PARKS = gql`
       difficulty
       features
       amenities
-      images
-      website
-      contactPhone
-      contactEmail
-      hours
-      pricing
       hasLiftAccess
       hasTechnicalSections
       hasJumps
       hasDrops
+      images
       createdAt
       updatedAt
     }

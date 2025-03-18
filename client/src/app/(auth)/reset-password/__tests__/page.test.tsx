@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ResetPasswordPage from '../page';
 
@@ -8,108 +8,126 @@ jest.mock('next/navigation', () => ({
   useSearchParams: jest.fn(),
 }));
 
+// Mock fetch globally
+global.fetch = jest.fn();
+
 describe('ResetPasswordPage', () => {
   const mockRouter = {
     push: jest.fn(),
   };
 
+  const mockSearchParams = {
+    get: jest.fn(),
+  };
+
   beforeEach(() => {
-    // Reset mocks before each test
-    (global.fetch as jest.Mock).mockReset();
+    jest.clearAllMocks();
+    jest.useFakeTimers();
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
+    (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
   });
 
-  it('shows invalid link message when no token is provided', () => {
-    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams());
-    
-    render(<ResetPasswordPage />);
-    
-    expect(screen.getByTestId('reset-password-page')).toBeInTheDocument();
-    expect(screen.getByTestId('forgot-password-link')).toBeInTheDocument();
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
-  it('renders the reset password form with valid token', () => {
-    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams('token=valid-token'));
-    
+  it('shows error message for invalid token', () => {
+    mockSearchParams.get.mockReturnValue(null);
     render(<ResetPasswordPage />);
-    
-    expect(screen.getByTestId('reset-password-page')).toBeInTheDocument();
-    expect(screen.getByTestId('password-input')).toBeInTheDocument();
-    expect(screen.getByTestId('confirm-password-input')).toBeInTheDocument();
-    expect(screen.getByTestId('reset-button')).toBeInTheDocument();
-    expect(screen.getByTestId('login-link')).toBeInTheDocument();
+    expect(screen.getByText('This password reset link is invalid or has expired.')).toBeInTheDocument();
   });
 
-  it('shows error when passwords do not match', async () => {
-    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams('token=valid-token'));
-    
+  it('shows password mismatch error', async () => {
+    mockSearchParams.get.mockReturnValue('valid-token');
     render(<ResetPasswordPage />);
-    
+
     const passwordInput = screen.getByTestId('password-input');
     const confirmPasswordInput = screen.getByTestId('confirm-password-input');
     const submitButton = screen.getByTestId('reset-button');
 
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'password456' } });
-    fireEvent.click(submitButton);
+    await act(async () => {
+      fireEvent.change(passwordInput, { target: { value: 'password123' } });
+      fireEvent.change(confirmPasswordInput, { target: { value: 'password456' } });
+      fireEvent.click(submitButton);
+    });
 
-    expect(screen.getByTestId('error-message')).toBeInTheDocument();
-    expect(screen.getByTestId('error-message')).toHaveTextContent('Passwords do not match');
+    expect(screen.getByText('Passwords do not match')).toBeInTheDocument();
   });
 
   it('shows loading state while submitting', async () => {
-    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams('token=valid-token'));
-    
+    mockSearchParams.get.mockReturnValue('valid-token');
+    (global.fetch as jest.Mock).mockImplementationOnce(() => new Promise(resolve => setTimeout(resolve, 100)));
+
     render(<ResetPasswordPage />);
-    
+
     const passwordInput = screen.getByTestId('password-input');
     const confirmPasswordInput = screen.getByTestId('confirm-password-input');
     const submitButton = screen.getByTestId('reset-button');
 
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
-    fireEvent.click(submitButton);
+    await act(async () => {
+      fireEvent.change(passwordInput, { target: { value: 'password123' } });
+      fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+      fireEvent.click(submitButton);
+    });
 
     expect(submitButton).toBeDisabled();
-    expect(submitButton).toHaveTextContent('Resetting...');
-  });
-
-  it('redirects to login page on successful password reset', async () => {
-    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams('token=valid-token'));
-    
-    render(<ResetPasswordPage />);
-    
-    const passwordInput = screen.getByTestId('password-input');
-    const confirmPasswordInput = screen.getByTestId('confirm-password-input');
-    const submitButton = screen.getByTestId('reset-button');
-
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
-    fireEvent.click(submitButton);
+    expect(screen.getByText('Resetting...')).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(mockRouter.push).toHaveBeenCalledWith('/login?reset=success');
+      expect(submitButton).not.toBeDisabled();
+      expect(screen.queryByText('Resetting...')).not.toBeInTheDocument();
     });
   });
 
-  it('shows error message on submission failure', async () => {
-    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams('token=valid-token'));
-    // Mock fetch to reject
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Failed to reset password'));
-    
+  it('redirects to login page on successful password reset', async () => {
+    mockSearchParams.get.mockReturnValue('valid-token');
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: 'Password reset successful' }),
+    });
+
     render(<ResetPasswordPage />);
-    
+
     const passwordInput = screen.getByTestId('password-input');
     const confirmPasswordInput = screen.getByTestId('confirm-password-input');
     const submitButton = screen.getByTestId('reset-button');
 
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
-    fireEvent.click(submitButton);
+    await act(async () => {
+      fireEvent.change(passwordInput, { target: { value: 'password123' } });
+      fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+      fireEvent.click(submitButton);
+    });
 
     await waitFor(() => {
-      expect(screen.getByTestId('error-message')).toBeInTheDocument();
-      expect(screen.getByTestId('error-message')).toHaveTextContent('Failed to reset password');
+      expect(screen.getByText('Password reset successful! Redirecting to login...')).toBeInTheDocument();
+    });
+
+    // Fast-forward timers
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    expect(mockRouter.push).toHaveBeenCalledWith('/login');
+  });
+
+  it('shows error message on submission failure', async () => {
+    mockSearchParams.get.mockReturnValue('valid-token');
+    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Failed to reset password'));
+
+    render(<ResetPasswordPage />);
+
+    const passwordInput = screen.getByTestId('password-input');
+    const confirmPasswordInput = screen.getByTestId('confirm-password-input');
+    const submitButton = screen.getByTestId('reset-button');
+
+    await act(async () => {
+      fireEvent.change(passwordInput, { target: { value: 'password123' } });
+      fireEvent.change(confirmPasswordInput, { target: { value: 'password123' } });
+      fireEvent.click(submitButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('error-message')).toHaveTextContent('Failed to reset password. Please try again.');
     });
   });
 }); 

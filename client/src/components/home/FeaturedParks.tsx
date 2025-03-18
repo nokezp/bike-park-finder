@@ -10,23 +10,23 @@ export default function FeaturedParks() {
     query: GET_PARKS,
   });
 
-  if (fetching) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (fetching) return <div className="font-body">Loading...</div>;
+  if (error) return <div className="font-body text-accent">Error: {error.message}</div>;
 
   const featuredParks = data?.parks.slice(0, 3) || [];
 
   return (
-    <section className="py-16">
+    <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12">Featured Parks</h2>
+        <h2 className="text-3xl font-display font-bold text-center mb-12">Featured Parks</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {featuredParks.map((park) => (
-            <div key={park._id} className="border rounded-lg p-4 shadow-sm">
-              <h3 className="text-xl font-semibold mb-2">{park.name}</h3>
-              <p className="text-gray-600 mb-4">{park.description}</p>
-              <div className="text-sm text-gray-500">
+            <div key={park._id} className="card">
+              <h3 className="text-xl font-display font-semibold mb-2">{park.name}</h3>
+              <p className="text-secondary mb-4 font-body">{park.description}</p>
+              <div className="text-sm text-secondary font-body">
                 <p>Location: {park.location}</p>
-                <p>Difficulty: {park.difficulty}</p>
+                <p>Difficulty: <span className="text-accent">{park.difficulty}</span></p>
               </div>
             </div>
           ))}
@@ -34,7 +34,7 @@ export default function FeaturedParks() {
         <div className="text-center mt-8">
           <Link
             href="/parks"
-            className="inline-block bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors"
+            className="btn-primary"
             data-testid="view-all-parks"
           >
             View All Parks

@@ -6,49 +6,44 @@ import { usePathname } from 'next/navigation';
 export default function Header() {
   const pathname = usePathname();
 
-  const isActive = (path: string) => pathname === path;
-
   return (
-    <header className="bg-primary text-white shadow-md" data-testid="header">
+    <header className="bg-white shadow-sm">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold">
-            BikePark Finder
+          <Link href="/" className="text-2xl font-display text-primary">
+            Bike Park Finder
           </Link>
           
-          <div className="hidden md:flex space-x-6">
+          <div className="flex items-center space-x-6">
             <Link 
               href="/parks" 
-              className={`hover:text-gray-200 transition-colors ${isActive('/parks') ? 'font-bold' : ''}`}
+              className={`nav-link ${pathname === '/parks' ? 'nav-link-active' : ''}`}
             >
               Parks
             </Link>
             <Link 
-              href="/events" 
-              className={`hover:text-gray-200 transition-colors ${isActive('/events') ? 'font-bold' : ''}`}
-            >
-              Events
-            </Link>
-            <Link 
               href="/about" 
-              className={`hover:text-gray-200 transition-colors ${isActive('/about') ? 'font-bold' : ''}`}
+              className={`nav-link ${pathname === '/about' ? 'nav-link-active' : ''}`}
             >
               About
             </Link>
             <Link 
               href="/contact" 
-              className={`hover:text-gray-200 transition-colors ${isActive('/contact') ? 'font-bold' : ''}`}
+              className={`nav-link ${pathname === '/contact' ? 'nav-link-active' : ''}`}
             >
               Contact
             </Link>
-          </div>
-
-          <div className="flex items-center space-x-4">
             <Link 
-              href="/profile" 
-              className="hover:text-gray-200 transition-colors"
+              href="/login" 
+              className={`nav-link ${pathname === '/login' ? 'nav-link-active' : ''}`}
             >
-              Profile
+              Login
+            </Link>
+            <Link 
+              href="/register" 
+              className="btn-primary"
+            >
+              Sign Up
             </Link>
           </div>
         </div>

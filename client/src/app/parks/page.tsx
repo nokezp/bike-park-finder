@@ -9,15 +9,19 @@ export default function ParksPage() {
     query: GET_PARKS,
   });
 
-  if (fetching) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (fetching) return <div data-testid="loading">Loading...</div>;
+  if (error) return <div data-testid="error">Error: {error.message}</div>;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div data-testid="parks-page" className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Bike Parks</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data?.parks.map((park) => (
-          <div key={park.id} className="border rounded-lg p-4 shadow-sm">
+          <div
+            key={park._id}
+            data-testid="park-card"
+            className="border rounded-lg p-4 shadow-sm"
+          >
             <h2 className="text-xl font-semibold mb-2">{park.name}</h2>
             <p className="text-gray-600 mb-4">{park.description}</p>
             <div className="text-sm text-gray-500">

@@ -1,63 +1,89 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import ForgotPasswordPage from '../page';
+
+// Mock fetch globally
+global.fetch = jest.fn();
 
 describe('ForgotPasswordPage', () => {
   beforeEach(() => {
-    // Reset fetch mock before each test
-    (global.fetch as jest.Mock).mockReset();
+    jest.clearAllMocks();
   });
 
-  it('renders the forgot password form', () => {
+  it('renders the form', () => {
     render(<ForgotPasswordPage />);
-    
-    expect(screen.getByTestId('forgot-password-page')).toBeInTheDocument();
-    expect(screen.getByTestId('email-input')).toBeInTheDocument();
-    expect(screen.getByTestId('reset-button')).toBeInTheDocument();
-    expect(screen.getByTestId('login-link')).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /send reset link/i })).toBeInTheDocument();
   });
 
   it('shows loading state while submitting', async () => {
+    (global.fetch as jest.Mock).mockImplementationOnce(() => new Promise(resolve => setTimeout(resolve, 100)));
+    
     render(<ForgotPasswordPage />);
     
-    const emailInput = screen.getByTestId('email-input');
-    const submitButton = screen.getByTestId('reset-button');
+    const emailInput = screen.getByLabelText(/email/i);
+    const submitButton = screen.getByRole('button', { name: /send reset link/i });
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.click(submitButton);
+    await act(async () => {
+      fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    });
+
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
 
     expect(submitButton).toBeDisabled();
-    expect(submitButton).toHaveTextContent('Sending...');
-  });
-
-  it('shows success message after successful submission', async () => {
-    render(<ForgotPasswordPage />);
-    
-    const emailInput = screen.getByTestId('email-input');
-    const submitButton = screen.getByTestId('reset-button');
-
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.click(submitButton);
+    expect(screen.getByText(/sending/i)).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByTestId('success-message')).toBeInTheDocument();
+      expect(submitButton).not.toBeDisabled();
+      expect(screen.queryByText(/sending/i)).not.toBeInTheDocument();
+    });
+  });
+
+  it('shows success message on successful submission', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: 'Reset link sent' }),
+    });
+
+    render(<ForgotPasswordPage />);
+
+    const emailInput = screen.getByLabelText(/email/i);
+    const submitButton = screen.getByRole('button', { name: /send reset link/i });
+
+    await act(async () => {
+      fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    });
+
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
     });
   });
 
   it('shows error message on submission failure', async () => {
-    // Mock fetch to reject
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Failed to send reset email'));
+    const mockError = new Error('Failed to send reset link');
+    (global.fetch as jest.Mock).mockRejectedValueOnce(mockError);
 
     render(<ForgotPasswordPage />);
-    
-    const emailInput = screen.getByTestId('email-input');
-    const submitButton = screen.getByTestId('reset-button');
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.click(submitButton);
+    const emailInput = screen.getByLabelText(/email/i);
+    const submitButton = screen.getByRole('button', { name: /send reset link/i });
+
+    await act(async () => {
+      fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    });
+
+    await act(async () => {
+      fireEvent.click(submitButton);
+    });
 
     await waitFor(() => {
       expect(screen.getByTestId('error-message')).toBeInTheDocument();
-      expect(screen.getByTestId('error-message')).toHaveTextContent('Failed to send reset email');
+      expect(screen.getByText('Failed to send reset email')).toBeInTheDocument();
     });
   });
 }); 

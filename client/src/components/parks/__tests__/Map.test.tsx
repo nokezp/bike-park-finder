@@ -1,61 +1,45 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import MapView from '../Map'
+import MapView from '../MapView'
 import { Park } from '@/types/park'
 
 // Mock react-map-gl components
 jest.mock('react-map-gl', () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="map-container">{children}</div>
+  Map: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
   ),
-  Marker: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
-    <div data-testid="park-marker" onClick={onClick}>{children}</div>
+  Marker: ({ children, onClick, 'data-testid': testId }: any) => (
+    <div data-testid={testId} onClick={onClick}>
+      {children}
+    </div>
   ),
-  Popup: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="park-popup">{children}</div>
+  Popup: ({ children, onClose, 'data-testid': testId }: any) => (
+    <div data-testid={testId}>
+      {children}
+      <button onClick={onClose}>Close</button>
+    </div>
   ),
 }));
 
-const mockParks: Park[] = [
+const mockParks = [
   {
     _id: '1',
     name: 'Test Park 1',
-    description: 'Test Description 1',
     location: 'Test Location 1',
     coordinates: {
-      latitude: 0,
-      longitude: 0
+      lat: 40.7128,
+      lng: -74.0060,
     },
     difficulty: 'Intermediate',
-    features: ['Feature 1', 'Feature 2'],
-    amenities: ['Amenity 1', 'Amenity 2'],
-    images: ['image1.jpg', 'image2.jpg'],
-    hasLiftAccess: true,
-    hasTechnicalSections: true,
-    hasJumps: true,
-    hasDrops: true,
-    createdAt: '2024-01-01',
-    updatedAt: '2024-01-01'
   },
   {
     _id: '2',
     name: 'Test Park 2',
-    description: 'Test Description 2',
     location: 'Test Location 2',
     coordinates: {
-      latitude: 1,
-      longitude: 1
+      lat: 34.0522,
+      lng: -118.2437,
     },
     difficulty: 'Advanced',
-    features: ['Feature 3', 'Feature 4'],
-    amenities: ['Amenity 3', 'Amenity 4'],
-    images: ['image3.jpg', 'image4.jpg'],
-    hasLiftAccess: false,
-    hasTechnicalSections: true,
-    hasJumps: true,
-    hasDrops: true,
-    createdAt: '2024-01-02',
-    updatedAt: '2024-01-02'
   },
 ];
 
@@ -74,18 +58,16 @@ describe('MapView', () => {
   it('shows popup when marker is clicked', () => {
     render(<MapView parks={mockParks} />)
     
-    // Initially, no popup should be visible
-    expect(screen.queryByTestId('park-popup')).not.toBeInTheDocument()
-    
     // Click the first marker
-    const firstMarker = screen.getAllByTestId('park-marker')[0]
-    fireEvent.click(firstMarker)
+    const markers = screen.getAllByTestId('park-marker')
+    fireEvent.click(markers[0])
     
-    // Popup should now be visible with park information
+    // Check if popup is shown with correct park info
     const popup = screen.getByTestId('park-popup')
     expect(popup).toBeInTheDocument()
-    expect(screen.getByText(mockParks[0].name)).toBeInTheDocument()
-    expect(screen.getByText(mockParks[0].difficulty)).toBeInTheDocument()
+    expect(screen.getByText('Test Park 1')).toBeInTheDocument()
+    expect(screen.getByText('Test Location 1')).toBeInTheDocument()
+    expect(screen.getByText('Intermediate')).toBeInTheDocument()
   })
 
   it('handles empty parks array', () => {

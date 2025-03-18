@@ -6,21 +6,31 @@ import Link from 'next/link';
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
+    setError('');
     setSuccess(false);
 
     try {
-      // TODO: Implement actual password reset API call
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated API call
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send reset email');
+      }
+
       setSuccess(true);
     } catch (err) {
-      setError('Failed to send reset email. Please try again.');
+      setError('Failed to send reset email');
     } finally {
       setIsLoading(false);
     }
@@ -30,24 +40,16 @@ export default function ForgotPasswordPage() {
     <main className="min-h-screen py-12" data-testid="forgot-password-page">
       <div className="container mx-auto px-4">
         <div className="max-w-md mx-auto">
-          <h1 className="text-3xl font-bold text-center mb-8">Reset Password</h1>
-          
+          <h1 className="text-3xl font-bold text-center mb-8">
+            Reset Password
+          </h1>
           <div className="bg-white rounded-lg shadow-md p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <div className="p-4 bg-red-100 text-red-700 rounded-lg" data-testid="error-message">
-                  {error}
-                </div>
-              )}
-
-              {success && (
-                <div className="p-4 bg-green-100 text-green-700 rounded-lg" data-testid="success-message">
-                  Password reset instructions have been sent to your email.
-                </div>
-              )}
-
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                  htmlFor="email"
+                >
                   Email
                 </label>
                 <input
@@ -60,7 +62,16 @@ export default function ForgotPasswordPage() {
                   data-testid="email-input"
                 />
               </div>
-
+              {error && (
+                <div className="text-red-600 text-sm" data-testid="error-message">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="text-green-600 text-sm" data-testid="success-message">
+                  Check your email for password reset instructions.
+                </div>
+              )}
               <button
                 type="submit"
                 disabled={isLoading}
@@ -71,10 +82,9 @@ export default function ForgotPasswordPage() {
                 } transition-colors`}
                 data-testid="reset-button"
               >
-                {isLoading ? 'Sending...' : 'Send Reset Instructions'}
+                {isLoading ? 'Sending...' : 'Send Reset Link'}
               </button>
             </form>
-
             <div className="mt-6 text-center">
               <p className="text-gray-600">
                 Remember your password?{' '}

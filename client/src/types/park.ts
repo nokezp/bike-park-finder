@@ -1,18 +1,20 @@
 export interface Park {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   location: string;
   coordinates: {
-    latitude: number;
-    longitude: number;
+    lat: number;
+    lng: number;
   };
   difficulty: string;
   features: string[];
   amenities: string[];
-  images: string[];
   hasLiftAccess: boolean;
   hasTechnicalSections: boolean;
   hasJumps: boolean;
   hasDrops: boolean;
+  images: string[];
+  createdAt: string;
+  updatedAt: string;
 } 
