@@ -1,54 +1,69 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-interface ITrail extends Document {
-  bikeParkId: mongoose.Types.ObjectId;
+export interface ITrail extends mongoose.Document {
   name: string;
   description: string;
-  capacity: number;
-  type: 'shuttle' | 'gondola' | 'chairlift' | 'other';
-  status: 'operational' | 'maintenance' | 'closed';
-  operatingHours: string;
-  imageUrl?: string;
-  notes?: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  length: number;
+  elevation: number;
+  features: string[];
+  status: 'open' | 'closed' | 'maintenance';
+  bikeParkId: mongoose.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const trailSchema = new Schema<ITrail>({
-  bikeParkId: {
-    type: Schema.Types.ObjectId,
-    ref: 'BikePark',
-    required: true
+const trailSchema = new mongoose.Schema<ITrail>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    difficulty: {
+      type: String,
+      required: true,
+      enum: ['beginner', 'intermediate', 'advanced', 'expert'],
+    },
+    length: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    elevation: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    features: [{
+      type: String,
+      required: true,
+    }],
+    status: {
+      type: String,
+      required: true,
+      enum: ['open', 'closed', 'maintenance'],
+      default: 'open',
+    },
+    bikeParkId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BikePark',
+      required: true,
+    },
   },
-  name: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  capacity: {
-    type: Number,
-    required: true
-  },
-  type: {
-    type: String,
-    enum: ['shuttle', 'gondola', 'chairlift', 'other'],
-    required: true
-  },
-  status: {
-    type: String,
-    enum: ['operational', 'maintenance', 'closed'],
-    required: true,
-    default: 'operational'
-  },
-  operatingHours: {
-    type: String,
-    required: true
-  },
-  imageUrl: String,
-  notes: String
-}, {
-  timestamps: true
-});
+  {
+    timestamps: true,
+  }
+);
 
-export default mongoose.model<ITrail>('Trail', trailSchema); 
+// Add text search index
+trailSchema.index(
+  { name: 'text', description: 'text' },
+  { weights: { name: 2, description: 1 } }
+);
+
+export const Trail = mongoose.model<ITrail>('Trail', trailSchema); 

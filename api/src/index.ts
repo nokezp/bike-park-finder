@@ -1,67 +1,58 @@
-import './server';
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
+import 'dotenv/config';
+import { createServer } from 'node:http';
+import { createYoga } from 'graphql-yoga';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import mongoose from 'mongoose';
-import { bikeParkRouter } from './routes/bikeParkRoutes';
-import { authRouter } from './routes/authRoutes';
 
-// Import routes
-// import reviewRoutes from './routes/reviewRoutes';
-// import checkInRoutes from './routes/checkInRoutes';
-// import trailRoutes from './routes/trailRoutes';
-// import photoVideoRoutes from './routes/photoVideoRoutes';
-// import eventRoutes from './routes/eventRoutes';
+// Import schema and resolvers
+import { typeDefs } from './schema/typeDefs.js';
+import { resolvers } from './resolvers/index.js';
 
-// Load environment variables
-dotenv.config();
+// Import authentication context
+import { createContext } from './utils/auth.js';
 
-// Create Express app
-const app = express();
-const port = process.env.PORT || 3001;
+// Environment variables
+const PORT = process.env.PORT || 4000;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder';
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Routes
-app.use('/api/parks', bikeParkRouter);
-app.use('/api/auth', authRouter);
-
-// Health check
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok' });
+// Create executable schema
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers,
 });
+
+// Create GraphQL Yoga server
+const yoga = createYoga({
+  schema,
+  context: createContext,
+  graphiql: true,
+  cors: {
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  },
+});
+
+// Create HTTP server
+const server = createServer(yoga);
+
+// Start server function
+const startServer = () => {
+  server.listen(PORT, () => {
+    console.log(`🚀 Server is running at http://localhost:${PORT}/graphql`);
+    if (!mongoose.connection.readyState) {
+      console.warn('⚠️  Warning: MongoDB is not connected. Running in mock data mode.');
+    }
+  });
+};
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder')
+mongoose.connect(MONGODB_URI)
   .then(() => {
-    console.log('Connected to MongoDB');
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
+    console.log('✅ Connected to MongoDB');
+    startServer();
   })
   .catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
-  });
-
-// API routes
-// app.use('/api/reviews', reviewRoutes);
-// app.use('/api/check-ins', checkInRoutes);
-// app.use('/api/trails', trailRoutes);
-// app.use('/api/events', eventRoutes);
-// app.use('/api/photos', photoVideoRoutes);
-
-// Root route
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to Bike Park Finder API' });
-});
-
-// Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({
-    message: 'Internal Server Error',
-    error: process.env.NODE_ENV === 'development' ? err : undefined,
-  });
-}); 
+    console.warn('⚠️  Failed to connect to MongoDB:', error.message);
+    console.log('🔄 Starting server with mock data...');
+    startServer();
+  }); 

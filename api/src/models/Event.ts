@@ -1,47 +1,71 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 
-interface IEvent extends Document {
-  bikeParkId: mongoose.Types.ObjectId;
+export interface IEvent extends mongoose.Document {
   name: string;
   description: string;
-  startDate: Date;
-  endDate: Date;
-  eventType: 'competition' | 'maintenance' | 'demo' | 'camp' | 'other';
-  imageUrl?: string;
-  externalUrl?: string;
+  date: Date;
+  type: 'competition' | 'clinic' | 'social' | 'maintenance';
+  status: 'scheduled' | 'cancelled' | 'completed';
+  capacity: number;
+  registrationDeadline: Date;
+  bikeParkId: mongoose.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const eventSchema = new Schema<IEvent>({
-  bikeParkId: {
-    type: Schema.Types.ObjectId,
-    ref: 'BikePark',
-    required: true
+const eventSchema = new mongoose.Schema<IEvent>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    type: {
+      type: String,
+      required: true,
+      enum: ['competition', 'clinic', 'social', 'maintenance'],
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ['scheduled', 'cancelled', 'completed'],
+      default: 'scheduled',
+    },
+    capacity: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    registrationDeadline: {
+      type: Date,
+      required: true,
+    },
+    bikeParkId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BikePark',
+      required: true,
+    },
   },
-  name: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  startDate: {
-    type: Date,
-    required: true
-  },
-  endDate: {
-    type: Date,
-    required: true
-  },
-  eventType: {
-    type: String,
-    enum: ['competition', 'maintenance', 'demo', 'camp', 'other'],
-    required: true
-  },
-  imageUrl: String,
-  externalUrl: String
-}, {
-  timestamps: true
-});
+  {
+    timestamps: true,
+  }
+);
 
-export default mongoose.model<IEvent>('Event', eventSchema); 
+// Add text search index
+eventSchema.index(
+  { name: 'text', description: 'text' },
+  { weights: { name: 2, description: 1 } }
+);
+
+// Add index for querying upcoming events
+eventSchema.index({ date: 1 });
+
+export const Event = mongoose.model<IEvent>('Event', eventSchema); 
