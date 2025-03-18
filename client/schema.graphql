@@ -1,0 +1,36 @@
+type User {
+  id: ID!
+  username: String!
+  email: String!
+  name: String
+  role: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type BikePark {
+  id: ID!
+  name: String!
+  description: String!
+  location: String!
+  features: [String!]!
+  difficultyLevels: [String!]!
+  rating: Float!
+}
+
+type Query {
+  me: User
+  bikeParks: [BikePark!]!
+  bikePark(id: ID!): BikePark
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type Mutation {
+  register(username: String!, email: String!, password: String!, name: String): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  updateProfile(name: String, email: String): User!
+} 
