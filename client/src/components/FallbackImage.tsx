@@ -7,7 +7,7 @@ interface FallbackImageProps {
   defaultSrc?: string;
 }
 
-export const FallbackImage: React.FC<FallbackImageProps> = ({
+const FallbackImage: React.FC<FallbackImageProps> = ({
   src,
   alt,
   className = '',
@@ -32,3 +32,5 @@ export const FallbackImage: React.FC<FallbackImageProps> = ({
     />
   );
 }; 
+
+export default FallbackImage

@@ -1,7 +1,8 @@
 import React from 'react';
-
+import { useNavigate } from 'react-router-dom';
 
 const Header: React.FC = () => {
+  const navigate = useNavigate();
   const userAvatar = "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"
   const navItems = [
     { label: 'Discover', route: '/discover' },
@@ -11,13 +12,11 @@ const Header: React.FC = () => {
   ];
 
   const onNavigate = (route: string) => {
-    console.log('Navigating to:', route);
-    // Add navigation logic here
+    navigate(route);
   };
 
   const onSearch = () => {
-    console.log('Opening search');
-    // Add search logic here
+    navigate('/bike-parks');
   };
 
   return (
