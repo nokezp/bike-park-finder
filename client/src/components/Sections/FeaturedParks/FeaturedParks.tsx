@@ -1,5 +1,8 @@
 import React from 'react';
 import ParkCard, { ParkCardProps } from './ParkCard';
+import { useQuery } from 'urql';
+import { GetBikeParks } from '../../../graphql/queries';
+
 
 const FeaturedParks: React.FC = () => {
   const title = "Popular Bike Parks"
@@ -9,6 +12,12 @@ const FeaturedParks: React.FC = () => {
     console.log('Viewing details for park:', parkId);
     // Add view details logic here
   };
+
+  const [{ data }] = useQuery({
+    query: GetBikeParks
+  });
+
+  console.log(data);
 
   return (
     <section className="py-12 animate-fade-in">

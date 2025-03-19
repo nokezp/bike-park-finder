@@ -1,68 +1,36 @@
-export const GET_BIKE_PARKS = `
+import { gql } from 'urql';
+
+export const GetBikeParks = gql`
   query GetBikeParks {
     bikeParks {
       id
-      name
-      description
       location
-      features
-      difficulty
-      rating
+      name
+      updatedAt
     }
   }
 `;
 
-export const GET_BIKE_PARK = `
+export const GetBikePark = gql`
   query GetBikePark($id: ID!) {
     bikePark(id: $id) {
       id
       name
-      description
-      location {
-        address
-        city
-        state
-        country
-        coordinates {
-          lat
-          lng
-        }
-      }
-      features
-      difficulty
-      openingHours
-      contactInfo {
-        phone
-        email
-        website
-      }
-      images
-      rating
-      reviews {
-        id
-        rating
-        comment
-        user {
-          id
-          name
-        }
-      }
-      createdAt
       updatedAt
     }
   }
 `;
 
-export const GET_USER_PROFILE = `
+export const GetUserProfile = gql`
   query GetUserProfile {
     me {
-      id
-      username
+      createdAt
       email
+      id
       name
       role
-      createdAt
       updatedAt
+      username
     }
   }
 `; 

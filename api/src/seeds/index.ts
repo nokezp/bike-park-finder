@@ -16,7 +16,7 @@ async function seed() {
 
     // Clear existing data
     console.log('🧹 Clearing existing data...');
-    await mongoose.connection.db.dropDatabase();
+    await mongoose.connection?.db?.dropDatabase();
     console.log('✅ Database cleared');
 
     // Seed users
@@ -26,7 +26,7 @@ async function seed() {
 
     // Seed bike parks
     console.log('🌱 Seeding bike parks...');
-    const bikeParks = await seedBikeParks(adminUser.id);
+    const bikeParks: any = await seedBikeParks(adminUser.id);
     console.log('✅ Bike parks seeded');
 
     // Seed trails

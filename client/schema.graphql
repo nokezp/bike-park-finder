@@ -11,17 +11,14 @@ type User {
 type BikePark {
   id: ID!
   name: String!
-  description: String!
   location: String!
-  features: [String!]!
-  difficulty: String!
-  rating: Float!
+  updatedAt: String!
 }
 
 type Query {
-  me: User
   bikeParks: [BikePark!]!
   bikePark(id: ID!): BikePark
+  me: User
 }
 
 type AuthPayload {

@@ -3,18 +3,16 @@ import { CodegenConfig } from '@graphql-codegen/cli';
 const config: CodegenConfig = {
   schema: './schema.graphql',
   documents: ['src/**/*.tsx', 'src/**/*.ts'],
-  ignoreNoDocuments: true,
   generates: {
-    './src/graphql/generated/types.ts': {
+    './src/gql/': {
+      preset: 'client',
       plugins: [
         'typescript',
-        'typescript-operations'
+        'typescript-operations',
+        'typescript-urql',
       ],
-      config: {
-        enumsAsTypes: true,
-        skipTypename: true,
-        avoidOptionals: false,
-        maybeValue: 'T | null | undefined',
+      presetConfig: {
+        gqlTagName: 'gql',
       },
     },
   },
