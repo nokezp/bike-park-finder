@@ -9,6 +9,15 @@ export const typeDefs = `
     updatedAt: String!
   }
 
+  type Review {
+    id: ID!
+    rating: Int!
+    comment: String
+    user: User!
+    bikePark: BikePark!
+    createdAt: String!
+  }
+
   type Coordinates {
     latitude: Float
     longitude: Float
@@ -17,16 +26,19 @@ export const typeDefs = `
   type BikePark {
     id: ID!
     name: String!
-    description: String
+    description: String!
     location: String!
     coordinates: Coordinates
     difficulty: String
-    features: [String]
+    features: [String!]!
     amenities: [String]
     hasLiftAccess: Boolean
     hasTechnicalSections: Boolean
     hasJumps: Boolean
     hasDrops: Boolean
+    rating: Float
+    reviews: [Review!]
+    images: [String!]
     createdBy: ID!
     createdAt: String!
     updatedAt: String!

@@ -21,7 +21,7 @@ export type AuthPayload = {
 
 export type BikePark = {
   description: Scalars['String']['output'];
-  difficultyLevels: Array<Scalars['String']['output']>;
+  difficulty: Scalars['String']['output'];
   features: Array<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   location: Scalars['String']['output'];

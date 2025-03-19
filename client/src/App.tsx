@@ -1,22 +1,18 @@
 import React from 'react';
-import { BikeParkList } from './components/BikeParkList';
-import './styles/components/App.scss';
+import LandingPage from './pages/LandingPage';
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
 
 const App: React.FC = () => {
   return (
-    <div className="app">
-      <header className="app__header">
-        <div className="container">
-          <h1>Bike Park Finder</h1>
-        </div>
-      </header>
-      <main className="app__main">
-        <div className="container">
-          <BikeParkList />
-        </div>
+    <div className="min-h-screen bg-slate-50">
+      <Header />
+      <main className="pt-16">
+        <LandingPage />
       </main>
+      <Footer />
     </div>
   );
 };
 
-export default App; 
+export default App;

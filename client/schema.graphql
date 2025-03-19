@@ -14,7 +14,7 @@ type BikePark {
   description: String!
   location: String!
   features: [String!]!
-  difficultyLevels: [String!]!
+  difficulty: String!
   rating: Float!
 }
 

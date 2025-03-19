@@ -53,7 +53,7 @@ const bikeParkSchema = new mongoose.Schema<IBikePark>(
     difficulty: {
       type: String,
       required: true,
-      enum: ['easy', 'medium', 'hard'],
+      enum: ['easy', 'medium', 'hard', 'expert', 'extreme', 'insane', 'nightmare', 'legendary', 'mythical', 'legendary'],
     },
     features: [{
       type: String,

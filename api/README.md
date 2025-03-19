@@ -30,9 +30,8 @@ npm install
    - Add the following variables:
 
 ```
-PORT=3000
+PORT=4000
 MONGODB_URI=mongodb://localhost:27017/bike-park-finder
-MONGODB_URI=mongodb+srv://kenansivro:Ga4wTyxo1dxSs7jF@cluster0.9wteb.mongodb.net/bikeparkfinder?retryWrites=true&w=majority
 JWT_SECRET=your-secret-key-change-in-production
 NODE_ENV=development
 ```
@@ -64,7 +63,7 @@ npm start
 Once the server is running, you can access the GraphQL playground at:
 
 ```
-http://localhost:3000/graphql
+http://localhost:4000/graphql
 ```
 
 ### Main Queries

@@ -6,7 +6,7 @@ export const GET_BIKE_PARKS = `
       description
       location
       features
-      difficultyLevels
+      difficulty
       rating
     }
   }
@@ -29,7 +29,7 @@ export const GET_BIKE_PARK = `
         }
       }
       features
-      difficultyLevels
+      difficulty
       openingHours
       contactInfo {
         phone

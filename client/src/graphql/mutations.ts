@@ -45,7 +45,7 @@ export const CREATE_BIKE_PARK = `
         }
       }
       features
-      difficultyLevels
+      difficulty
       openingHours
       contactInfo {
         phone
@@ -86,7 +86,7 @@ export const UPDATE_BIKE_PARK = `
         }
       }
       features
-      difficultyLevels
+      difficulty
       openingHours
       contactInfo {
         phone
