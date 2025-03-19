@@ -1,4 +1,5 @@
 import React from 'react';
+import { FallbackImage } from '../../FallbackImage';
 
 interface Tag {
   label: string;
@@ -17,22 +18,6 @@ export interface ParkCardProps {
   onViewDetails?: (id: string) => void;
 }
 
-/*
-id
-location
-name
-updatedAt
-difficulty
-amenities
-createdAt
-createdBy
-description
-coordinates {
-  latitude
-  longitude
-}
-*/
-
 const ParkCard: React.FC<ParkCardProps> = ({
   id,
   image,
@@ -47,10 +32,10 @@ const ParkCard: React.FC<ParkCardProps> = ({
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
       <div className="relative h-48">
-          <img 
-            className="w-full h-full object-cover" 
+          <FallbackImage
             src={image}
             alt={name}
+            className="w-full h-full object-cover"
           />
           <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 text-sm">
             <i className="fa-solid fa-star text-yellow-400"></i> {rating.toFixed(1)}

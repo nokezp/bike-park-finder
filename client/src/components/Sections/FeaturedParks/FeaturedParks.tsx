@@ -3,6 +3,7 @@ import ParkCard, { ParkCardProps } from './ParkCard';
 import { useQuery } from 'urql';
 import { GET_BIKE_PARKS } from '../../../queries/bikeParks';
 import { BikePark } from '../../../types/graphql';
+import { getRandomColor } from '../../../utils/colors';
 
 const FeaturedParks: React.FC = () => {
   const title = "Popular Bike Parks"
@@ -24,7 +25,10 @@ const FeaturedParks: React.FC = () => {
     rating: park.rating,
     name: park.name,
     location: park.location,
-    tags: park.features,
+    tags: park.features?.map((feature: string) => ({
+      label: feature,
+      color: getRandomColor()
+    })),
     temperature: park.weather?.current?.temperature,
   }))?.slice(0, 3);
 
