@@ -1,9 +1,7 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import { User } from '../models/index.js';
-import { BikePark } from '../models/index.js';
-import { Trail } from '../models/index.js';
-import { Event } from '../models/index.js';
+import { BikePark } from '../models/BikePark.js';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder';
 
@@ -21,8 +19,6 @@ async function generateMockDb() {
     await Promise.all([
       User.deleteMany({}),
       BikePark.deleteMany({}),
-      Trail.deleteMany({}),
-      Event.deleteMany({})
     ]);
     console.log('✅ Database cleared');
 
@@ -174,82 +170,6 @@ async function generateMockDb() {
       }
       return [];
     });
-
-    await Trail.create(trails);
-    console.log('✅ Trails generated');
-
-    // Generate events
-    console.log('📅 Generating events...');
-    const currentDate = new Date();
-    const oneDay = 24 * 60 * 60 * 1000;
-    const events = createdBikeParks.flatMap(bikePark => {
-      if (bikePark.name === 'Whistler Mountain Bike Park') {
-        return [
-          {
-            name: 'Crankworx Whistler',
-            description: 'The ultimate mountain biking festival featuring competitions and demos',
-            date: new Date(currentDate.getTime() + 30 * oneDay),
-            type: 'competition',
-            status: 'scheduled',
-            capacity: 5000,
-            registrationDeadline: new Date(currentDate.getTime() + 25 * oneDay),
-            bikeParkId: bikePark._id
-          },
-          {
-            name: 'Beginner Skills Clinic',
-            description: 'Learn the basics of mountain biking with certified instructors',
-            date: new Date(currentDate.getTime() + 7 * oneDay),
-            type: 'clinic',
-            status: 'scheduled',
-            capacity: 20,
-            registrationDeadline: new Date(currentDate.getTime() + 5 * oneDay),
-            bikeParkId: bikePark._id
-          }
-        ];
-      }
-      if (bikePark.name === 'Highland Mountain Bike Park') {
-        return [
-          {
-            name: 'Highland Throwdown',
-            description: 'Annual slopestyle competition with pro riders',
-            date: new Date(currentDate.getTime() + 45 * oneDay),
-            type: 'competition',
-            status: 'scheduled',
-            capacity: 1000,
-            registrationDeadline: new Date(currentDate.getTime() + 40 * oneDay),
-            bikeParkId: bikePark._id
-          }
-        ];
-      }
-      if (bikePark.name === 'Bike Park Wales') {
-        return [
-          {
-            name: 'Welsh Open',
-            description: 'National downhill racing series round',
-            date: new Date(currentDate.getTime() + 60 * oneDay),
-            type: 'competition',
-            status: 'scheduled',
-            capacity: 200,
-            registrationDeadline: new Date(currentDate.getTime() + 55 * oneDay),
-            bikeParkId: bikePark._id
-          },
-          {
-            name: 'Women\'s Ride Day',
-            description: 'A day dedicated to women riders with workshops and group rides',
-            date: new Date(currentDate.getTime() + 14 * oneDay),
-            type: 'social',
-            status: 'scheduled',
-            capacity: 50,
-            registrationDeadline: new Date(currentDate.getTime() + 12 * oneDay),
-            bikeParkId: bikePark._id
-          }
-        ];
-      }
-      return [];
-    });
-
-    await Event.create(events);
-    console.log('✅ Events generated');
 
     console.log('✨ Database seeded successfully!');
     process.exit(0);

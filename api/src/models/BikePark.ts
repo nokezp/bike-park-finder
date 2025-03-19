@@ -1,98 +1,76 @@
 import mongoose from 'mongoose';
-
-// Coordinates interface
-export interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
+import { WeatherData } from '../services/weatherService.js';
 
 // BikePark interface
 export interface IBikePark extends mongoose.Document {
   name: string;
-  description?: string;
+  description: string;
   location: string;
-  coordinates?: Coordinates;
-  difficulty?: string;
-  features?: string[];
-  amenities?: string[];
-  hasLiftAccess?: boolean;
-  hasTechnicalSections?: boolean;
-  hasJumps?: boolean;
-  hasDrops?: boolean;
-  createdBy: mongoose.Types.ObjectId;
+  features: string[];
+  difficulty: string;
+  rating?: number;
+  reviews: mongoose.Types.ObjectId[];
+  imageUrl?: string;
+  address: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  facilities?: string[];
+  rules?: string[];
+  status?: string;
+  lastUpdated: Date;
   createdAt: Date;
   updatedAt: Date;
+  weather?: {
+    current: WeatherData;
+    forecast: WeatherData[];
+    lastUpdated: Date;
+  };
 }
 
 // BikePark schema
-const bikeParkSchema = new mongoose.Schema<IBikePark>(
-  {
-    name: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
-    location: {
-      type: String,
-      required: true,
-    },
-    coordinates: {
-      latitude: {
-        type: Number,
-        required: true,
-      },
-      longitude: {
-        type: Number,
-        required: true,
-      },
-    },
-    difficulty: {
-      type: String,
-      required: true,
-      enum: ['easy', 'medium', 'hard', 'expert', 'extreme', 'insane', 'nightmare', 'legendary', 'mythical', 'legendary'],
-    },
-    features: [{
-      type: String,
-    }],
-    amenities: [{
-      type: String,
-    }],
-    hasLiftAccess: {
-      type: Boolean,
-      default: false,
-    },
-    hasTechnicalSections: {
-      type: Boolean,
-      default: false,
-    },
-    hasJumps: {
-      type: Boolean,
-      default: false,
-    },
-    hasDrops: {
-      type: Boolean,
-      default: false,
-    },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
+const bikeParkSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
   },
-  {
-    timestamps: true,
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  createdAt: {
+    type: String,
+    required: true
+  },
+  description: String,
+  location: String,
+  features: [String],
+  difficulty: String,
+  rating: Number,
+  reviews: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Review'
+  }],
+  imageUrl: String,
+  address: String,
+  coordinates: {
+    latitude: Number,
+    longitude: Number
+  },
+  rules: [String],
+  status: {
+    type: String,
+    default: 'active'
+  },
+  lastUpdated: String,
+  updatedAt: String,
+  weather: {
+    current: mongoose.Schema.Types.Mixed,
+    forecast: mongoose.Schema.Types.Mixed,
+    lastUpdated: String
   }
-);
+});
 
-// Add text index for search
-bikeParkSchema.index(
-  { name: 'text', description: 'text', location: 'text' },
-  { weights: { name: 3, location: 2, description: 1 } }
-);
-
-// Export BikePark model
-export const BikePark = mongoose.model<IBikePark>('BikePark', bikeParkSchema); 
+export const BikePark = mongoose.model('BikePark', bikeParkSchema); 

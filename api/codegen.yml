@@ -1,0 +1,21 @@
+schema: src/schema/schema.graphql
+documents: src/**/*.ts
+generates:
+  src/types/graphql.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+    config:
+      contextType: ../types#Context
+      mappers:
+        BikePark: ../models/BikePark#IBikePark
+        Review: ../models/Review#IReview
+        User: ../models/User#IUser
+      scalars:
+        JSON: any
+        DateTime: string
+      enumsAsTypes: true
+      constEnums: true
+      immutableTypes: true
+      skipTypename: true
+      dedupeFragments: true 

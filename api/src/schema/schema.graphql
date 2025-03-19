@@ -1,0 +1,196 @@
+type User {
+  id: ID!
+  username: String!
+  email: String!
+  name: String
+  role: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Coordinates {
+  latitude: Float!
+  longitude: Float!
+}
+
+type WeatherData {
+  temperature: Float!
+  feelsLike: Float!
+  humidity: Int!
+  windSpeed: Float!
+  description: String!
+  icon: String!
+  precipitation: Float!
+  uvIndex: Float!
+}
+
+type Weather {
+  current: JSON
+  forecast: JSON
+  lastUpdated: String
+}
+
+type OpeningHours {
+  monday: String
+  tuesday: String
+  wednesday: String
+  thursday: String
+  friday: String
+  saturday: String
+  sunday: String
+}
+
+type Contact {
+  phone: String
+  email: String
+}
+
+type Price {
+  amount: Float!
+  currency: String!
+}
+
+type SocialMedia {
+  facebook: String
+  instagram: String
+  twitter: String
+  youtube: String
+}
+
+type BikePark {
+  id: ID!
+  name: String!
+  createdBy: ID!
+  createdAt: String!
+  description: String
+  location: String
+  features: [String!]
+  difficulty: String
+  rating: Float
+  reviews: [Review!]
+  imageUrl: String
+  address: String
+  coordinates: Coordinates
+  openingHours: OpeningHours
+  contact: Contact
+  price: Price
+  facilities: [String!]
+  rules: [String!]
+  photos: [String!]
+  videos: [String!]
+  website: String
+  socialMedia: SocialMedia
+  status: String
+  lastUpdated: String
+  updatedAt: String
+  weather: Weather
+}
+
+type Review {
+  id: ID!
+  rating: Float!
+  comment: String!
+  createdBy: ID!
+  bikePark: ID!
+  createdAt: String!
+  updatedAt: String
+}
+
+type Query {
+  me: User
+  bikeParks: [BikePark!]!
+  bikePark(id: ID!): BikePark
+  reviews(bikeParkId: ID!): [Review!]!
+  searchBikeParks(query: String!): [BikePark!]!
+}
+
+type Mutation {
+  register(username: String!, email: String!, password: String!, name: String): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  updateProfile(name: String, email: String): User!
+  createBikePark(
+    name: String!
+    description: String
+    location: String
+    features: [String!]
+    difficulty: String
+    address: String
+    coordinates: CoordinatesInput
+    imageUrl: String
+    openingHours: OpeningHoursInput
+    contact: ContactInput
+    price: PriceInput
+    facilities: [String!]
+    rules: [String!]
+    photos: [String!]
+    videos: [String!]
+    website: String
+    socialMedia: SocialMediaInput
+    status: String
+  ): BikePark!
+  updateBikePark(id: ID!, input: UpdateBikeParkInput!): BikePark!
+  deleteBikePark(id: ID!): Boolean!
+  createReview(bikeParkId: ID!, rating: Float!, comment: String!): Review!
+  updateReview(id: ID!, rating: Float, comment: String): Review!
+  deleteReview(id: ID!): Boolean!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+input CoordinatesInput {
+  latitude: Float!
+  longitude: Float!
+}
+
+input OpeningHoursInput {
+  monday: String
+  tuesday: String
+  wednesday: String
+  thursday: String
+  friday: String
+  saturday: String
+  sunday: String
+}
+
+input ContactInput {
+  phone: String
+  email: String
+}
+
+input PriceInput {
+  amount: Float!
+  currency: String!
+}
+
+input SocialMediaInput {
+  facebook: String
+  instagram: String
+  twitter: String
+  youtube: String
+}
+
+input UpdateBikeParkInput {
+  name: String
+  description: String
+  location: String
+  features: [String!]
+  difficulty: String
+  address: String
+  coordinates: CoordinatesInput
+  imageUrl: String
+  openingHours: OpeningHoursInput
+  contact: ContactInput
+  price: PriceInput
+  facilities: [String!]
+  rules: [String!]
+  photos: [String!]
+  videos: [String!]
+  website: String
+  socialMedia: SocialMediaInput
+  status: String
+}
+
+scalar JSON 

@@ -2,8 +2,6 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import { seedUsers } from './users.js';
 import { seedBikeParks } from './bikeParks.js';
-import { seedTrails } from './trails.js';
-import { seedEvents } from './events.js';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder';
 
@@ -28,16 +26,6 @@ async function seed() {
     console.log('🌱 Seeding bike parks...');
     const bikeParks: any = await seedBikeParks(adminUser.id);
     console.log('✅ Bike parks seeded');
-
-    // Seed trails
-    console.log('🌱 Seeding trails...');
-    await seedTrails(bikeParks);
-    console.log('✅ Trails seeded');
-
-    // Seed events
-    console.log('🌱 Seeding events...');
-    await seedEvents(bikeParks);
-    console.log('✅ Events seeded');
 
     console.log('✨ All data seeded successfully!');
     process.exit(0);

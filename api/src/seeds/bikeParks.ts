@@ -1,4 +1,4 @@
-import { BikePark } from '../models/index.js';
+import { BikePark } from "../models/BikePark.js";
 
 export async function seedBikeParks(adminId: string) {
   const bikeParks = [

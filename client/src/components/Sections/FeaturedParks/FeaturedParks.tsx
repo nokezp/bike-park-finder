@@ -1,12 +1,12 @@
 import React from 'react';
 import ParkCard, { ParkCardProps } from './ParkCard';
 import { useQuery } from 'urql';
-import { GetBikeParks } from '../../../graphql/queries';
-
+import { GET_BIKE_PARKS } from '../../../queries/bikeParks';
+import { BikePark } from '../../../types/graphql';
 
 const FeaturedParks: React.FC = () => {
   const title = "Popular Bike Parks"
-  const parks = mockParks;
+  // const parks = mockParks;
 
   const handleViewDetails = (parkId: string) => {
     console.log('Viewing details for park:', parkId);
@@ -14,17 +14,26 @@ const FeaturedParks: React.FC = () => {
   };
 
   const [{ data }] = useQuery({
-    query: GetBikeParks
+    query: GET_BIKE_PARKS
   });
 
   console.log(data);
+  const parks = data?.bikeParks?.map((park: BikePark) => ({
+    id: park.id,
+    image: park.imageUrl,
+    rating: park.rating,
+    name: park.name,
+    location: park.location,
+    tags: park.features,
+    temperature: park.weather?.current?.temperature,
+  }))?.slice(0, 3);
 
   return (
     <section className="py-12 animate-fade-in">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-bold mb-8">{title}</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {parks.map((park) => (
+          {parks?.map((park: ParkCardProps) => (
             <ParkCard
               key={park.id}
               {...park}
