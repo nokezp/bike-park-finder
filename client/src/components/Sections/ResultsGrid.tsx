@@ -1,6 +1,5 @@
 import React from 'react';
 import BikeParkCard from './BikeParkCard';
-import { getRandomColor } from '../../utils/colors';
 
 interface BikePark {
   id: string;
