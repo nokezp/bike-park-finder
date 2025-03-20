@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// Replace with your Mapbox access token
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
+mapboxgl.accessToken = 'pk.eyJ1Ijoibm9rZXpwbmV3IiwiYSI6ImNtOGQya3BnZzFiZnkya3M1bWEzMzVuYXkifQ.rOk1OezputSSawqlWIMycQ';
 
 interface MapProps {
   center: [number, number];
