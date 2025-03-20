@@ -747,10 +747,10 @@ export const seedDatabase = async (): Promise<void> => {
   try {
     // Clear existing data
     await Promise.all([
-      BikePark.deleteMany({}),
+      Review.deleteMany({}),
       Event.deleteMany({}),
       Trail.deleteMany({}),
-      Review.deleteMany({}),
+      BikePark.deleteMany({}),
       User.deleteMany({})
     ]);
 
