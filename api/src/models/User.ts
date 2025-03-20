@@ -15,39 +15,145 @@ export interface IUser extends mongoose.Document {
 
 // User schema
 const userSchema = new mongoose.Schema({
-  username: String,
-  email: String,
-  password: String,
-  name: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    minlength: 3,
+    maxlength: 30
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email']
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 8
+  },
   role: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user',
+    required: true,
+    enum: ['admin', 'user'],
+    default: 'user'
   },
-}, {
-  timestamps: true,
-} as mongoose.SchemaOptions<IUser>);
+  profile: {
+    firstName: {
+      type: String,
+      trim: true
+    },
+    lastName: {
+      type: String,
+      trim: true
+    },
+    avatar: {
+      type: String,
+      validate: {
+        validator: function(v: string) {
+          return !v || /^https?:\/\/.+/.test(v);
+        },
+        message: 'Avatar URL must be a valid URL'
+      }
+    },
+    bio: {
+      type: String,
+      maxlength: 500
+    },
+    location: {
+      type: String,
+      trim: true
+    },
+    preferences: {
+      ridingStyle: [{
+        type: String,
+        enum: ['Downhill', 'Enduro', 'Freeride', 'Dirt Jump', 'Trail', 'Cross Country']
+      }],
+      skillLevel: {
+        type: String,
+        enum: ['Beginner', 'Intermediate', 'Advanced', 'Pro']
+      },
+      preferredBikeType: [{
+        type: String,
+        enum: ['Downhill', 'Enduro', 'Trail', 'Dirt Jump']
+      }]
+    }
+  },
+  stats: {
+    totalRides: {
+      type: Number,
+      default: 0
+    },
+    totalReviews: {
+      type: Number,
+      default: 0
+    },
+    favoriteParks: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BikePark'
+    }],
+    favoriteTrails: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Trail'
+    }]
+  },
+  socialMedia: {
+    instagram: String,
+    facebook: String,
+    youtube: String,
+    strava: String
+  },
+  notifications: {
+    email: {
+      type: Boolean,
+      default: true
+    },
+    push: {
+      type: Boolean,
+      default: true
+    }
+  },
+  verified: {
+    type: Boolean,
+    default: false
+  },
+  lastLogin: {
+    type: Date
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Add text index for search functionality
+userSchema.index({ 
+  username: 'text',
+  'profile.firstName': 'text',
+  'profile.lastName': 'text',
+  'profile.location': 'text'
+});
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error: any) {
-    next(error);
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 12);
   }
+  this.updatedAt = new Date();
+  next();
 });
 
 // Method to compare password
 userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
-  try {
-    return await bcrypt.compare(candidatePassword, this.password);
-  } catch (error) {
-    throw error;
-  }
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Export User model

@@ -33,44 +33,120 @@ export interface IBikePark extends mongoose.Document {
 const bikeParkSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  createdAt: {
+  description: {
     type: String,
     required: true
   },
-  description: String,
-  location: String,
-  features: [String],
-  difficulty: String,
-  rating: Number,
+  location: {
+    type: String,
+    required: true
+  },
+  coordinates: {
+    latitude: {
+      type: Number,
+      required: true
+    },
+    longitude: {
+      type: Number,
+      required: true
+    }
+  },
+  imageUrl: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: String,
+    required: true,
+    enum: ['open', 'closed', 'maintenance']
+  },
+  difficulty: {
+    type: String,
+    required: true,
+    enum: ['beginner', 'intermediate', 'advanced', 'pro']
+  },
+  features: [{
+    type: String,
+    required: true
+  }],
+  facilities: [{
+    type: String,
+    required: true
+  }],
+  openingHours: {
+    monday: String,
+    tuesday: String,
+    wednesday: String,
+    thursday: String,
+    friday: String,
+    saturday: String,
+    sunday: String
+  },
+  contact: {
+    phone: String,
+    email: String
+  },
+  price: {
+    amount: Number,
+    currency: String
+  },
+  rules: [String],
+  photos: [String],
+  videos: [String],
+  website: String,
+  socialMedia: {
+    facebook: String,
+    instagram: String,
+    youtube: String
+  },
+  weather: {
+    current: {
+      temperature: Number,
+      conditions: String,
+      windSpeed: Number,
+      precipitation: Number
+    },
+    forecast: [{
+      date: Date,
+      temperature: Number,
+      conditions: String,
+      windSpeed: Number,
+      precipitation: Number
+    }],
+    lastUpdated: Date
+  },
   reviews: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Review'
   }],
-  imageUrl: String,
-  address: String,
-  coordinates: {
-    latitude: Number,
-    longitude: Number
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
-  rules: [String],
-  status: {
-    type: String,
-    default: 'active'
+  createdAt: {
+    type: Date,
+    default: Date.now
   },
-  lastUpdated: String,
-  updatedAt: String,
-  weather: {
-    current: mongoose.Schema.Types.Mixed,
-    forecast: mongoose.Schema.Types.Mixed,
-    lastUpdated: String
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
+});
+
+// Add text index for search functionality
+bikeParkSchema.index({ 
+  name: 'text',
+  description: 'text',
+  location: 'text'
+});
+
+// Update timestamps on save
+bikeParkSchema.pre('save', function(next) {
+  this.updatedAt = new Date();
+  next();
 });
 
 export const BikePark = mongoose.model('BikePark', bikeParkSchema); 
