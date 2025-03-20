@@ -1,6 +1,5 @@
 import { createClient, fetchExchange } from 'urql';
 import { cacheExchange } from '@urql/exchange-graphcache';
-import { Data } from '@urql/exchange-graphcache';
 
 const API_URL = 'http://localhost:4000/graphql';
 
@@ -9,9 +8,12 @@ export const client = createClient({
   exchanges: [
     cacheExchange({
       keys: {
-        BikePark: (data: Data) => data.id as string,
-        Review: (data: Data) => data.id as string,
-        User: (data: Data) => data.id as string,
+        BikePark: (data) => data.id as string,
+        SocialMedia: (data) => data.facebook as string,
+        Contact: (data) => data.email as string,
+        Coordinates: (data) => data.latitude as string,
+        OpeningHours: (data) => data.friday as string,
+        Price: (data) => data.id as string,
       },
     }),
     fetchExchange,

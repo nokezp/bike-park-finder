@@ -1,56 +1,19 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useQuery } from 'urql';
-
-const BIKE_PARK_QUERY = `
-  query GetBikePark($id: ID!) {
-    bikePark(id: $id) {
-      id
-      imageUrl
-      name
-      status
-      rating
-      location
-      weather {
-        current
-        forecast
-      }
-      openingHours {
-        friday
-        monday
-        saturday
-        sunday
-        thursday
-        tuesday
-        wednesday
-      }
-      difficulty
-      description
-      features
-      facilities
-      photos
-    }
-  }
-`;
+import { useBikePark } from '../hooks/useBikeParks';
+import moment from 'moment';
 
 const BikeParkDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   
-  // Ensure the ID is in the correct format
-  const formattedId = id?.length === 24 ? id : null;
-  
-  const [{ data, fetching, error }] = useQuery({
-    query: BIKE_PARK_QUERY,
-    variables: { id: formattedId },
-    pause: !formattedId, // Don't run the query if we don't have a valid ID
-  });
+  const { loading, bikePark, error } = useBikePark(id);
 
-  if (!formattedId) return <div>Invalid bike park ID</div>;
-  if (fetching) return <div>Loading...</div>;
+  if (!id) return <div>Invalid bike park ID</div>;
+  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  if (!data?.bikePark) return <div>Bike park not found</div>;
+  if (!bikePark) return <div>Bike park not found</div>;
 
-  const bikePark = data.bikePark;
+  console.log('bikePark: ', bikePark);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -96,7 +59,7 @@ const BikeParkDetailPage: React.FC = () => {
                 <div>
                   <p className="text-sm text-gray-600">Weather</p>
                   <p className="font-bold">
-                    {bikePark.weather?.current}°C {bikePark.weather?.current}
+                    {bikePark.weather?.current?.temperature}°C
                   </p>
                 </div>
               </div>
@@ -104,7 +67,7 @@ const BikeParkDetailPage: React.FC = () => {
                 <i className="fa-solid fa-clock text-2xl text-gray-600"></i>
                 <div>
                   <p className="text-sm text-gray-600">Hours</p>
-                  <p className="font-bold">{bikePark.openingHours}</p>
+                  <p className="font-bold">{bikePark.openingHours[moment().format('dddd').toLowerCase()]}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -204,12 +167,12 @@ const BikeParkDetailPage: React.FC = () => {
               <div id="weather-widget" className="bg-white rounded-lg shadow-md p-6 mb-8">
                 <h3 className="text-xl font-bold mb-4">Weather Forecast</h3>
                 <div className="space-y-4">
-                  {bikePark.weather?.forecast?.map((day: any, index: number) => (
+                  {bikePark.weather?.forecast?.slice(0, 5)?.map((day: any, index: number) => (
                     <div key={index} className="flex items-center justify-between">
-                      <span>{day}</span>
+                      <span>{moment().add(index, 'days').format('dddd')}</span>
                       <div className="flex items-center">
                         <i className={`fa-solid ${day === 'sunny' ? 'fa-sun text-yellow-400' : 'fa-cloud text-gray-400'} mr-2`}></i>
-                        <span>{day}°C</span>
+                        <span>{day?.temperature}°C</span>
                       </div>
                     </div>
                   ))}

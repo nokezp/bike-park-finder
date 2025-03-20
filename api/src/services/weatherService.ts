@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;
+const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || "f8526a6c25cefc4039879801b90bd545";
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 export interface WeatherData {
@@ -17,7 +17,6 @@ export interface WeatherData {
 export class WeatherService {
   static async getCurrentWeather(lat: number, lng: number): Promise<WeatherData> {
     try {
-      console.log(`Fetching current weather for coordinates: ${lat}, ${lng}`);
       const response = await axios.get(`${BASE_URL}/weather`, {
         params: {
           lat,
@@ -26,7 +25,6 @@ export class WeatherService {
           units: 'metric'
         }
       });
-      console.log('Current weather response:', response.data);
       const data = response.data;
       return {
         temperature: Math.round(data.main.temp),
@@ -46,7 +44,6 @@ export class WeatherService {
 
   static async getForecast(lat: number, lng: number): Promise<WeatherData[]> {
     try {
-      console.log(`Fetching forecast for coordinates: ${lat}, ${lng}`);
       const response = await axios.get(`${BASE_URL}/forecast`, {
         params: {
           lat,
@@ -55,7 +52,6 @@ export class WeatherService {
           units: 'metric'
         }
       });
-      console.log('Forecast response:', response.data);
       return response.data.list.map((item: any) => ({
         temperature: Math.round(item.main.temp),
         feelsLike: Math.round(item.main.feels_like),
