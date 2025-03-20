@@ -16,9 +16,14 @@
     "start": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
-    "dev": "vite"
+    "dev": "vite",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^3.0.0",
+    "@graphql-codegen/typescript": "^3.0.0",
+    "@graphql-codegen/typescript-operations": "^3.0.0",
+    "@graphql-codegen/typescript-urql": "^3.0.0",
     "@vitejs/plugin-react": "^3.0.0",
     "vite": "^4.0.0"
   }

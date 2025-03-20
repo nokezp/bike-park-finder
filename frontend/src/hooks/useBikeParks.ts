@@ -1,6 +1,7 @@
-import { useQuery, useMutation, gql } from 'urql';
+import { useQuery, useMutation } from 'urql';
+import { gql } from '../gql/gql';
 
-const GET_BIKE_PARKS = gql`
+const GetBikeParksDocument = gql(`
   query GetBikeParks($filter: BikeParkFilter, $pagination: PaginationInput!) {
     bikeParks(filter: $filter, pagination: $pagination) {
       bikeParks {
@@ -24,9 +25,9 @@ const GET_BIKE_PARKS = gql`
       hasNextPage
     }
   }
-`;
+`);
 
-const GET_BIKE_PARK = gql`
+const GetBikeParkDocument = gql(`
   query GetBikePark($id: ID!) {
     bikePark(id: $id) {
       id
@@ -44,9 +45,9 @@ const GET_BIKE_PARK = gql`
       }
     }
   }
-`;
+`);
 
-const CREATE_BIKE_PARK = gql`
+const CreateBikeParkDocument = gql(`
   mutation CreateBikePark($input: CreateBikeParkInput!) {
     createBikePark(input: $input) {
       id
@@ -64,9 +65,9 @@ const CREATE_BIKE_PARK = gql`
       }
     }
   }
-`;
+`);
 
-const UPDATE_BIKE_PARK = gql`
+const UpdateBikeParkDocument = gql(`
   mutation UpdateBikePark($id: ID!, $input: UpdateBikeParkInput!) {
     updateBikePark(id: $id, input: $input) {
       id
@@ -84,17 +85,17 @@ const UPDATE_BIKE_PARK = gql`
       }
     }
   }
-`;
+`);
 
-const DELETE_BIKE_PARK = gql`
+const DeleteBikeParkDocument = gql(`
   mutation DeleteBikePark($id: ID!) {
     deleteBikePark(id: $id)
   }
-`;
+`);
 
 export function useBikeParks(filter?: any, pagination = { page: 1, limit: 10 }) {
   const [{ data, error, fetching }, reexecuteQuery] = useQuery({
-    query: GET_BIKE_PARKS,
+    query: GetBikeParksDocument,
     variables: { filter, pagination },
   });
 
@@ -112,7 +113,7 @@ export function useBikeParks(filter?: any, pagination = { page: 1, limit: 10 }) 
 
 export function useBikePark(id: string) {
   const [{ data, error, fetching }, reexecuteQuery] = useQuery({
-    query: GET_BIKE_PARK,
+    query: GetBikeParkDocument,
     variables: { id },
     pause: !id,
   });
@@ -126,7 +127,7 @@ export function useBikePark(id: string) {
 }
 
 export function useCreateBikePark() {
-  const [{ data, error, fetching }, createBikePark] = useMutation(CREATE_BIKE_PARK);
+  const [{ data, error, fetching }, createBikePark] = useMutation(CreateBikeParkDocument);
 
   return {
     createBikePark,
@@ -137,7 +138,7 @@ export function useCreateBikePark() {
 }
 
 export function useUpdateBikePark() {
-  const [{ data, error, fetching }, updateBikePark] = useMutation(UPDATE_BIKE_PARK);
+  const [{ data, error, fetching }, updateBikePark] = useMutation(UpdateBikeParkDocument);
 
   return {
     updateBikePark,
@@ -148,7 +149,7 @@ export function useUpdateBikePark() {
 }
 
 export function useDeleteBikePark() {
-  const [{ data, error, fetching }, deleteBikePark] = useMutation(DELETE_BIKE_PARK);
+  const [{ data, error, fetching }, deleteBikePark] = useMutation(DeleteBikeParkDocument);
 
   return {
     deleteBikePark,

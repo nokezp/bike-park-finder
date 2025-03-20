@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
-import { useMutation, gql } from 'urql';
+import { useMutation } from 'urql';
+import { gql } from '../gql/gql';
 
-const LOGIN_MUTATION = gql`
+const LoginDocument = gql(`
   mutation Login($input: LoginInput!) {
     login(input: $input) {
       token
@@ -13,9 +14,9 @@ const LOGIN_MUTATION = gql`
       }
     }
   }
-`;
+`);
 
-const REGISTER_MUTATION = gql`
+const RegisterDocument = gql(`
   mutation Register($input: RegisterInput!) {
     register(input: $input) {
       token
@@ -27,11 +28,11 @@ const REGISTER_MUTATION = gql`
       }
     }
   }
-`;
+`);
 
 export function useAuth() {
-  const [{ data: loginData, error: loginError }, login] = useMutation(LOGIN_MUTATION);
-  const [{ data: registerData, error: registerError }, register] = useMutation(REGISTER_MUTATION);
+  const [{ data: loginData, error: loginError }, login] = useMutation(LoginDocument);
+  const [{ data: registerData, error: registerError }, register] = useMutation(RegisterDocument);
 
   const handleLogin = useCallback(
     async (email: string, password: string) => {
