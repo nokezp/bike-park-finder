@@ -52,6 +52,12 @@ export type BikePark = {
   readonly website?: Maybe<Scalars['String']['output']>;
 };
 
+export type BikeParkFilter = {
+  readonly difficulty?: InputMaybe<Scalars['String']['input']>;
+  readonly location?: InputMaybe<Scalars['String']['input']>;
+  readonly name?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Contact = {
   readonly email?: Maybe<Scalars['String']['output']>;
   readonly phone?: Maybe<Scalars['String']['output']>;
@@ -176,6 +182,19 @@ export type OpeningHoursInput = {
   readonly wednesday?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type PaginatedBikeParks = {
+  readonly bikeParks: ReadonlyArray<BikePark>;
+  readonly currentPage: Scalars['Int']['output'];
+  readonly hasNextPage: Scalars['Boolean']['output'];
+  readonly totalCount: Scalars['Int']['output'];
+  readonly totalPages: Scalars['Int']['output'];
+};
+
+export type PaginationInput = {
+  readonly limit: Scalars['Int']['input'];
+  readonly page: Scalars['Int']['input'];
+};
+
 export type Price = {
   readonly amount: Scalars['Float']['output'];
   readonly currency: Scalars['String']['output'];
@@ -188,7 +207,7 @@ export type PriceInput = {
 
 export type Query = {
   readonly bikePark?: Maybe<BikePark>;
-  readonly bikeParks: ReadonlyArray<BikePark>;
+  readonly bikeParks: PaginatedBikeParks;
   readonly me?: Maybe<User>;
   readonly reviews: ReadonlyArray<Review>;
   readonly searchBikeParks: ReadonlyArray<BikePark>;
@@ -197,6 +216,12 @@ export type Query = {
 
 export type QueryBikeParkArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryBikeParksArgs = {
+  filter?: InputMaybe<BikeParkFilter>;
+  pagination: PaginationInput;
 };
 
 
@@ -354,6 +379,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   BikePark: ResolverTypeWrapper<BikePark>;
+  BikeParkFilter: BikeParkFilter;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   Contact: ResolverTypeWrapper<Contact>;
   ContactInput: ContactInput;
@@ -366,6 +392,8 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   OpeningHours: ResolverTypeWrapper<OpeningHours>;
   OpeningHoursInput: OpeningHoursInput;
+  PaginatedBikeParks: ResolverTypeWrapper<PaginatedBikeParks>;
+  PaginationInput: PaginationInput;
   Price: ResolverTypeWrapper<Price>;
   PriceInput: PriceInput;
   Query: ResolverTypeWrapper<{}>;
@@ -383,6 +411,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AuthPayload: AuthPayload;
   BikePark: BikePark;
+  BikeParkFilter: BikeParkFilter;
   Boolean: Scalars['Boolean']['output'];
   Contact: Contact;
   ContactInput: ContactInput;
@@ -395,6 +424,8 @@ export type ResolversParentTypes = {
   Mutation: {};
   OpeningHours: OpeningHours;
   OpeningHoursInput: OpeningHoursInput;
+  PaginatedBikeParks: PaginatedBikeParks;
+  PaginationInput: PaginationInput;
   Price: Price;
   PriceInput: PriceInput;
   Query: {};
@@ -483,6 +514,15 @@ export type OpeningHoursResolvers<ContextType = Context, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PaginatedBikeParksResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PaginatedBikeParks'] = ResolversParentTypes['PaginatedBikeParks']> = {
+  bikeParks?: Resolver<ReadonlyArray<ResolversTypes['BikePark']>, ParentType, ContextType>;
+  currentPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PriceResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Price'] = ResolversParentTypes['Price']> = {
   amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -491,7 +531,7 @@ export type PriceResolvers<ContextType = Context, ParentType extends ResolversPa
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   bikePark?: Resolver<Maybe<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParkArgs, 'id'>>;
-  bikeParks?: Resolver<ReadonlyArray<ResolversTypes['BikePark']>, ParentType, ContextType>;
+  bikeParks?: Resolver<ResolversTypes['PaginatedBikeParks'], ParentType, ContextType, RequireFields<QueryBikeParksArgs, 'pagination'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   reviews?: Resolver<ReadonlyArray<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
   searchBikeParks?: Resolver<ReadonlyArray<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QuerySearchBikeParksArgs, 'query'>>;
@@ -554,6 +594,7 @@ export type Resolvers<ContextType = Context> = {
   JSON?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   OpeningHours?: OpeningHoursResolvers<ContextType>;
+  PaginatedBikeParks?: PaginatedBikeParksResolvers<ContextType>;
   Price?: PriceResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;
