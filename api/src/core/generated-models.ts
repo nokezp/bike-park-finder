@@ -1,7 +1,7 @@
+/* eslint-disable */
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { Context } from '../types';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
+export type Maybe<T> = T | null | undefined;
+export type InputMaybe<T> = T | null | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -19,75 +19,80 @@ export type Scalars = {
 };
 
 export type AuthPayload = {
-  readonly token: Scalars['String']['output'];
-  readonly user: User;
+  __typename?: 'AuthPayload';
+  token: Scalars['String']['output'];
+  user: User;
 };
 
 export type BikePark = {
-  readonly address?: Maybe<Scalars['String']['output']>;
-  readonly contact?: Maybe<Contact>;
-  readonly coordinates?: Maybe<Coordinates>;
-  readonly createdAt: Scalars['String']['output'];
-  readonly createdBy: Scalars['ID']['output'];
-  readonly description?: Maybe<Scalars['String']['output']>;
-  readonly difficulty?: Maybe<Scalars['String']['output']>;
-  readonly facilities?: Maybe<ReadonlyArray<Scalars['String']['output']>>;
-  readonly features?: Maybe<ReadonlyArray<Scalars['String']['output']>>;
-  readonly id: Scalars['ID']['output'];
-  readonly imageUrl?: Maybe<Scalars['String']['output']>;
-  readonly lastUpdated?: Maybe<Scalars['String']['output']>;
-  readonly location?: Maybe<Scalars['String']['output']>;
-  readonly name: Scalars['String']['output'];
-  readonly openingHours?: Maybe<OpeningHours>;
-  readonly photos?: Maybe<ReadonlyArray<Scalars['String']['output']>>;
-  readonly price?: Maybe<Price>;
-  readonly rating?: Maybe<Scalars['Float']['output']>;
-  readonly reviews?: Maybe<ReadonlyArray<Review>>;
-  readonly rules?: Maybe<ReadonlyArray<Scalars['String']['output']>>;
-  readonly socialMedia?: Maybe<SocialMedia>;
-  readonly status?: Maybe<Scalars['String']['output']>;
-  readonly updatedAt?: Maybe<Scalars['String']['output']>;
-  readonly videos?: Maybe<ReadonlyArray<Scalars['String']['output']>>;
-  readonly weather?: Maybe<Weather>;
-  readonly website?: Maybe<Scalars['String']['output']>;
+  __typename?: 'BikePark';
+  address?: Maybe<Scalars['String']['output']>;
+  contact?: Maybe<Contact>;
+  coordinates?: Maybe<Coordinates>;
+  createdAt: Scalars['String']['output'];
+  createdBy: Scalars['ID']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  difficulty?: Maybe<Scalars['String']['output']>;
+  facilities?: Maybe<Array<Scalars['String']['output']>>;
+  features?: Maybe<Array<Scalars['String']['output']>>;
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  lastUpdated?: Maybe<Scalars['String']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  openingHours?: Maybe<OpeningHours>;
+  photos?: Maybe<Array<Scalars['String']['output']>>;
+  price?: Maybe<Price>;
+  rating?: Maybe<Scalars['Float']['output']>;
+  reviews?: Maybe<Array<Review>>;
+  rules?: Maybe<Array<Scalars['String']['output']>>;
+  socialMedia?: Maybe<SocialMedia>;
+  status?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  videos?: Maybe<Array<Scalars['String']['output']>>;
+  weather?: Maybe<Weather>;
+  website?: Maybe<Scalars['String']['output']>;
 };
 
 export type BikeParkFilter = {
-  readonly difficulty?: InputMaybe<Scalars['String']['input']>;
-  readonly location?: InputMaybe<Scalars['String']['input']>;
-  readonly name?: InputMaybe<Scalars['String']['input']>;
+  difficulty?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Contact = {
-  readonly email?: Maybe<Scalars['String']['output']>;
-  readonly phone?: Maybe<Scalars['String']['output']>;
+  __typename?: 'Contact';
+  email?: Maybe<Scalars['String']['output']>;
+  phone?: Maybe<Scalars['String']['output']>;
 };
 
 export type ContactInput = {
-  readonly email?: InputMaybe<Scalars['String']['input']>;
-  readonly phone?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Coordinates = {
-  readonly latitude: Scalars['Float']['output'];
-  readonly longitude: Scalars['Float']['output'];
+  __typename?: 'Coordinates';
+  latitude: Scalars['Float']['output'];
+  longitude: Scalars['Float']['output'];
 };
 
 export type CoordinatesInput = {
-  readonly latitude: Scalars['Float']['input'];
-  readonly longitude: Scalars['Float']['input'];
+  latitude: Scalars['Float']['input'];
+  longitude: Scalars['Float']['input'];
 };
 
 export type Mutation = {
-  readonly createBikePark: BikePark;
-  readonly createReview: Review;
-  readonly deleteBikePark: Scalars['Boolean']['output'];
-  readonly deleteReview: Scalars['Boolean']['output'];
-  readonly login: AuthPayload;
-  readonly register: AuthPayload;
-  readonly updateBikePark: BikePark;
-  readonly updateProfile: User;
-  readonly updateReview: Review;
+  __typename?: 'Mutation';
+  createBikePark: BikePark;
+  createReview: Review;
+  deleteBikePark: Scalars['Boolean']['output'];
+  deleteReview: Scalars['Boolean']['output'];
+  login: AuthPayload;
+  register: AuthPayload;
+  updateBikePark: BikePark;
+  updateProfile: User;
+  updateReview: Review;
 };
 
 
@@ -97,18 +102,18 @@ export type MutationCreateBikeParkArgs = {
   coordinates?: InputMaybe<CoordinatesInput>;
   description?: InputMaybe<Scalars['String']['input']>;
   difficulty?: InputMaybe<Scalars['String']['input']>;
-  facilities?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
-  features?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
+  facilities?: InputMaybe<Array<Scalars['String']['input']>>;
+  features?: InputMaybe<Array<Scalars['String']['input']>>;
   imageUrl?: InputMaybe<Scalars['String']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   openingHours?: InputMaybe<OpeningHoursInput>;
-  photos?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
+  photos?: InputMaybe<Array<Scalars['String']['input']>>;
   price?: InputMaybe<PriceInput>;
-  rules?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
+  rules?: InputMaybe<Array<Scalars['String']['input']>>;
   socialMedia?: InputMaybe<SocialMediaInput>;
   status?: InputMaybe<Scalars['String']['input']>;
-  videos?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
+  videos?: InputMaybe<Array<Scalars['String']['input']>>;
   website?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -163,54 +168,58 @@ export type MutationUpdateReviewArgs = {
 };
 
 export type OpeningHours = {
-  readonly friday?: Maybe<Scalars['String']['output']>;
-  readonly monday?: Maybe<Scalars['String']['output']>;
-  readonly saturday?: Maybe<Scalars['String']['output']>;
-  readonly sunday?: Maybe<Scalars['String']['output']>;
-  readonly thursday?: Maybe<Scalars['String']['output']>;
-  readonly tuesday?: Maybe<Scalars['String']['output']>;
-  readonly wednesday?: Maybe<Scalars['String']['output']>;
+  __typename?: 'OpeningHours';
+  friday?: Maybe<Scalars['String']['output']>;
+  monday?: Maybe<Scalars['String']['output']>;
+  saturday?: Maybe<Scalars['String']['output']>;
+  sunday?: Maybe<Scalars['String']['output']>;
+  thursday?: Maybe<Scalars['String']['output']>;
+  tuesday?: Maybe<Scalars['String']['output']>;
+  wednesday?: Maybe<Scalars['String']['output']>;
 };
 
 export type OpeningHoursInput = {
-  readonly friday?: InputMaybe<Scalars['String']['input']>;
-  readonly monday?: InputMaybe<Scalars['String']['input']>;
-  readonly saturday?: InputMaybe<Scalars['String']['input']>;
-  readonly sunday?: InputMaybe<Scalars['String']['input']>;
-  readonly thursday?: InputMaybe<Scalars['String']['input']>;
-  readonly tuesday?: InputMaybe<Scalars['String']['input']>;
-  readonly wednesday?: InputMaybe<Scalars['String']['input']>;
+  friday?: InputMaybe<Scalars['String']['input']>;
+  monday?: InputMaybe<Scalars['String']['input']>;
+  saturday?: InputMaybe<Scalars['String']['input']>;
+  sunday?: InputMaybe<Scalars['String']['input']>;
+  thursday?: InputMaybe<Scalars['String']['input']>;
+  tuesday?: InputMaybe<Scalars['String']['input']>;
+  wednesday?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type PaginatedBikeParks = {
-  readonly bikeParks: ReadonlyArray<BikePark>;
-  readonly currentPage: Scalars['Int']['output'];
-  readonly hasNextPage: Scalars['Boolean']['output'];
-  readonly totalCount: Scalars['Int']['output'];
-  readonly totalPages: Scalars['Int']['output'];
+  __typename?: 'PaginatedBikeParks';
+  bikeParks: Array<BikePark>;
+  currentPage: Scalars['Int']['output'];
+  hasNextPage: Scalars['Boolean']['output'];
+  totalCount: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
 };
 
 export type PaginationInput = {
-  readonly limit: Scalars['Int']['input'];
-  readonly page: Scalars['Int']['input'];
+  limit: Scalars['Int']['input'];
+  page: Scalars['Int']['input'];
 };
 
 export type Price = {
-  readonly amount: Scalars['Float']['output'];
-  readonly currency: Scalars['String']['output'];
+  __typename?: 'Price';
+  amount: Scalars['Float']['output'];
+  currency: Scalars['String']['output'];
 };
 
 export type PriceInput = {
-  readonly amount: Scalars['Float']['input'];
-  readonly currency: Scalars['String']['input'];
+  amount: Scalars['Float']['input'];
+  currency: Scalars['String']['input'];
 };
 
 export type Query = {
-  readonly bikePark?: Maybe<BikePark>;
-  readonly bikeParks: PaginatedBikeParks;
-  readonly me?: Maybe<User>;
-  readonly reviews: ReadonlyArray<Review>;
-  readonly searchBikeParks: ReadonlyArray<BikePark>;
+  __typename?: 'Query';
+  bikePark?: Maybe<BikePark>;
+  bikeParks: PaginatedBikeParks;
+  me?: Maybe<User>;
+  reviews: Array<Review>;
+  searchBikeParks: Array<BikePark>;
 };
 
 
@@ -235,75 +244,80 @@ export type QuerySearchBikeParksArgs = {
 };
 
 export type Review = {
-  readonly bikePark: Scalars['ID']['output'];
-  readonly comment: Scalars['String']['output'];
-  readonly createdAt: Scalars['String']['output'];
-  readonly createdBy: Scalars['ID']['output'];
-  readonly id: Scalars['ID']['output'];
-  readonly rating: Scalars['Float']['output'];
-  readonly updatedAt?: Maybe<Scalars['String']['output']>;
+  __typename?: 'Review';
+  bikePark: Scalars['ID']['output'];
+  comment: Scalars['String']['output'];
+  createdAt: Scalars['String']['output'];
+  createdBy: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  rating: Scalars['Float']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
 };
 
 export type SocialMedia = {
-  readonly facebook?: Maybe<Scalars['String']['output']>;
-  readonly instagram?: Maybe<Scalars['String']['output']>;
-  readonly twitter?: Maybe<Scalars['String']['output']>;
-  readonly youtube?: Maybe<Scalars['String']['output']>;
+  __typename?: 'SocialMedia';
+  facebook?: Maybe<Scalars['String']['output']>;
+  instagram?: Maybe<Scalars['String']['output']>;
+  twitter?: Maybe<Scalars['String']['output']>;
+  youtube?: Maybe<Scalars['String']['output']>;
 };
 
 export type SocialMediaInput = {
-  readonly facebook?: InputMaybe<Scalars['String']['input']>;
-  readonly instagram?: InputMaybe<Scalars['String']['input']>;
-  readonly twitter?: InputMaybe<Scalars['String']['input']>;
-  readonly youtube?: InputMaybe<Scalars['String']['input']>;
+  facebook?: InputMaybe<Scalars['String']['input']>;
+  instagram?: InputMaybe<Scalars['String']['input']>;
+  twitter?: InputMaybe<Scalars['String']['input']>;
+  youtube?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateBikeParkInput = {
-  readonly address?: InputMaybe<Scalars['String']['input']>;
-  readonly contact?: InputMaybe<ContactInput>;
-  readonly coordinates?: InputMaybe<CoordinatesInput>;
-  readonly description?: InputMaybe<Scalars['String']['input']>;
-  readonly difficulty?: InputMaybe<Scalars['String']['input']>;
-  readonly facilities?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
-  readonly features?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
-  readonly imageUrl?: InputMaybe<Scalars['String']['input']>;
-  readonly location?: InputMaybe<Scalars['String']['input']>;
-  readonly name?: InputMaybe<Scalars['String']['input']>;
-  readonly openingHours?: InputMaybe<OpeningHoursInput>;
-  readonly photos?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
-  readonly price?: InputMaybe<PriceInput>;
-  readonly rules?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
-  readonly socialMedia?: InputMaybe<SocialMediaInput>;
-  readonly status?: InputMaybe<Scalars['String']['input']>;
-  readonly videos?: InputMaybe<ReadonlyArray<Scalars['String']['input']>>;
-  readonly website?: InputMaybe<Scalars['String']['input']>;
+  address?: InputMaybe<Scalars['String']['input']>;
+  contact?: InputMaybe<ContactInput>;
+  coordinates?: InputMaybe<CoordinatesInput>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  difficulty?: InputMaybe<Scalars['String']['input']>;
+  facilities?: InputMaybe<Array<Scalars['String']['input']>>;
+  features?: InputMaybe<Array<Scalars['String']['input']>>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  openingHours?: InputMaybe<OpeningHoursInput>;
+  photos?: InputMaybe<Array<Scalars['String']['input']>>;
+  price?: InputMaybe<PriceInput>;
+  rules?: InputMaybe<Array<Scalars['String']['input']>>;
+  socialMedia?: InputMaybe<SocialMediaInput>;
+  status?: InputMaybe<Scalars['String']['input']>;
+  videos?: InputMaybe<Array<Scalars['String']['input']>>;
+  website?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type User = {
-  readonly createdAt: Scalars['String']['output'];
-  readonly email: Scalars['String']['output'];
-  readonly id: Scalars['ID']['output'];
-  readonly name?: Maybe<Scalars['String']['output']>;
-  readonly role: Scalars['String']['output'];
-  readonly updatedAt: Scalars['String']['output'];
-  readonly username: Scalars['String']['output'];
+  __typename?: 'User';
+  createdAt: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  role: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+  username: Scalars['String']['output'];
 };
 
 export type Weather = {
-  readonly current?: Maybe<Scalars['JSON']['output']>;
-  readonly forecast?: Maybe<Scalars['JSON']['output']>;
-  readonly lastUpdated?: Maybe<Scalars['String']['output']>;
+  __typename?: 'Weather';
+  current?: Maybe<Scalars['JSON']['output']>;
+  forecast?: Maybe<Scalars['JSON']['output']>;
+  lastUpdated?: Maybe<Scalars['String']['output']>;
 };
 
 export type WeatherData = {
-  readonly description: Scalars['String']['output'];
-  readonly feelsLike: Scalars['Float']['output'];
-  readonly humidity: Scalars['Int']['output'];
-  readonly icon: Scalars['String']['output'];
-  readonly precipitation: Scalars['Float']['output'];
-  readonly temperature: Scalars['Float']['output'];
-  readonly uvIndex: Scalars['Float']['output'];
-  readonly windSpeed: Scalars['Float']['output'];
+  __typename?: 'WeatherData';
+  description: Scalars['String']['output'];
+  feelsLike: Scalars['Float']['output'];
+  humidity: Scalars['Int']['output'];
+  icon: Scalars['String']['output'];
+  precipitation: Scalars['Float']['output'];
+  temperature: Scalars['Float']['output'];
+  uvIndex: Scalars['Float']['output'];
+  windSpeed: Scalars['Float']['output'];
 };
 
 
@@ -439,13 +453,13 @@ export type ResolversParentTypes = {
   WeatherData: WeatherData;
 };
 
-export type AuthPayloadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
+export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
   token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type BikeParkResolvers<ContextType = Context, ParentType extends ResolversParentTypes['BikePark'] = ResolversParentTypes['BikePark']> = {
+export type BikeParkResolvers<ContextType = any, ParentType extends ResolversParentTypes['BikePark'] = ResolversParentTypes['BikePark']> = {
   address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   contact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType>;
   coordinates?: Resolver<Maybe<ResolversTypes['Coordinates']>, ParentType, ContextType>;
@@ -453,35 +467,35 @@ export type BikeParkResolvers<ContextType = Context, ParentType extends Resolver
   createdBy?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   difficulty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  facilities?: Resolver<Maybe<ReadonlyArray<ResolversTypes['String']>>, ParentType, ContextType>;
-  features?: Resolver<Maybe<ReadonlyArray<ResolversTypes['String']>>, ParentType, ContextType>;
+  facilities?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  features?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastUpdated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   openingHours?: Resolver<Maybe<ResolversTypes['OpeningHours']>, ParentType, ContextType>;
-  photos?: Resolver<Maybe<ReadonlyArray<ResolversTypes['String']>>, ParentType, ContextType>;
+  photos?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   price?: Resolver<Maybe<ResolversTypes['Price']>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  reviews?: Resolver<Maybe<ReadonlyArray<ResolversTypes['Review']>>, ParentType, ContextType>;
-  rules?: Resolver<Maybe<ReadonlyArray<ResolversTypes['String']>>, ParentType, ContextType>;
+  reviews?: Resolver<Maybe<Array<ResolversTypes['Review']>>, ParentType, ContextType>;
+  rules?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   socialMedia?: Resolver<Maybe<ResolversTypes['SocialMedia']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  videos?: Resolver<Maybe<ReadonlyArray<ResolversTypes['String']>>, ParentType, ContextType>;
+  videos?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   weather?: Resolver<Maybe<ResolversTypes['Weather']>, ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ContactResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Contact'] = ResolversParentTypes['Contact']> = {
+export type ContactResolvers<ContextType = any, ParentType extends ResolversParentTypes['Contact'] = ResolversParentTypes['Contact']> = {
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type CoordinatesResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Coordinates'] = ResolversParentTypes['Coordinates']> = {
+export type CoordinatesResolvers<ContextType = any, ParentType extends ResolversParentTypes['Coordinates'] = ResolversParentTypes['Coordinates']> = {
   latitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   longitude?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -491,7 +505,7 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'JSON';
 }
 
-export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationCreateBikeParkArgs, 'name'>>;
   createReview?: Resolver<ResolversTypes['Review'], ParentType, ContextType, RequireFields<MutationCreateReviewArgs, 'bikeParkId' | 'comment' | 'rating'>>;
   deleteBikePark?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBikeParkArgs, 'id'>>;
@@ -503,7 +517,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   updateReview?: Resolver<ResolversTypes['Review'], ParentType, ContextType, RequireFields<MutationUpdateReviewArgs, 'id'>>;
 };
 
-export type OpeningHoursResolvers<ContextType = Context, ParentType extends ResolversParentTypes['OpeningHours'] = ResolversParentTypes['OpeningHours']> = {
+export type OpeningHoursResolvers<ContextType = any, ParentType extends ResolversParentTypes['OpeningHours'] = ResolversParentTypes['OpeningHours']> = {
   friday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   monday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   saturday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -514,8 +528,8 @@ export type OpeningHoursResolvers<ContextType = Context, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PaginatedBikeParksResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PaginatedBikeParks'] = ResolversParentTypes['PaginatedBikeParks']> = {
-  bikeParks?: Resolver<ReadonlyArray<ResolversTypes['BikePark']>, ParentType, ContextType>;
+export type PaginatedBikeParksResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginatedBikeParks'] = ResolversParentTypes['PaginatedBikeParks']> = {
+  bikeParks?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType>;
   currentPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -523,21 +537,21 @@ export type PaginatedBikeParksResolvers<ContextType = Context, ParentType extend
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PriceResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Price'] = ResolversParentTypes['Price']> = {
+export type PriceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Price'] = ResolversParentTypes['Price']> = {
   amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   bikePark?: Resolver<Maybe<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParkArgs, 'id'>>;
   bikeParks?: Resolver<ResolversTypes['PaginatedBikeParks'], ParentType, ContextType, RequireFields<QueryBikeParksArgs, 'pagination'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  reviews?: Resolver<ReadonlyArray<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
-  searchBikeParks?: Resolver<ReadonlyArray<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QuerySearchBikeParksArgs, 'query'>>;
+  reviews?: Resolver<Array<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
+  searchBikeParks?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QuerySearchBikeParksArgs, 'query'>>;
 };
 
-export type ReviewResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Review'] = ResolversParentTypes['Review']> = {
+export type ReviewResolvers<ContextType = any, ParentType extends ResolversParentTypes['Review'] = ResolversParentTypes['Review']> = {
   bikePark?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   comment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -548,7 +562,7 @@ export type ReviewResolvers<ContextType = Context, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type SocialMediaResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SocialMedia'] = ResolversParentTypes['SocialMedia']> = {
+export type SocialMediaResolvers<ContextType = any, ParentType extends ResolversParentTypes['SocialMedia'] = ResolversParentTypes['SocialMedia']> = {
   facebook?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   instagram?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   twitter?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -556,7 +570,7 @@ export type SocialMediaResolvers<ContextType = Context, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -567,14 +581,14 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type WeatherResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Weather'] = ResolversParentTypes['Weather']> = {
+export type WeatherResolvers<ContextType = any, ParentType extends ResolversParentTypes['Weather'] = ResolversParentTypes['Weather']> = {
   current?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   forecast?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   lastUpdated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type WeatherDataResolvers<ContextType = Context, ParentType extends ResolversParentTypes['WeatherData'] = ResolversParentTypes['WeatherData']> = {
+export type WeatherDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WeatherData'] = ResolversParentTypes['WeatherData']> = {
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   feelsLike?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   humidity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -586,7 +600,7 @@ export type WeatherDataResolvers<ContextType = Context, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Resolvers<ContextType = Context> = {
+export type Resolvers<ContextType = any> = {
   AuthPayload?: AuthPayloadResolvers<ContextType>;
   BikePark?: BikeParkResolvers<ContextType>;
   Contact?: ContactResolvers<ContextType>;

@@ -98,7 +98,7 @@ type Review {
 
 type Query {
   me: User
-  bikeParks: [BikePark!]!
+  bikeParks(filter: BikeParkFilter, pagination: PaginationInput!): PaginatedBikeParks!
   bikePark(id: ID!): BikePark
   reviews(bikeParkId: ID!): [Review!]!
   searchBikeParks(query: String!): [BikePark!]!
@@ -191,6 +191,25 @@ input UpdateBikeParkInput {
   website: String
   socialMedia: SocialMediaInput
   status: String
+}
+
+input BikeParkFilter {
+  location: String
+  name: String
+  difficulty: String
+}
+
+input PaginationInput {
+  page: Int!
+  limit: Int!
+}
+
+type PaginatedBikeParks {
+  bikeParks: [BikePark!]!
+  totalCount: Int!
+  currentPage: Int!
+  totalPages: Int!
+  hasNextPage: Boolean!
 }
 
 scalar JSON 

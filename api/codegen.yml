@@ -1,17 +1,13 @@
 schema: src/schema/schema.graphql
 generates:
-  src/types/graphql.ts:
+  src/core/generated-models.ts:
     plugins:
+      - add
       - typescript
       - typescript-operations
       - typescript-resolvers
     config:
-      contextType: ../types#Context
-      scalars:
-        JSON: any
-        DateTime: string
-      enumsAsTypes: true
-      constEnums: true
-      immutableTypes: true
-      skipTypename: true
-      dedupeFragments: true 
+      content: '/* eslint-disable */'
+      maybeValue: T | null | undefined
+      namingConvention:
+        enumValues: change-case#upperCase

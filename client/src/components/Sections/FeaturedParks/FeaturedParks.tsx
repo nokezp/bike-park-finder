@@ -1,26 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ParkCard, { ParkCardProps } from './ParkCard';
-import { useQuery } from 'urql';
-import { GET_BIKE_PARKS } from '../../../queries/bikeParks';
-import { BikePark } from '../../../types/graphql';
 import { getRandomColor } from '../../../utils/colors';
 import { useNavigate } from 'react-router-dom';
+import { useBikeParks } from '../../../hooks/useBikeParks';
 
 const FeaturedParks: React.FC = () => {
   const navigate = useNavigate();
 
   const title = "Popular Bike Parks"
 
-
   const handleViewDetails = (bikeParkId: string) => {
     navigate(`/bike-parks/${bikeParkId}`);
   };
 
-  const [{ data }] = useQuery({
-    query: GET_BIKE_PARKS
-  });
+  const { bikeParks } = useBikeParks(
+    {
+      location: '',
+      name: '',
+      difficulty: '',
+    },
+    { page: 1, limit: 3 }
+  );
 
-  const parks = data?.bikeParks?.map((park: BikePark) => ({
+  const parks = bikeParks?.map((park: any) => ({
     id: park.id,
     image: park.imageUrl,
     rating: park.rating,
@@ -31,7 +33,7 @@ const FeaturedParks: React.FC = () => {
       color: getRandomColor()
     })),
     temperature: park.weather?.current?.temperature,
-  }))?.slice(0, 3);
+  }));
 
   return (
     <section className="py-12 animate-fade-in">

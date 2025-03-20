@@ -1,18 +1,21 @@
-schema: ../api/src/schema/schema.graphql
-documents: src/**/*.{ts,tsx}
+schema: http://localhost:4000/graphql
+# documents: src/**/*.ts
 generates:
-  src/types/graphql.ts:
+  src/lib/graphql/generated/urql-introspection.ts:
     plugins:
-      - typescript
-      - typescript-operations
-      - typescript-react-apollo
+      - add
+      - urql-introspection
     config:
-      withHooks: true
-      withHOC: false
-      withComponent: false
-      apolloClientVersion: 3
-      dedupeFragments: true
-      skipTypename: true
-      enumsAsTypes: true
-      constEnums: true
-      immutableTypes: true 
+      content: '/* eslint-disable */
+  # src/generated/graphql:
+  #   # preset: client
+  #   plugins:
+  #     - typescript
+  #     - typescript-operations
+  #     - typescript-urql
+  #   presentConfig:
+  #     gqlTagName: gql
+  #   config:
+  #     withHooks: true
+  #     withHOC: false
+  #     withComponent: false

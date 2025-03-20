@@ -2,6 +2,7 @@ import { GraphQLError } from 'graphql';
 import { WeatherService } from '../services/weatherService.js';
 import { BikePark } from '../models/BikePark.js';
 import { Document } from 'mongoose';
+import { AuthContext } from '../utils/auth.js';
 
 interface Context {
   user?: {
@@ -38,21 +39,72 @@ interface IBikePark {
   [key: string]: any;
 }
 
+interface BikeParkFilter {
+  location?: string;
+  name?: string;
+  difficulty?: string;
+}
+
+interface PaginationInput {
+  page: number;
+  limit: number;
+}
+
 const WEATHER_UPDATE_INTERVAL = 30 * 60 * 1000; // 30 minutes
 
 export const bikeParkResolvers = {
   Query: {
-    bikeParks: async () => {
+    bikeParks: async (
+      _: unknown,
+      { filter, pagination }: { filter?: BikeParkFilter; pagination: PaginationInput },
+      context: AuthContext
+    ) => {
       try {
-        return await BikePark.find().populate('reviews');
+        const { page, limit } = pagination;
+        const skip = (page - 1) * limit;
+
+        // Build filter query
+        const query: any = {};
+        if (filter) {
+          if (filter.location) {
+            query.location = { $regex: filter.location, $options: 'i' };
+          }
+          if (filter.name) {
+            query.name = { $regex: filter.name, $options: 'i' };
+          }
+          if (filter.difficulty) {
+            query.difficulty = filter.difficulty;
+          }
+        }
+
+        // Get total count for pagination
+        const totalCount = await BikePark.countDocuments(query);
+
+        // Fetch paginated results
+        const bikeParks = await BikePark.find(query)
+          .skip(skip)
+          .limit(limit)
+          .sort({ createdAt: -1 });
+
+        // Calculate pagination info
+        const totalPages = Math.ceil(totalCount / limit);
+        const hasNextPage = page < totalPages;
+
+        return {
+          bikeParks,
+          totalCount,
+          currentPage: page,
+          totalPages,
+          hasNextPage
+        };
       } catch (error: any) {
         throw new GraphQLError(`Error fetching bike parks: ${error.message}`);
       }
     },
 
-    bikePark: async (_: unknown, { id }: { id: string }) => {
+    bikePark: async (_: unknown, { id }: { id: string }, context: AuthContext) => {
       try {
-        const bikePark = await BikePark.findById(id).populate('reviews');
+        const bikePark = await BikePark.findById(id);
         if (!bikePark) {
           throw new GraphQLError('Bike park not found');
         }
@@ -62,17 +114,16 @@ export const bikeParkResolvers = {
       }
     },
 
-    searchBikeParks: async (_: unknown, args: { query: string }) => {
+    searchBikeParks: async (_: unknown, { query }: { query: string }, context: AuthContext) => {
       try {
-        const { query } = args;
-        
-        if (!query.trim()) {
-          return await BikePark.find();
-        }
-        
-        return await BikePark.find({ 
-          $text: { $search: query } 
-        });
+        const bikeParks = await BikePark.find({
+          $or: [
+            { name: { $regex: query, $options: 'i' } },
+            { location: { $regex: query, $options: 'i' } },
+            { description: { $regex: query, $options: 'i' } }
+          ]
+        }).limit(10);
+        return bikeParks;
       } catch (error: any) {
         throw new GraphQLError(`Error searching bike parks: ${error.message}`);
       }
@@ -81,61 +132,75 @@ export const bikeParkResolvers = {
 
   Mutation: {
     createBikePark: async (
-      _: any,
-      args: CreateBikeParkInput,
-      context: Context
-    ): Promise<Document & IBikePark> => {
-      if (!context.user) {
-        throw new GraphQLError('Not authenticated');
-      }
-
-      const bikePark = new BikePark({
-        ...args,
-        createdBy: context.user.id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        status: args.status || 'active',
-        features: args.features || [],
-        facilities: args.facilities || [],
-        rules: args.rules || [],
-        photos: args.photos || [],
-        videos: args.videos || [],
-      });
-
-      const savedBikePark = await bikePark.save();
-      return savedBikePark as any;
-    },
-
-    updateBikePark: async (_: unknown, { id, ...args }: { id: string } & any, context: any) => {
+      _: unknown,
+      args: any,
+      context: AuthContext
+    ) => {
       if (!context.user) {
         throw new GraphQLError('Not authenticated');
       }
 
       try {
-        const bikePark = await BikePark.findByIdAndUpdate(
-          id,
-          { ...args, lastUpdated: new Date() },
-          { new: true }
-        );
+        const bikePark = new BikePark({
+          ...args,
+          createdBy: context.user.id
+        });
+        await bikePark.save();
+        return bikePark;
+      } catch (error: any) {
+        throw new GraphQLError(`Error creating bike park: ${error.message}`);
+      }
+    },
+
+    updateBikePark: async (
+      _: unknown,
+      { id, input }: { id: string; input: any },
+      context: AuthContext
+    ) => {
+      if (!context.user) {
+        throw new GraphQLError('Not authenticated');
+      }
+
+      try {
+        const bikePark = await BikePark.findById(id);
         if (!bikePark) {
           throw new GraphQLError('Bike park not found');
         }
+
+        // Check if user is admin or creator
+        if (context.user.role !== 'admin' && bikePark.createdBy && bikePark.createdBy.toString() !== context.user.id) {
+          throw new GraphQLError('Not authorized to update this bike park');
+        }
+
+        Object.assign(bikePark, input);
+        await bikePark.save();
         return bikePark;
       } catch (error: any) {
         throw new GraphQLError(`Error updating bike park: ${error.message}`);
       }
     },
 
-    deleteBikePark: async (_: unknown, { id }: { id: string }, context: any) => {
+    deleteBikePark: async (
+      _: unknown,
+      { id }: { id: string },
+      context: AuthContext
+    ) => {
       if (!context.user) {
         throw new GraphQLError('Not authenticated');
       }
 
       try {
-        const bikePark = await BikePark.findByIdAndDelete(id);
+        const bikePark = await BikePark.findById(id);
         if (!bikePark) {
           throw new GraphQLError('Bike park not found');
         }
+
+        // Check if user is admin or creator
+        if (context.user.role !== 'admin' && bikePark.createdBy && bikePark.createdBy.toString() !== context.user.id) {
+          throw new GraphQLError('Not authorized to delete this bike park');
+        }
+
+        await bikePark.deleteOne();
         return true;
       } catch (error: any) {
         throw new GraphQLError(`Error deleting bike park: ${error.message}`);

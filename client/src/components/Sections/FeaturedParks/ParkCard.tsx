@@ -38,7 +38,7 @@ const ParkCard: React.FC<ParkCardProps> = ({
             className="w-full h-full object-cover"
           />
           <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 text-sm">
-            <i className="fa-solid fa-star text-yellow-400"></i> {rating.toFixed(1)}
+            <i className="fa-solid fa-star text-yellow-400"></i> {rating?.toFixed(1)}
           </div>
       </div>
       <div className="p-4">
@@ -48,12 +48,12 @@ const ParkCard: React.FC<ParkCardProps> = ({
           <span>{location}</span>
         </div>
         <div className="flex flex-wrap gap-2 mb-4">
-          {tags.map((tag, index) => (
+          {tags?.map((tag, index) => (
             <span 
               key={index}
-              className={`px-3 py-1 bg-${tag.color}-100 text-${tag.color}-600 rounded-full text-sm`}
+              className={`px-3 py-1 bg-${tag?.color}-100 text-${tag?.color}-600 rounded-full text-sm`}
             >
-              {tag.label}
+              {tag?.label}
             </span>
           ))}
         </div>
