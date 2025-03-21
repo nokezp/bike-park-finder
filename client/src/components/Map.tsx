@@ -5,7 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 mapboxgl.accessToken = 'pk.eyJ1Ijoibm9rZXpwbmV3IiwiYSI6ImNtOGQya3BnZzFiZnkya3M1bWEzMzVuYXkifQ.rOk1OezputSSawqlWIMycQ';
 
 interface MapProps {
-    center: [number, number];
+    center?: [number, number];
     zoom?: number;
     markers?: Array<{
         coordinates: [number, number];
@@ -15,8 +15,10 @@ interface MapProps {
     className?: string;
 }
 
+// Default center: somewhere in Colorado (bike park friendly area)
+const DEFAULT_CENTER: [number, number] = [-105.2705, 39.8617];
 
-function Map({ center, zoom = 13, markers = [], className = '' }: MapProps) {
+function Map({ center = DEFAULT_CENTER, zoom = 13, markers = [], className = '' }: MapProps) {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
     const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -74,9 +76,9 @@ function Map({ center, zoom = 13, markers = [], className = '' }: MapProps) {
     return (
       <div
         ref={mapContainer}
-        className={`w-full h-[400px] rounded-lg overflow-hidden ${className}`}
+        className={`w-full h-[100%] rounded-lg overflow-hidden ${className}`}
       />
     );
 }
 
-  export default Map;
+export default Map;

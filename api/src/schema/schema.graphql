@@ -197,6 +197,16 @@ input BikeParkFilter {
   location: String
   name: String
   difficulty: String
+  features: [String!]
+  amenities: [String!]
+  coordinates: CoordinatesSearchInput
+  sortBy: String
+}
+
+input CoordinatesSearchInput {
+  latitude: Float!
+  longitude: Float!
+  radius: Float
 }
 
 input PaginationInput {

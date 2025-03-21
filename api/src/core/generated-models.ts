@@ -55,9 +55,13 @@ export type BikePark = {
 };
 
 export type BikeParkFilter = {
+  amenities?: InputMaybe<Array<Scalars['String']['input']>>;
+  coordinates?: InputMaybe<CoordinatesSearchInput>;
   difficulty?: InputMaybe<Scalars['String']['input']>;
+  features?: InputMaybe<Array<Scalars['String']['input']>>;
   location?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  sortBy?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Contact = {
@@ -80,6 +84,12 @@ export type Coordinates = {
 export type CoordinatesInput = {
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
+};
+
+export type CoordinatesSearchInput = {
+  latitude: Scalars['Float']['input'];
+  longitude: Scalars['Float']['input'];
+  radius?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type Mutation = {
@@ -399,6 +409,7 @@ export type ResolversTypes = {
   ContactInput: ContactInput;
   Coordinates: ResolverTypeWrapper<Coordinates>;
   CoordinatesInput: CoordinatesInput;
+  CoordinatesSearchInput: CoordinatesSearchInput;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
@@ -431,6 +442,7 @@ export type ResolversParentTypes = {
   ContactInput: ContactInput;
   Coordinates: Coordinates;
   CoordinatesInput: CoordinatesInput;
+  CoordinatesSearchInput: CoordinatesSearchInput;
   Float: Scalars['Float']['output'];
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];

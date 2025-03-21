@@ -1,0 +1,11 @@
+{
+  "restartable": "rs",
+  "ignore": [".git", "node_modules/**/node_modules"],
+  "verbose": true,
+  "execMap": {
+    "ts": "node --loader ts-node/esm"
+  },
+  "watch": ["src"],
+  "ext": "js,json,ts,graphql",
+  "exec": "node --loader ts-node/esm src/index.ts"
+} 
