@@ -43,6 +43,14 @@ interface BikeParkFilter {
   location?: string;
   name?: string;
   difficulty?: string;
+  features?: string[];
+  amenities?: string[];
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+    radius?: number;
+  };
+  sortBy?: string;
 }
 
 interface PaginationInput {
@@ -51,6 +59,21 @@ interface PaginationInput {
 }
 
 const WEATHER_UPDATE_INTERVAL = 30 * 60 * 1000; // 30 minutes
+const DEFAULT_SEARCH_RADIUS_KM = 50;
+
+// Helper function to calculate distance between two coordinates using Haversine formula
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371; // Radius of the earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2); 
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  const distance = R * c; // Distance in km
+  return distance;
+}
 
 export const bikeParkResolvers = {
   Query: {
@@ -65,26 +88,90 @@ export const bikeParkResolvers = {
 
         // Build filter query
         const query: any = {};
+        let sort: any = { createdAt: -1 }; // Default sort
         if (filter) {
+          // Text search for location or name
           if (filter.location) {
             query.location = { $regex: filter.location, $options: 'i' };
           }
           if (filter.name) {
             query.name = { $regex: filter.name, $options: 'i' };
           }
-          if (filter.difficulty) {
+          
+          // Exact match for difficulty
+          if (filter.difficulty && filter.difficulty !== 'All') {
             query.difficulty = filter.difficulty;
+          }
+          
+          // Features filter - match any of the provided features
+          if (filter.features && filter.features.length > 0 && !filter.features.includes('All')) {
+            query.features = { $in: filter.features };
+          }
+          
+          // Amenities filter - match all provided amenities
+          if (filter.amenities && filter.amenities.length > 0) {
+            query.amenities = { $all: filter.amenities };
+          }
+          
+          // Sort order
+          if (filter.sortBy) {
+            if (filter.sortBy === 'Rating') {
+              sort = { rating: -1 };
+            } else if (filter.sortBy === 'Name') {
+              sort = { name: 1 };
+            }
+            // Distance sorting will be handled after database query
           }
         }
 
-        // Get total count for pagination
-        const totalCount = await BikePark.countDocuments(query);
-
-        // Fetch paginated results
-        const bikeParks = await BikePark.find(query)
-          .skip(skip)
-          .limit(limit)
-          .sort({ createdAt: -1 });
+        // Fetch parks without pagination first if coordinates search is used
+        let bikeParks;
+        let totalCount;
+        
+        // Special handling for location-based search with coordinates
+        if (filter?.coordinates) {
+          // Get all matching parks first
+          bikeParks = await BikePark.find(query).sort(sort);
+          
+          // Filter by distance
+          const { latitude, longitude, radius = DEFAULT_SEARCH_RADIUS_KM } = filter.coordinates;
+          
+          bikeParks = bikeParks.filter(park => {
+            if (!park.coordinates || !park.coordinates.latitude || !park.coordinates.longitude) {
+              return false;
+            }
+            
+            const distance = calculateDistance(
+              latitude, 
+              longitude, 
+              park.coordinates.latitude, 
+              park.coordinates.longitude
+            );
+            
+            // Add distance to park object for sorting
+            (park as any).distance = distance;
+            
+            // Include only parks within radius
+            return distance <= radius;
+          });
+          
+          // Sort by distance if required
+          if (filter.sortBy === 'Distance') {
+            bikeParks.sort((a: any, b: any) => a.distance - b.distance);
+          }
+          
+          totalCount = bikeParks.length;
+          
+          // Apply pagination manually
+          bikeParks = bikeParks.slice(skip, skip + limit);
+        } else {
+          // Regular database query with pagination
+          totalCount = await BikePark.countDocuments(query);
+          bikeParks = await BikePark.find(query)
+            .skip(skip)
+            .limit(limit)
+            .sort(sort);
+        }
 
         // Calculate pagination info
         const totalPages = Math.ceil(totalCount / limit);

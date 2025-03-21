@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import BikeParkPage from './pages/BikeParkPage';
 import LandingPage from './pages/LandingPage';
 import BikeParkDetailPage from './pages/BikeParkDetailPage';
+import { MapsPage } from './pages/MapsPage';
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
       {
         path: '/bike-parks/:id',
         element: <BikeParkDetailPage />,
+      },
+      {
+        path: '/maps',
+        element: <MapsPage />,
       },
     ],
   },

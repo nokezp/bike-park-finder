@@ -1,19 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useBikePark } from '../hooks/useBikeParks';
 import moment from 'moment';
+import Map from '../components/Map'
 
 const BikeParkDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   
   const { loading, bikePark, error } = useBikePark(id);
+  
+  const coordinates: [number, number] = useMemo(() => 
+    {return [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude]}
+  , [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude]);
 
   if (!id) return <div>Invalid bike park ID</div>;
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
   if (!bikePark) return <div>Bike park not found</div>;
-
-  console.log('bikePark: ', bikePark);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -122,7 +125,19 @@ const BikeParkDetailPage: React.FC = () => {
                   </button>
                 </div>
                 <div className="relative h-[400px] bg-gray-100 rounded-lg">
-                  {/* Add map component here */}
+                {bikePark.coordinates && (
+                  <Map
+                    center={coordinates}
+                    zoom={13}
+                    markers={[
+                      {
+                        coordinates: coordinates,
+                        title: bikePark.name,
+                        description: bikePark.location
+                      }
+                    ]}
+                    />
+                  )}
                 </div>
               </div>
 

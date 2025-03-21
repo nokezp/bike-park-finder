@@ -14,6 +14,10 @@ const GetBikeParksDocument = gql(`
         createdAt
         updatedAt
         createdBy
+        coordinates {
+          latitude
+          longitude
+        }
       }
       totalCount
       currentPage

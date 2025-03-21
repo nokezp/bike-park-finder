@@ -23,7 +23,7 @@ const Header: React.FC = () => {
     <header className="bg-white shadow-sm fixed w-full z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2" onClick={() => navigate("/")}>
           <i className="fa-solid fa-mountain-sun text-2xl text-emerald-600"></i>
           <span className="text-xl font-bold">Bike Park Finder</span>
         </div>

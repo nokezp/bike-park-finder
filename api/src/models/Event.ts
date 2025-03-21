@@ -60,18 +60,15 @@ const eventSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    required: true,
-    enum: ['Race', 'Festival', 'Training', 'Competition']
+    required: true
   },
   status: {
     type: String,
-    required: true,
-    enum: ['upcoming', 'ongoing', 'completed', 'cancelled']
+    required: true
   },
   category: {
     type: String,
-    required: true,
-    enum: ['Professional', 'Amateur', 'All Levels']
+    required: true
   },
   disciplines: [{
     type: String,

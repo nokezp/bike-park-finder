@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "nodemon",
+    "debug": "nodemon --inspect src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "node --loader ts-node/esm src/scripts/seed.ts",
     "seed:build": "npm run build && node dist/scripts/seed.js",
@@ -23,10 +24,11 @@
   "license": "ISC",
   "dependencies": {
     "@graphql-tools/schema": "^10.0.2",
+    "@types/express": "^5.0.1",
     "axios": "^1.8.3",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2",
+    "express": "^4.21.2",
     "graphql": "^16.6.0",
     "graphql-yoga": "^5.13.2",
     "jsonwebtoken": "^9.0.0",
@@ -38,12 +40,12 @@
     "@graphql-codegen/typescript-operations": "^4.5.1",
     "@graphql-codegen/typescript-resolvers": "^4.4.4",
     "@types/bcryptjs": "^2.4.2",
-    "@types/express": "^4.17.17",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^18.15.11",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.3"
-  }
+  },
+  "packageManager": "yarn@4.0.0+sha512.955259c0370ab8c06d013faa7d5e7addb6914251029695675f54e04c917ea6b092c379ba8d3521556d90b3874e5037759467072f01d2295341ead43cc259f14b"
 }

@@ -4,6 +4,9 @@ import { createYoga } from 'graphql-yoga';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import mongoose from 'mongoose';
 
+// Import logger
+import Logger from './utils/logger.js';
+
 // Import schema and resolvers
 import { typeDefs } from './schema/typeDefs.js';
 import { resolvers } from './resolvers/index.js';
@@ -14,6 +17,13 @@ import { createContext } from './utils/auth.js';
 // Environment variables
 const PORT = process.env.PORT || 4000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder';
+
+// Log environment information for debugging
+Logger.debug('Starting server with environment:', { 
+  NODE_ENV: process.env.NODE_ENV,
+  PORT,
+  MONGODB_URI: MONGODB_URI.replace(/mongodb:\/\/.*@/, 'mongodb://[redacted]@') // Redact credentials
+});
 
 // Create executable schema
 const schema = makeExecutableSchema({
@@ -27,9 +37,16 @@ const yoga = createYoga({
   context: createContext,
   graphiql: true,
   cors: {
-    origin: ['http://localhost:5173'],
+    origin: ['http://localhost:3000', 'http://localhost:5173'],
     credentials: true,
   },
+  // Add logging for GraphQL operations
+  logging: {
+    debug: (...args) => Logger.debug('GraphQL Debug:', ...args),
+    info: (...args) => Logger.info('GraphQL Info: ' + args.join(' ')),
+    warn: (...args) => Logger.error('GraphQL Warning: ' + args.join(' ')),
+    error: (...args) => Logger.error('GraphQL Error: ' + args.join(' ')),
+  }
 });
 
 // Create HTTP server
@@ -38,9 +55,9 @@ const server = createServer(yoga);
 // Start server function
 const startServer = () => {
   server.listen(PORT, () => {
-    console.log(`🚀 Server is running at http://localhost:${PORT}/graphql`);
+    Logger.info(`🚀 Server is running at http://localhost:${PORT}/graphql`);
     if (!mongoose.connection.readyState) {
-      console.warn('⚠️  Warning: MongoDB is not connected. Running in mock data mode.');
+      Logger.warn('⚠️  Warning: MongoDB is not connected. Running in mock data mode.');
     }
   });
 };
@@ -48,11 +65,11 @@ const startServer = () => {
 // Connect to MongoDB
 mongoose.connect(MONGODB_URI)
   .then(() => {
-    console.log('✅ Connected to MongoDB');
+    Logger.info('✅ Connected to MongoDB');
     startServer();
   })
   .catch((error) => {
-    console.warn('⚠️  Failed to connect to MongoDB:', error.message);
-    console.log('🔄 Starting server with mock data...');
+    Logger.error('⚠️  Failed to connect to MongoDB:', error);
+    Logger.info('🔄 Starting server with mock data...');
     startServer();
   }); 
