@@ -29,7 +29,7 @@ function Map({ center = DEFAULT_CENTER, zoom = 13, markers = [], className = '' 
       // Initialize map
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/outdoors-v12',
+        style: 'mapbox://styles/mapbox/streets-v12',
         center,
         zoom,
       });

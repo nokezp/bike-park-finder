@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Map from '../components/Map';
-import { useBikeParks } from '../hooks/useBikeParks';
 import { geocodeLocation, isWithinRadius, calculateDistance } from '../utils/location';
 import debounce from 'lodash/debounce';
-import { BikePark, BikeParkFilter, Coordinates, GetBikeParkQuery, GetBikeParksDocument } from '../lib/graphql/generated/graphql-operations';
+import { BikePark, BikeParkFilter, Coordinates, GetBikeParksDocument } from '../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 
-const SEARCH_RADIUS_KM = 5000;
+const SEARCH_RADIUS_KM = 100;
 const PARKS_PER_PAGE = 10;
 
 export enum Difficulty {
@@ -136,65 +135,67 @@ export function MapsPage() {
   }, [filters.location, debouncedGeocode]);
 
   // Filter and sort parks based on all criteria
-//   useEffect(() => {
-//     let filtered = [...bikeParks];
+  useEffect(() => {
+    let filtered = [...bikeParks];
 
-//     // Filter by location if search center is set
-//     if (searchCenter) {
-//       filtered = filtered.filter((park) =>
-//         isWithinRadius(
-//           searchCenter.latitude,
-//           searchCenter.longitude,
-//           park.coordinates[1],
-//           park.coordinates[0],
-//           SEARCH_RADIUS_KM
-//         )
-//       );
-//     }
+    // Filter by location if search center is set
+    if (searchCenter) {
+      filtered = filtered.filter((park) =>
+        isWithinRadius(
+          searchCenter.latitude,
+          searchCenter.longitude,
+          park.coordinates[1],
+          park.coordinates[0],
+          SEARCH_RADIUS_KM
+        )
+      );
+    }
   
   
-//    // Filter by difficulty
-//    if (filters.difficulty && filters.difficulty !== Difficulty.ALL) {
-//     filtered = filtered.filter((park) => park.difficulty === filters.difficulty);
-//   }
+   // Filter by difficulty
+   if (filters.difficulty && filters.difficulty !== Difficulty.ALL) {
+    filtered = filtered.filter((park) => park.difficulty === filters.difficulty);
+  }
 
-//   // Filter by features
-//   if (filters.features?.length && !filters.features.includes(Feature.ALL)) {
-//     filtered = filtered.filter((park) =>
-//       filters.features?.some((feature) => park.features.includes(feature))
-//     );
-//   }
+  // Filter by features
+  if (filters.features?.length && !filters.features.includes(Feature.ALL)) {
+    filtered = filtered.filter((park) =>
+      filters.features?.some((feature) => park.features.includes(feature))
+    );
+  }
 
-//   // Filter by amenities
-//   if (filters.amenities?.length) {
-//     filtered = filtered.filter((park) =>
-//       filters.amenities?.every((amenity) => park.amenities?.includes(amenity))
-//     );
-//   }
+  // Filter by amenities
+  if (filters.amenities?.length) {
+    filtered = filtered.filter((park) =>
+      filters.amenities?.every((amenity) => park.amenities?.includes(amenity))
+    );
+  }
 
-//   // Sort parks
-//   if (filters.sortBy === SortOption.RATING) {
-//     filtered.sort((a, b) => b.rating - a.rating);
-//   } else if (filters.sortBy === SortOption.DISTANCE && searchCenter) {
-//     filtered.sort((a, b) => {
-//       const distanceA = calculateDistance(
-//         searchCenter.latitude,
-//         searchCenter.longitude,
-//         a.coordinates[1],
-//         a.coordinates[0]
-//       );
-//       const distanceB = calculateDistance(
-//         searchCenter.latitude,
-//         searchCenter.longitude,
-//         b.coordinates[1],
-//         b.coordinates[0]
-//       );
-//       return distanceA - distanceB;
-//     });
-//   }
+  // Sort parks
+  if (filters.sortBy === SortOption.RATING) {
+    filtered.sort((a, b) => b.rating - a.rating);
+  } else if (filters.sortBy === SortOption.DISTANCE && searchCenter) {
+    filtered.sort((a, b) => {
+      const distanceA = calculateDistance(
+        searchCenter.latitude,
+        searchCenter.longitude,
+        a.coordinates[1],
+        a.coordinates[0]
+      );
+      const distanceB = calculateDistance(
+        searchCenter.latitude,
+        searchCenter.longitude,
+        b.coordinates[1],
+        b.coordinates[0]
+      );
+      return distanceA - distanceB;
+    });
+  }
 
-//   setFilteredParks(filtered);
-// }, [filters, searchCenter]);
+  setFilteredParks(filtered);
+}, [filters, searchCenter]);
+
+console.log('filteredParks: ', filteredParks);
 
   // Execute search function
   const executeSearch = async () => {
