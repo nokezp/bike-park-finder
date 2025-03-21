@@ -14,6 +14,7 @@ import { geocodeLocation, isWithinRadius, calculateDistance } from '../utils/loc
 import debounce from 'lodash/debounce';
 
 const SEARCH_RADIUS_KM = 50;
+const PARKS_PER_PAGE = 10;
 
 const MOCK_BIKE_PARKS: BikePark[] = [
   {
@@ -60,7 +61,60 @@ export function MapsPage() {
   });
   const [searchCenter, setSearchCenter] = React.useState<Coordinates | null>(null);
   const [filteredParks, setFilteredParks] = React.useState<BikePark[]>(MOCK_BIKE_PARKS);
+  const [displayedParks, setDisplayedParks] = React.useState<BikePark[]>([]);
   const [isSearching, setIsSearching] = React.useState(false);
+  const [page, setPage] = React.useState(1);
+  const [hasMore, setHasMore] = React.useState(true);
+  const loadingRef = React.useRef<HTMLDivElement>(null);
+
+  // Intersection Observer setup
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          loadMoreParks();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (loadingRef.current) {
+      observer.observe(loadingRef.current);
+    }
+
+    return () => {
+      if (loadingRef.current) {
+        observer.unobserve(loadingRef.current);
+      }
+    };
+  }, [hasMore, filteredParks]);
+
+  // Load more parks function
+  const loadMoreParks = React.useCallback(() => {
+    const start = (page - 1) * PARKS_PER_PAGE;
+    const end = page * PARKS_PER_PAGE;
+    const newParks = filteredParks.slice(start, end);
+    
+    if (newParks.length > 0) {
+      setDisplayedParks(prev => [...prev, ...newParks]);
+      setPage(prev => prev + 1);
+      setHasMore(end < filteredParks.length);
+    } else {
+      setHasMore(false);
+    }
+  }, [page, filteredParks]);
+
+  // Reset pagination when filters change
+  React.useEffect(() => {
+    setPage(1);
+    setDisplayedParks([]);
+    setHasMore(true);
+  }, [filters, searchCenter]);
+
+  // Initial load of parks
+  React.useEffect(() => {
+    loadMoreParks();
+  }, [filteredParks]);
 
   // Debounced geocoding function
   const debouncedGeocode = React.useMemo(
@@ -144,6 +198,9 @@ export function MapsPage() {
     }
 
     setFilteredParks(filtered);
+    setPage(1);
+    setDisplayedParks([]);
+    setHasMore(true);
   }, [filters, searchCenter]);
 
   const markers: MapMarker[] = filteredParks.map(park => ({
@@ -256,8 +313,8 @@ export function MapsPage() {
                 </div>
 
                 {/* Compact Park Cards */}
-                <div id="compact-results" className="space-y-3">
-                  {filteredParks.map((park) => (
+                <div id="compact-results" className="space-y-3 max-h-[600px] overflow-y-auto">
+                  {displayedParks.map((park) => (
                     <div key={park.id} className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md cursor-pointer">
                       <div className="flex gap-4">
                         <img src={park.imageUrl} className="w-20 h-20 rounded-lg object-cover" alt={park.name} />
@@ -310,17 +367,20 @@ export function MapsPage() {
                       </div>
                     </div>
                   ))}
-                </div>
-
-                {/* Pagination */}
-                <div className="flex justify-center mt-6">
-                  <div className="flex space-x-1">
-                    <button className="px-3 py-1 border rounded-md hover:bg-gray-50 text-sm">Previous</button>
-                    <button className="px-3 py-1 border rounded-md bg-emerald-600 text-white text-sm">1</button>
-                    <button className="px-3 py-1 border rounded-md hover:bg-gray-50 text-sm">2</button>
-                    <button className="px-3 py-1 border rounded-md hover:bg-gray-50 text-sm">3</button>
-                    <button className="px-3 py-1 border rounded-md hover:bg-gray-50 text-sm">Next</button>
-                  </div>
+                  
+                  {/* Loading indicator */}
+                  {hasMore && (
+                    <div ref={loadingRef} className="flex justify-center py-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                    </div>
+                  )}
+                  
+                  {/* No results message */}
+                  {filteredParks.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No bike parks found matching your criteria
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
