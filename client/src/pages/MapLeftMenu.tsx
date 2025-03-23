@@ -6,7 +6,8 @@ export enum Difficulty {
   ALL = 'All Levels',
   BEGINNER = 'Beginner',
   INTERMEDIATE = 'Intermediate',
-  EXPERT = 'Expert',
+  ADVANCED = 'Advanced',
+  PRO = 'Pro',
 }
 
 export enum Feature {
@@ -23,7 +24,17 @@ const MapLeftMenu: React.FC<{
   setFilteredLocations: (locations: BikePark[]) => void;
   setSelectedLocationId: (id: string) => void;
   setPause: (pause: boolean) => void;
-}> = ({ selectedLocationId, filteredLocations, setFilteredLocations, setSelectedLocationId, setPause }) => {
+  minimizeLeftMenu: boolean;
+  setMinimizeLeftMenu: (minimize: boolean) => void;
+}> = ({
+  selectedLocationId,
+  filteredLocations,
+  setFilteredLocations,
+  setSelectedLocationId,
+  setPause,
+  minimizeLeftMenu,
+  setMinimizeLeftMenu,
+}) => {
   const [filter, setFilter] = useState<BikeParkFilter>({
     location: '',
     coordinates: null,
@@ -76,7 +87,20 @@ const MapLeftMenu: React.FC<{
   );
 
   return (
-    <div className="bg-white shadow-lg" style={{ height: 'calc(100vh - 120px)' }}>
+    <div
+      className={`bg-white shadow-lg z-[11] ${minimizeLeftMenu ? 'absolute' : 'relative'}`}
+      style={minimizeLeftMenu ? { height: 'auto' } : { height: 'calc(100vh - 120px)' }}
+    >
+      <button
+        className="absolute right-px m-[10px] text-gray-600 hover:text-emerald-600 transition-colors duration-200"
+        onClick={() => setMinimizeLeftMenu(!minimizeLeftMenu)}
+      >
+        {minimizeLeftMenu ? (
+          <i className="fa-solid text-xl fa-maximize"></i>
+        ) : (
+          <i className="fa-solid text-xl fa-minimize"></i>
+        )}
+      </button>
       <div className="p-6 w-[372px]">
         <div className="space-y-4">
           <div>
@@ -173,77 +197,79 @@ const MapLeftMenu: React.FC<{
         </div>
       </div>
 
-      {/* Results List */}
-      <div className="p-6 pt-0 space-y-4">
-        {bikeParks?.length > 0 && (
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold">{bikeParks.length} Parks Found</h2>
-          </div>
-        )}
+      {!minimizeLeftMenu && (
+        <>
+          {/* Results List */}
+          <div className="p-6 pt-0 space-y-4">
+            {bikeParks?.length > 0 && (
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold">{bikeParks.length} Parks Found</h2>
+              </div>
+            )}
 
-        {/* Compact Park Cards */}
-        <div id="compact-results" className="space-y-3 max-h-[593px] overflow-auto rounded-lg">
-          {bikeParks?.map((park: BikePark) => (
-            <div
-              key={park.id}
-              data-index={park.id}
-              ref={setRef}
-              className={`bg-white p-4 rounded-lg shadow-sm hover:shadow-md cursor-pointer border-[1px] border-solid ${
-                park.id === selectedLocationId ? 'border-green-600' : ''
-              }`}
-              onClick={() => setSelectedLocationId(park.id)}
-            >
-              <div className="flex gap-4">
-                {park.imageUrl ? (
-                  <img src={park.imageUrl} className="w-20 h-20 rounded-lg object-cover" alt={park.name} />
-                ) : (
-                  <div className="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center">
-                    <i className="fa-solid fa-mountain text-gray-400 text-2x1"></i>
-                  </div>
-                )}
-                <div className="flex-1">
-                  <div className="flex justify-between">
-                    <h3 className="font-bold">{park.name}</h3>
-                    <span className="text-sm">
-                      <i className="fa-solid fa-star text-yellow-400"></i> {park.rating}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-2">{park.location}</p>
-                  <div className="flex gap-2">
-                    {park.features?.slice(0, 1)?.map((feature, index) => (
-                      <span
-                        key={index}
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          feature === 'Flow'
-                            ? 'bg-emerald-100 text-emerald-600'
-                            : feature === 'Skills'
-                            ? 'bg-purple-100 text-purple-600'
-                            : 'bg-orange-100 text-orange-600'
-                        }`}
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        park.difficulty === 'Beginner'
-                          ? 'bg-yellow-100 text-yellow-600'
-                          : park.difficulty === 'Intermediate'
-                          ? 'bg-blue-100 text-blue-600'
-                          : 'bg-red-100 text-red-600'
-                      }`}
-                    >
-                      {park.difficulty}
-                    </span>
+            {/* Compact Park Cards */}
+            <div id="compact-results" className="space-y-3 max-h-[593px] overflow-auto rounded-lg">
+              {bikeParks?.map((park: BikePark) => (
+                <div
+                  key={park.id}
+                  data-index={park.id}
+                  ref={setRef}
+                  className={`bg-white p-4 rounded-lg shadow-sm hover:shadow-md cursor-pointer border-[1px] border-solid ${
+                    park.id === selectedLocationId ? 'border-green-600' : ''
+                  }`}
+                  onClick={() => setSelectedLocationId(park.id)}
+                >
+                  <div className="flex gap-4">
+                    {park.imageUrl ? (
+                      <img src={park.imageUrl} className="w-20 h-20 rounded-lg object-cover" alt={park.name} />
+                    ) : (
+                      <div className="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center">
+                        <i className="fa-solid fa-mountain text-gray-400 text-2x1"></i>
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <div className="flex justify-between">
+                        <h3 className="font-bold text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]">{park.name}</h3>
+                        <span className="text-sm">
+                          <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i> {park.rating}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">{park.location}</p>
+                      <div className="flex gap-2">
+                        {park.features?.slice(0, 1)?.map((feature, index) => (
+                          <span
+                            key={index}
+                            className={`px-2 py-1 rounded-full text-xs ${
+                              feature === 'Flow'
+                                ? 'bg-emerald-100 text-emerald-600'
+                                : feature === 'Skills'
+                                ? 'bg-purple-100 text-purple-600'
+                                : 'bg-orange-100 text-orange-600'
+                            }`}
+                          >
+                            {feature}
+                          </span>
+                        ))}
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            park.difficulty === 'beginner'
+                              ? 'bg-yellow-100 text-yellow-600'
+                              : park.difficulty === 'intermediate'
+                              ? 'bg-blue-100 text-blue-600'
+                              : 'bg-red-100 text-red-600'
+                          }`}
+                        >
+                          {park.difficulty?.[0]?.toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
 
-      {/* Load more button
+          {/* Load more button
 			{hasNextPage && (
 				<button 
 					onClick={loadMoreParks}
@@ -253,6 +279,8 @@ const MapLeftMenu: React.FC<{
 					{isLoadingParks ? 'Loading...' : 'Load More'}
 				</button>
 			)} */}
+        </>
+      )}
     </div>
   );
 };

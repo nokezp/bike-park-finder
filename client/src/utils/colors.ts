@@ -10,4 +10,4 @@ export const getRandomColor = (): Color => {
 // Optional: Function to get a color by index (useful for consistent colors for the same item)
 export const getColorByIndex = (index: number): Color => {
   return COLORS[index % COLORS.length];
-}; 
+};

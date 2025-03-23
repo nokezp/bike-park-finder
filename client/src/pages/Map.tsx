@@ -173,9 +173,9 @@ const Map: React.FC<{
                     )}
                     <div className="flex-1">
                       <div className="flex justify-between">
-                        <h3 className="font-bold">{location.name}</h3>
+                        <h3 className="font-bold text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]">{location.name}</h3>
                         <span className="text-sm">
-                          <i className="fa-solid fa-star text-yellow-400"></i> {location.rating}
+                          <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i> {location.rating}
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 mb-2">{location.location}</p>
@@ -196,14 +196,14 @@ const Map: React.FC<{
                         ))}
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${
-                            location.difficulty === 'Beginner'
+                            location.difficulty === 'beginner'
                               ? 'bg-yellow-100 text-yellow-600'
-                              : location.difficulty === 'Intermediate'
+                              : location.difficulty === 'intermediate'
                               ? 'bg-blue-100 text-blue-600'
                               : 'bg-red-100 text-red-600'
                           }`}
                         >
-                          {location.difficulty}
+                          {location.difficulty?.[0]?.toUpperCase()}
                         </span>
                       </div>
                     </div>

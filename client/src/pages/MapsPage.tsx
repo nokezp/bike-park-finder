@@ -24,6 +24,8 @@ export function MapsPage() {
   const [filteredLocations, setFilteredLocations] = useState<BikePark[]>([]);
   const [selectedLocationId, setSelectedLocationId] = useState<string>();
   const [pause, setPause] = useState<boolean>(false);
+  const [minimizeLeftMenu, setMinimizeLeftMenu] = useState<boolean>(false);
+
 
   const selectedLocation = useMemo(
     () => filteredLocations?.find(({ id }: any) => id === selectedLocationId),
@@ -40,10 +42,12 @@ export function MapsPage() {
           setFilteredLocations={setFilteredLocations}
           setSelectedLocationId={setSelectedLocationId}
           setPause={setPause}
+          minimizeLeftMenu={minimizeLeftMenu}
+          setMinimizeLeftMenu={setMinimizeLeftMenu}
         />
 
         {/* Map Area */}
-        <div className="w-full min-h-[calc(100vh - 120px)] z-10">
+        <div className="w-full z-10" style={{ minHeight: "calc(100vh - 120px)"}}>
           <div className="bg-white rounded-lg shadow-lg h-[100%]">
             <Map
               selectedLocation={selectedLocation}
