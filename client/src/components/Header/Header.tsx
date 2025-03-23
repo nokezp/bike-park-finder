@@ -13,14 +13,8 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img
-              className="h-8 w-auto"
-              src="/logo.svg"
-              alt="Bike Park Finder"
-            />
-            <span className="ml-2 text-xl font-bold text-gray-900">
-              Bike Park Finder
-            </span>
+            <i className="fa-solid fa-mountain-sun text-2xl text-emerald-600"></i>
+            <span className="ml-2 text-xl font-bold text-gray-900">Bike Park Finder</span>
           </Link>
 
           {/* Navigation */}
@@ -33,11 +27,7 @@ const Header = () => {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <span className="sr-only">Open main menu</span>
-            {isMenuOpen ? (
-              <FaTimes className="block h-6 w-6" />
-            ) : (
-              <FaBars className="block h-6 w-6" />
-            )}
+            {isMenuOpen ? <FaTimes className="block h-6 w-6" /> : <FaBars className="block h-6 w-6" />}
           </button>
         </div>
       </div>
@@ -48,4 +38,4 @@ const Header = () => {
   );
 };
 
-export default Header; 
+export default Header;
