@@ -1,4 +1,7 @@
 /* eslint-disable */
+import { cacheExchange } from '@urql/exchange-graphcache';
+import { Resolver as GraphCacheResolver, UpdateResolver as GraphCacheUpdateResolver, OptimisticMutationResolver as GraphCacheOptimisticMutationResolver } from '@urql/exchange-graphcache';
+
 import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Maybe<T> = T | null;
@@ -228,6 +231,7 @@ export type Query = {
   __typename?: 'Query';
   bikePark?: Maybe<BikePark>;
   bikeParks: PaginatedBikeParks;
+  bikeParksByViewport: Array<BikePark>;
   me?: Maybe<User>;
   reviews: Array<Review>;
   searchBikeParks: Array<BikePark>;
@@ -242,6 +246,12 @@ export type QueryBikeParkArgs = {
 export type QueryBikeParksArgs = {
   filter?: InputMaybe<BikeParkFilter>;
   pagination: PaginationInput;
+};
+
+
+export type QueryBikeParksByViewportArgs = {
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
+  viewport: ViewportInput;
 };
 
 
@@ -312,6 +322,11 @@ export type User = {
   username: Scalars['String']['output'];
 };
 
+export type ViewportInput = {
+  northEast: CoordinatesInput;
+  southWest: CoordinatesInput;
+};
+
 export type Weather = {
   __typename?: 'Weather';
   current?: Maybe<Scalars['JSON']['output']>;
@@ -346,32 +361,307 @@ export type GetBikeParkQueryVariables = Exact<{
 
 export type GetBikeParkQuery = { __typename?: 'Query', bikePark?: { __typename?: 'BikePark', id: string, name: string, description?: string | null, difficulty?: string | null, facilities?: Array<string> | null, features?: Array<string> | null, imageUrl?: string | null, location?: string | null, photos?: Array<string> | null, rating?: number | null, rules?: Array<string> | null, status?: string | null, videos?: Array<string> | null, website?: string | null, contact?: { __typename?: 'Contact', email?: string | null, phone?: string | null } | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, openingHours?: { __typename?: 'OpeningHours', friday?: string | null, monday?: string | null, saturday?: string | null, sunday?: string | null, thursday?: string | null, tuesday?: string | null, wednesday?: string | null } | null, price?: { __typename?: 'Price', amount: number, currency: string } | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null } | null, weather?: { __typename?: 'Weather', current?: any | null, forecast?: any | null } | null } | null };
 
+export type GetBikeParksByViewportQueryVariables = Exact<{
+  viewport: ViewportInput;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetBikeParksByViewportQuery = { __typename?: 'Query', bikeParksByViewport: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> };
+
+export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __typename: NonNullable<T['__typename']> };
+
+export type GraphCacheKeysConfig = {
+  AuthPayload?: (data: WithTypename<AuthPayload>) => null | string,
+  BikePark?: (data: WithTypename<BikePark>) => null | string,
+  Contact?: (data: WithTypename<Contact>) => null | string,
+  Coordinates?: (data: WithTypename<Coordinates>) => null | string,
+  OpeningHours?: (data: WithTypename<OpeningHours>) => null | string,
+  PaginatedBikeParks?: (data: WithTypename<PaginatedBikeParks>) => null | string,
+  Price?: (data: WithTypename<Price>) => null | string,
+  Review?: (data: WithTypename<Review>) => null | string,
+  SocialMedia?: (data: WithTypename<SocialMedia>) => null | string,
+  User?: (data: WithTypename<User>) => null | string,
+  Weather?: (data: WithTypename<Weather>) => null | string,
+  WeatherData?: (data: WithTypename<WeatherData>) => null | string
+}
+
+export type GraphCacheResolvers = {
+  Query?: {
+    bikePark?: GraphCacheResolver<WithTypename<Query>, QueryBikeParkArgs, WithTypename<BikePark> | string>,
+    bikeParks?: GraphCacheResolver<WithTypename<Query>, QueryBikeParksArgs, WithTypename<PaginatedBikeParks> | string>,
+    bikeParksByViewport?: GraphCacheResolver<WithTypename<Query>, QueryBikeParksByViewportArgs, Array<WithTypename<BikePark> | string>>,
+    me?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
+    reviews?: GraphCacheResolver<WithTypename<Query>, QueryReviewsArgs, Array<WithTypename<Review> | string>>,
+    searchBikeParks?: GraphCacheResolver<WithTypename<Query>, QuerySearchBikeParksArgs, Array<WithTypename<BikePark> | string>>
+  },
+  AuthPayload?: {
+    token?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>,
+    user?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, WithTypename<User> | string>
+  },
+  BikePark?: {
+    address?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    contact?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Contact> | string>,
+    coordinates?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Coordinates> | string>,
+    createdAt?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    createdBy?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['ID'] | string>,
+    description?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    difficulty?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    facilities?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
+    features?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
+    id?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['ID'] | string>,
+    imageUrl?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    lastUpdated?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    location?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    name?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    openingHours?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<OpeningHours> | string>,
+    photos?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
+    price?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Price> | string>,
+    rating?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['Float'] | string>,
+    reviews?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<WithTypename<Review> | string>>,
+    rules?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
+    socialMedia?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<SocialMedia> | string>,
+    status?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    videos?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
+    weather?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Weather> | string>,
+    website?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>
+  },
+  Contact?: {
+    email?: GraphCacheResolver<WithTypename<Contact>, Record<string, never>, Scalars['String'] | string>,
+    phone?: GraphCacheResolver<WithTypename<Contact>, Record<string, never>, Scalars['String'] | string>
+  },
+  Coordinates?: {
+    latitude?: GraphCacheResolver<WithTypename<Coordinates>, Record<string, never>, Scalars['Float'] | string>,
+    longitude?: GraphCacheResolver<WithTypename<Coordinates>, Record<string, never>, Scalars['Float'] | string>
+  },
+  OpeningHours?: {
+    friday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
+    monday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
+    saturday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
+    sunday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
+    thursday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
+    tuesday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
+    wednesday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>
+  },
+  PaginatedBikeParks?: {
+    bikeParks?: GraphCacheResolver<WithTypename<PaginatedBikeParks>, Record<string, never>, Array<WithTypename<BikePark> | string>>,
+    currentPage?: GraphCacheResolver<WithTypename<PaginatedBikeParks>, Record<string, never>, Scalars['Int'] | string>,
+    hasNextPage?: GraphCacheResolver<WithTypename<PaginatedBikeParks>, Record<string, never>, Scalars['Boolean'] | string>,
+    totalCount?: GraphCacheResolver<WithTypename<PaginatedBikeParks>, Record<string, never>, Scalars['Int'] | string>,
+    totalPages?: GraphCacheResolver<WithTypename<PaginatedBikeParks>, Record<string, never>, Scalars['Int'] | string>
+  },
+  Price?: {
+    amount?: GraphCacheResolver<WithTypename<Price>, Record<string, never>, Scalars['Float'] | string>,
+    currency?: GraphCacheResolver<WithTypename<Price>, Record<string, never>, Scalars['String'] | string>
+  },
+  Review?: {
+    bikePark?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['ID'] | string>,
+    comment?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>,
+    createdAt?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>,
+    createdBy?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['ID'] | string>,
+    id?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['ID'] | string>,
+    rating?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['Float'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>
+  },
+  SocialMedia?: {
+    facebook?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
+    instagram?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
+    twitter?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
+    youtube?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>
+  },
+  User?: {
+    createdAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    email?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    id?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['ID'] | string>,
+    name?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    role?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    username?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
+  },
+  Weather?: {
+    current?: GraphCacheResolver<WithTypename<Weather>, Record<string, never>, Scalars['JSON'] | string>,
+    forecast?: GraphCacheResolver<WithTypename<Weather>, Record<string, never>, Scalars['JSON'] | string>,
+    lastUpdated?: GraphCacheResolver<WithTypename<Weather>, Record<string, never>, Scalars['String'] | string>
+  },
+  WeatherData?: {
+    description?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['String'] | string>,
+    feelsLike?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['Float'] | string>,
+    humidity?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['Int'] | string>,
+    icon?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['String'] | string>,
+    precipitation?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['Float'] | string>,
+    temperature?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['Float'] | string>,
+    uvIndex?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['Float'] | string>,
+    windSpeed?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['Float'] | string>
+  }
+};
+
+export type GraphCacheOptimisticUpdaters = {
+  createBikePark?: GraphCacheOptimisticMutationResolver<MutationCreateBikeParkArgs, WithTypename<BikePark>>,
+  createReview?: GraphCacheOptimisticMutationResolver<MutationCreateReviewArgs, WithTypename<Review>>,
+  deleteBikePark?: GraphCacheOptimisticMutationResolver<MutationDeleteBikeParkArgs, Scalars['Boolean']>,
+  deleteReview?: GraphCacheOptimisticMutationResolver<MutationDeleteReviewArgs, Scalars['Boolean']>,
+  login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<AuthPayload>>,
+  register?: GraphCacheOptimisticMutationResolver<MutationRegisterArgs, WithTypename<AuthPayload>>,
+  updateBikePark?: GraphCacheOptimisticMutationResolver<MutationUpdateBikeParkArgs, WithTypename<BikePark>>,
+  updateProfile?: GraphCacheOptimisticMutationResolver<MutationUpdateProfileArgs, WithTypename<User>>,
+  updateReview?: GraphCacheOptimisticMutationResolver<MutationUpdateReviewArgs, WithTypename<Review>>
+};
+
+export type GraphCacheUpdaters = {
+  Query?: {
+    bikePark?: GraphCacheUpdateResolver<{ bikePark: Maybe<WithTypename<BikePark>> }, QueryBikeParkArgs>,
+    bikeParks?: GraphCacheUpdateResolver<{ bikeParks: WithTypename<PaginatedBikeParks> }, QueryBikeParksArgs>,
+    bikeParksByViewport?: GraphCacheUpdateResolver<{ bikeParksByViewport: Array<WithTypename<BikePark>> }, QueryBikeParksByViewportArgs>,
+    me?: GraphCacheUpdateResolver<{ me: Maybe<WithTypename<User>> }, Record<string, never>>,
+    reviews?: GraphCacheUpdateResolver<{ reviews: Array<WithTypename<Review>> }, QueryReviewsArgs>,
+    searchBikeParks?: GraphCacheUpdateResolver<{ searchBikeParks: Array<WithTypename<BikePark>> }, QuerySearchBikeParksArgs>
+  },
+  Mutation?: {
+    createBikePark?: GraphCacheUpdateResolver<{ createBikePark: WithTypename<BikePark> }, MutationCreateBikeParkArgs>,
+    createReview?: GraphCacheUpdateResolver<{ createReview: WithTypename<Review> }, MutationCreateReviewArgs>,
+    deleteBikePark?: GraphCacheUpdateResolver<{ deleteBikePark: Scalars['Boolean'] }, MutationDeleteBikeParkArgs>,
+    deleteReview?: GraphCacheUpdateResolver<{ deleteReview: Scalars['Boolean'] }, MutationDeleteReviewArgs>,
+    login?: GraphCacheUpdateResolver<{ login: WithTypename<AuthPayload> }, MutationLoginArgs>,
+    register?: GraphCacheUpdateResolver<{ register: WithTypename<AuthPayload> }, MutationRegisterArgs>,
+    updateBikePark?: GraphCacheUpdateResolver<{ updateBikePark: WithTypename<BikePark> }, MutationUpdateBikeParkArgs>,
+    updateProfile?: GraphCacheUpdateResolver<{ updateProfile: WithTypename<User> }, MutationUpdateProfileArgs>,
+    updateReview?: GraphCacheUpdateResolver<{ updateReview: WithTypename<Review> }, MutationUpdateReviewArgs>
+  },
+  Subscription?: {},
+  AuthPayload?: {
+    token?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>,
+    user?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>
+  },
+  BikePark?: {
+    address?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    contact?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    coordinates?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    createdBy?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    description?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    difficulty?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    facilities?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    features?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    imageUrl?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    lastUpdated?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    location?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    name?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    openingHours?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    photos?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    price?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    rating?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    reviews?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    rules?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    socialMedia?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    status?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    videos?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    weather?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    website?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>
+  },
+  Contact?: {
+    email?: GraphCacheUpdateResolver<Maybe<WithTypename<Contact>>, Record<string, never>>,
+    phone?: GraphCacheUpdateResolver<Maybe<WithTypename<Contact>>, Record<string, never>>
+  },
+  Coordinates?: {
+    latitude?: GraphCacheUpdateResolver<Maybe<WithTypename<Coordinates>>, Record<string, never>>,
+    longitude?: GraphCacheUpdateResolver<Maybe<WithTypename<Coordinates>>, Record<string, never>>
+  },
+  OpeningHours?: {
+    friday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
+    monday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
+    saturday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
+    sunday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
+    thursday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
+    tuesday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
+    wednesday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>
+  },
+  PaginatedBikeParks?: {
+    bikeParks?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedBikeParks>>, Record<string, never>>,
+    currentPage?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedBikeParks>>, Record<string, never>>,
+    hasNextPage?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedBikeParks>>, Record<string, never>>,
+    totalCount?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedBikeParks>>, Record<string, never>>,
+    totalPages?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedBikeParks>>, Record<string, never>>
+  },
+  Price?: {
+    amount?: GraphCacheUpdateResolver<Maybe<WithTypename<Price>>, Record<string, never>>,
+    currency?: GraphCacheUpdateResolver<Maybe<WithTypename<Price>>, Record<string, never>>
+  },
+  Review?: {
+    bikePark?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    comment?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    createdBy?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    rating?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>
+  },
+  SocialMedia?: {
+    facebook?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
+    instagram?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
+    twitter?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
+    youtube?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>
+  },
+  User?: {
+    createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    email?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    name?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    role?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    username?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>
+  },
+  Weather?: {
+    current?: GraphCacheUpdateResolver<Maybe<WithTypename<Weather>>, Record<string, never>>,
+    forecast?: GraphCacheUpdateResolver<Maybe<WithTypename<Weather>>, Record<string, never>>,
+    lastUpdated?: GraphCacheUpdateResolver<Maybe<WithTypename<Weather>>, Record<string, never>>
+  },
+  WeatherData?: {
+    description?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
+    feelsLike?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
+    humidity?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
+    icon?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
+    precipitation?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
+    temperature?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
+    uvIndex?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
+    windSpeed?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>
+  },
+};
+
+export type GraphCacheConfig = Parameters<typeof cacheExchange>[0] & {
+  updates?: GraphCacheUpdaters,
+  keys?: GraphCacheKeysConfig,
+  optimistic?: GraphCacheOptimisticUpdaters,
+  resolvers?: GraphCacheResolvers,
+};
 
 export const GetBikeParksDocument = gql`
     query GetBikeParks($filter: BikeParkFilter, $pagination: PaginationInput!) {
-      bikeParks(filter: $filter, pagination: $pagination) {
-        bikeParks {
-          id
-          name
-          description
-          location
-          difficulty
-          status
-          features
-          createdAt
-          updatedAt
-          createdBy
-          coordinates {
-            latitude
-            longitude
-          }
-        }
-        totalCount
-        currentPage
-        totalPages
-        hasNextPage
+  bikeParks(filter: $filter, pagination: $pagination) {
+    bikeParks {
+      id
+      name
+      description
+      location
+      difficulty
+      status
+      features
+      createdAt
+      updatedAt
+      createdBy
+      coordinates {
+        latitude
+        longitude
       }
     }
+    totalCount
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}
     `;
 
 export function useGetBikeParksQuery(options: Omit<Urql.UseQueryArgs<GetBikeParksQueryVariables>, 'query'>) {
@@ -432,3 +722,34 @@ export const GetBikeParkDocument = gql`
 export function useGetBikeParkQuery(options: Omit<Urql.UseQueryArgs<GetBikeParkQueryVariables>, 'query'>) {
   return Urql.useQuery<GetBikeParkQuery, GetBikeParkQueryVariables>({ query: GetBikeParkDocument, ...options });
 };
+export const GetBikeParksByViewportDocument = gql`
+    query GetBikeParksByViewport($viewport: ViewportInput!, $searchQuery: String) {
+  bikeParksByViewport(viewport: $viewport, searchQuery: $searchQuery) {
+    id
+    name
+    description
+    location
+    difficulty
+    status
+    features
+    createdAt
+    updatedAt
+    createdBy
+    coordinates {
+      latitude
+      longitude
+    }
+  }
+}
+    `;
+
+export function useGetBikeParksByViewportQuery(options: Omit<Urql.UseQueryArgs<GetBikeParksByViewportQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetBikeParksByViewportQuery, GetBikeParksByViewportQueryVariables>({ query: GetBikeParksByViewportDocument, ...options });
+};
+export const namedOperations = {
+  Query: {
+    GetBikeParks: 'GetBikeParks',
+    GetBikePark: 'GetBikePark',
+    GetBikeParksByViewport: 'GetBikeParksByViewport'
+  }
+}

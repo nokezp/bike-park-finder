@@ -64,13 +64,12 @@ const DEFAULT_SEARCH_RADIUS_KM = 50;
 // Helper function to calculate distance between two coordinates using Haversine formula
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371; // Radius of the earth in km
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2); 
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c; // Distance in km
   return distance;
 }
@@ -80,7 +79,7 @@ export const bikeParkResolvers = {
     bikeParks: async (
       _: unknown,
       { filter, pagination }: { filter?: BikeParkFilter; pagination: PaginationInput },
-      context: AuthContext
+      context: AuthContext,
     ) => {
       try {
         const { page, limit } = pagination;
@@ -97,22 +96,22 @@ export const bikeParkResolvers = {
           if (filter.name) {
             query.name = { $regex: filter.name, $options: 'i' };
           }
-          
+
           // Exact match for difficulty
           if (filter.difficulty && filter.difficulty !== 'All') {
             query.difficulty = filter.difficulty;
           }
-          
+
           // Features filter - match any of the provided features
           if (filter.features && filter.features.length > 0 && !filter.features.includes('All')) {
             query.features = { $in: filter.features };
           }
-          
+
           // Amenities filter - match all provided amenities
           if (filter.amenities && filter.amenities.length > 0) {
             query.amenities = { $all: filter.amenities };
           }
-          
+
           // Sort order
           if (filter.sortBy) {
             if (filter.sortBy === 'Rating') {
@@ -127,50 +126,42 @@ export const bikeParkResolvers = {
         // Fetch parks without pagination first if coordinates search is used
         let bikeParks;
         let totalCount;
-        
+
         // Special handling for location-based search with coordinates
         if (filter?.coordinates) {
           // Get all matching parks first
           bikeParks = await BikePark.find(query).sort(sort);
-          
+
           // Filter by distance
           const { latitude, longitude, radius = DEFAULT_SEARCH_RADIUS_KM } = filter.coordinates;
-          
-          bikeParks = bikeParks.filter(park => {
+
+          bikeParks = bikeParks.filter((park) => {
             if (!park.coordinates || !park.coordinates.latitude || !park.coordinates.longitude) {
               return false;
             }
-            
-            const distance = calculateDistance(
-              latitude, 
-              longitude, 
-              park.coordinates.latitude, 
-              park.coordinates.longitude
-            );
-            
+
+            const distance = calculateDistance(latitude, longitude, park.coordinates.latitude, park.coordinates.longitude);
+
             // Add distance to park object for sorting
             (park as any).distance = distance;
-            
+
             // Include only parks within radius
             return distance <= radius;
           });
-          
+
           // Sort by distance if required
           if (filter.sortBy === 'Distance') {
             bikeParks.sort((a: any, b: any) => a.distance - b.distance);
           }
-          
+
           totalCount = bikeParks.length;
-          
+
           // Apply pagination manually
           bikeParks = bikeParks.slice(skip, skip + limit);
         } else {
           // Regular database query with pagination
           totalCount = await BikePark.countDocuments(query);
-          bikeParks = await BikePark.find(query)
-            .skip(skip)
-            .limit(limit)
-            .sort(sort);
+          bikeParks = await BikePark.find(query).skip(skip).limit(limit).sort(sort);
         }
 
         // Calculate pagination info
@@ -182,7 +173,7 @@ export const bikeParkResolvers = {
           totalCount,
           currentPage: page,
           totalPages,
-          hasNextPage
+          hasNextPage,
         };
       } catch (error: any) {
         throw new GraphQLError(`Error fetching bike parks: ${error.message}`);
@@ -207,22 +198,59 @@ export const bikeParkResolvers = {
           $or: [
             { name: { $regex: query, $options: 'i' } },
             { location: { $regex: query, $options: 'i' } },
-            { description: { $regex: query, $options: 'i' } }
-          ]
+            { description: { $regex: query, $options: 'i' } },
+          ],
         }).limit(10);
         return bikeParks;
       } catch (error: any) {
         throw new GraphQLError(`Error searching bike parks: ${error.message}`);
       }
-    }
+    },
+
+    bikeParksByViewport: async (
+      _: any,
+      {
+        viewport,
+        searchQuery,
+      }: {
+        viewport: {
+          northEast: { latitude: number; longitude: number };
+          southWest: { latitude: number; longitude: number };
+        };
+        searchQuery?: string;
+      },
+      context: Context,
+    ) => {
+      try {
+        let query: any = {};
+        const coord = {
+          'coordinates.latitude': {
+            $gte: viewport.southWest.latitude,
+            $lte: viewport.northEast.latitude,
+          },
+          'coordinates.longitude': {
+            $gte: viewport.southWest.longitude,
+            $lte: viewport.northEast.longitude,
+          },
+        };
+
+        if (searchQuery) {
+          query = { location: { $regex: searchQuery, $options: 'i' } };
+        } else {
+          query = coord;
+        }
+
+        const bikeParks = await BikePark.find(query);
+        return bikeParks;
+      } catch (error) {
+        console.error('Error fetching bike parks by viewport:', error);
+        throw new Error('Failed to fetch bike parks');
+      }
+    },
   },
 
   Mutation: {
-    createBikePark: async (
-      _: unknown,
-      args: any,
-      context: AuthContext
-    ) => {
+    createBikePark: async (_: unknown, args: any, context: AuthContext) => {
       if (!context.user) {
         throw new GraphQLError('Not authenticated');
       }
@@ -230,7 +258,7 @@ export const bikeParkResolvers = {
       try {
         const bikePark = new BikePark({
           ...args,
-          createdBy: context.user.id
+          createdBy: context.user.id,
         });
         await bikePark.save();
         return bikePark;
@@ -239,11 +267,7 @@ export const bikeParkResolvers = {
       }
     },
 
-    updateBikePark: async (
-      _: unknown,
-      { id, input }: { id: string; input: any },
-      context: AuthContext
-    ) => {
+    updateBikePark: async (_: unknown, { id, input }: { id: string; input: any }, context: AuthContext) => {
       if (!context.user) {
         throw new GraphQLError('Not authenticated');
       }
@@ -267,11 +291,7 @@ export const bikeParkResolvers = {
       }
     },
 
-    deleteBikePark: async (
-      _: unknown,
-      { id }: { id: string },
-      context: AuthContext
-    ) => {
+    deleteBikePark: async (_: unknown, { id }: { id: string }, context: AuthContext) => {
       if (!context.user) {
         throw new GraphQLError('Not authenticated');
       }
@@ -292,7 +312,7 @@ export const bikeParkResolvers = {
       } catch (error: any) {
         throw new GraphQLError(`Error deleting bike park: ${error.message}`);
       }
-    }
+    },
   },
 
   BikePark: {
@@ -317,11 +337,11 @@ export const bikeParkResolvers = {
         }
 
         console.log('Fetching new weather data for coordinates:', bikePark.coordinates.latitude, bikePark.coordinates.longitude);
-        
+
         // Fetch new weather data
         const [current, forecast] = await Promise.all([
           WeatherService.getCurrentWeather(bikePark.coordinates.latitude, bikePark.coordinates.longitude),
-          WeatherService.getForecast(bikePark.coordinates.latitude, bikePark.coordinates.longitude)
+          WeatherService.getForecast(bikePark.coordinates.latitude, bikePark.coordinates.longitude),
         ]);
 
         console.log('Weather data fetched successfully');
@@ -333,10 +353,10 @@ export const bikeParkResolvers = {
             weather: {
               current,
               forecast,
-              lastUpdated: now
-            }
+              lastUpdated: now,
+            },
           },
-          { new: true }
+          { new: true },
         );
 
         if (!updatedBikePark) {
@@ -356,17 +376,17 @@ export const bikeParkResolvers = {
         if (!bikePark.reviews || bikePark.reviews.length === 0) {
           return 0;
         }
-        
+
         const totalRating = bikePark.reviews.reduce((sum: number, review: any) => {
           return sum + (review.rating || 0);
         }, 0);
-        
+
         const averageRating = totalRating / bikePark.reviews.length;
         return Number(averageRating.toFixed(1)); // Round to 1 decimal place
       } catch (error: any) {
         console.error(`Error calculating rating for bike park ${bikePark._id}:`, error);
         return 0;
       }
-    }
-  }
-}; 
+    },
+  },
+};

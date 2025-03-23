@@ -102,6 +102,7 @@ type Query {
   bikePark(id: ID!): BikePark
   reviews(bikeParkId: ID!): [Review!]!
   searchBikeParks(query: String!): [BikePark!]!
+  bikeParksByViewport(viewport: ViewportInput!, searchQuery: String): [BikePark!]!
 }
 
 type Mutation {
@@ -212,6 +213,11 @@ input CoordinatesSearchInput {
 input PaginationInput {
   page: Int!
   limit: Int!
+}
+
+input ViewportInput {
+  northEast: CoordinatesInput!
+  southWest: CoordinatesInput!
 }
 
 type PaginatedBikeParks {

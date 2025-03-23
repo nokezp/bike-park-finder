@@ -1,4 +1,5 @@
-import { gql, useQuery } from "urql";
+import { gql, useQuery } from 'urql';
+import { ViewportInput } from '../lib/graphql/generated/graphql-operations';
 
 const GetBikeParksDocument = gql(`
   query GetBikeParks($filter: BikeParkFilter, $pagination: PaginationInput!) {
@@ -79,6 +80,27 @@ const GetBikeParkDocument = gql(`
   }
 `);
 
+const GetBikeParksByViewportDocument = gql(`
+  query GetBikeParksByViewport($viewport: ViewportInput!, $searchQuery: String) {
+  bikeParksByViewport(viewport: $viewport, searchQuery: $searchQuery) {
+    id
+    name
+    description
+    location
+    difficulty
+    status
+    features
+    createdAt
+    updatedAt
+    createdBy
+    coordinates {
+      latitude
+      longitude
+    }
+  }
+}
+`);
+
 // const CreateBikeParkDocument = gql(`
 //   mutation CreateBikePark($input: CreateBikeParkInput!) {
 //     createBikePark(input: $input) {
@@ -152,6 +174,20 @@ export function useBikePark(id: string | undefined) {
   };
 }
 
+export function useBikeParkViewport(viewport: ViewportInput) {
+  const [{ data, error, fetching }, reexecuteQuery] = useQuery({
+    query: GetBikeParksByViewportDocument,
+    variables: { viewport },
+  });
+
+  return {
+    bikePark: data?.bikePark,
+    error,
+    loading: fetching,
+    refetch: reexecuteQuery,
+  };
+}
+
 // export function useCreateBikePark() {
 // //   const [{ data, error, fetching }, createBikePark] = useMutation(CreateBikeParkDocument);
 
@@ -183,4 +219,4 @@ export function useBikePark(id: string | undefined) {
 // //     error,
 // //     loading: fetching,
 // //   };
-// // } 
+// // }
