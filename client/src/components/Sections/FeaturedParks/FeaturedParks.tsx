@@ -26,7 +26,7 @@ const FeaturedParks: React.FC = () => {
     },
   });
 
-  const bikeParks = data?.bikeParks;
+  const bikeParks = data?.bikeParks?.bikeParks;
 
   const parks = bikeParks?.map((park: any) => ({
     id: park.id,
