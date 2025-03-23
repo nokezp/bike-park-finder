@@ -74,7 +74,7 @@ const Map: React.FC<{
   };
 
   const setView = () => {
-    const map = mapRef.current?.target;
+    const map = mapRef.current;
     if (map) {
       map.flyTo(
         {
@@ -82,13 +82,13 @@ const Map: React.FC<{
           lng: selectedLocation?.coordinates?.longitude,
         },
         15,
-        { animate: true, duration: 3 },
+        { animate: true, duration: 1.5 },
       );
     }
   };
 
   const fitBounds = (markers: any) => {
-    const map = mapRef.current?.target;
+    const map = mapRef.current;
     if (map) {
       map.flyToBounds(latLngBounds(markers), {
         padding: [50, 50],
@@ -132,9 +132,9 @@ const Map: React.FC<{
     <div className="relative w-full h-full">
       {fetching && <div className="absolute top-4 right-4 z-[1000] bg-white px-4 py-2 rounded-md shadow">Loading...</div>}
       <MapContainer
+        ref={mapRef}
         center={[49.5, 10]} // Center of Germany
         zoom={6}
-        whenReady={(mapInstance: any) => (mapRef.current = mapInstance)}
         className="w-full h-full"
       >
         <TileLayer

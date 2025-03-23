@@ -182,7 +182,7 @@ const MapLeftMenu: React.FC<{
         )}
 
         {/* Compact Park Cards */}
-        <div id="compact-results" className="space-y-3 max-h-[570px] overflow-auto rounded-lg">
+        <div id="compact-results" className="space-y-3 max-h-[593px] overflow-auto rounded-lg">
           {bikeParks?.map((park: BikePark) => (
             <div
               key={park.id}

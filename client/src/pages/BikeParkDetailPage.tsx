@@ -2,16 +2,15 @@ import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useBikePark } from '../hooks/useBikeParks';
 import moment from 'moment';
-import Map from '../components/Map'
 
 const BikeParkDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  
+
   const { loading, bikePark, error } = useBikePark(id);
-  
-  const coordinates: [number, number] = useMemo(() => 
-    {return [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude]}
-  , [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude]);
+
+  const coordinates: [number, number] = useMemo(() => {
+    return [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude];
+  }, [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude]);
 
   if (!id) return <div>Invalid bike park ID</div>;
   if (loading) return <div>Loading...</div>;
@@ -23,19 +22,13 @@ const BikeParkDetailPage: React.FC = () => {
       {/* Park Details Hero */}
       <section id="park-hero" className="relative h-[500px]">
         <div className="absolute inset-0">
-          <img 
-            className="w-full h-full object-cover" 
-            src={bikePark.imageUrl} 
-            alt={`${bikePark.name} aerial view`}
-          />
+          <img className="w-full h-full object-cover" src={bikePark.imageUrl} alt={`${bikePark.name} aerial view`} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
         </div>
         <div className="container mx-auto px-4 relative h-full flex items-end pb-8">
           <div className="text-white">
             <div className="flex items-center space-x-4 mb-4">
-              <span className={`px-3 py-1 rounded-full text-sm ${
-                bikePark.status === 'open' ? 'bg-emerald-500' : 'bg-red-500'
-              }`}>
+              <span className={`px-3 py-1 rounded-full text-sm ${bikePark.status === 'open' ? 'bg-emerald-500' : 'bg-red-500'}`}>
                 {bikePark.status === 'open' ? 'Open Today' : 'Closed'}
               </span>
               <div className="flex items-center">
@@ -61,9 +54,7 @@ const BikeParkDetailPage: React.FC = () => {
                 <i className="fa-solid fa-cloud-sun text-2xl text-gray-600"></i>
                 <div>
                   <p className="text-sm text-gray-600">Weather</p>
-                  <p className="font-bold">
-                    {bikePark.weather?.current?.temperature}°C
-                  </p>
+                  <p className="font-bold">{bikePark.weather?.current?.temperature}°C</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
@@ -125,7 +116,7 @@ const BikeParkDetailPage: React.FC = () => {
                   </button>
                 </div>
                 <div className="relative h-[400px] bg-gray-100 rounded-lg">
-                {bikePark.coordinates && (
+                  {/* {bikePark.coordinates && (
                   <Map
                     center={coordinates}
                     zoom={13}
@@ -137,7 +128,7 @@ const BikeParkDetailPage: React.FC = () => {
                       }
                     ]}
                     />
-                  )}
+                  )} */}
                 </div>
               </div>
 
@@ -147,11 +138,15 @@ const BikeParkDetailPage: React.FC = () => {
                   <h2 className="text-2xl font-bold">Reviews</h2>
                   <button className="text-emerald-600 hover:text-emerald-700">Write a Review</button>
                 </div>
-                
+
                 {/* Review Card */}
                 <div className="border-b border-gray-200 pb-6 mb-6">
                   <div className="flex items-start space-x-4">
-                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" className="w-12 h-12 rounded-full" alt="User avatar"/>
+                    <img
+                      src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
+                      className="w-12 h-12 rounded-full"
+                      alt="User avatar"
+                    />
                     <div className="flex-1">
                       <div className="flex justify-between">
                         <h4 className="font-bold">Mike Thompson</h4>
@@ -164,15 +159,16 @@ const BikeParkDetailPage: React.FC = () => {
                         <i className="fa-solid fa-star"></i>
                         <i className="fa-solid fa-star"></i>
                       </div>
-                      <p className="text-gray-600">Amazing park with world-class trails. The lift system is efficient and the staff is super friendly. A must-visit for any mountain biker!</p>
+                      <p className="text-gray-600">
+                        Amazing park with world-class trails. The lift system is efficient and the staff is super friendly. A must-visit for
+                        any mountain biker!
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {/* More Reviews Button */}
-                <button className="w-full py-2 text-center text-emerald-600 hover:text-emerald-700">
-                  Show More Reviews
-                </button>
+                <button className="w-full py-2 text-center text-emerald-600 hover:text-emerald-700">Show More Reviews</button>
               </div>
             </div>
 
@@ -205,9 +201,7 @@ const BikeParkDetailPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <button className="w-full mt-4 text-center text-emerald-600 hover:text-emerald-700">
-                  View All Trails
-                </button>
+                <button className="w-full mt-4 text-center text-emerald-600 hover:text-emerald-700">View All Trails</button>
               </div>
 
               {/* Additional Features */}
@@ -234,11 +228,7 @@ const BikeParkDetailPage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {bikePark.photos?.map((photo: string, index: number) => (
               <div key={index} className="relative h-48 group cursor-pointer">
-                <img 
-                  className="w-full h-full object-cover rounded-lg" 
-                  src={photo} 
-                  alt={`${bikePark.name} photo ${index + 1}`}
-                />
+                <img className="w-full h-full object-cover rounded-lg" src={photo} alt={`${bikePark.name} photo ${index + 1}`} />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
                   <i className="fa-solid fa-expand text-white text-2xl"></i>
                 </div>
@@ -249,6 +239,6 @@ const BikeParkDetailPage: React.FC = () => {
       </section>
     </div>
   );
-}; 
+};
 
-export default BikeParkDetailPage; 
+export default BikeParkDetailPage;
