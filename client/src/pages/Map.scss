@@ -1,5 +1,9 @@
 .leaflet-popup-content-wrapper {
-    .leaflet-popup-content {
-        margin: 0;
-    }
+	.leaflet-popup-content {
+		margin: 0;
+
+		.leaflet-popup-content p {
+			margin: 2px 0;
+		}
+	}
 }
