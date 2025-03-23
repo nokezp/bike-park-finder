@@ -92,15 +92,86 @@ export type CoordinatesSearchInput = {
   radius?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type CreateEventInput = {
+  capacity: Scalars['Int']['input'];
+  category: EventCategory;
+  date: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+  endTime: Scalars['String']['input'];
+  featured?: InputMaybe<Scalars['Boolean']['input']>;
+  imageUrl: Scalars['String']['input'];
+  location: Scalars['String']['input'];
+  organizer: OrganizerInput;
+  price: Scalars['Float']['input'];
+  registrationEndDate: Scalars['String']['input'];
+  schedule: Array<ScheduleItemInput>;
+  startTime: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  venue: VenueInput;
+};
+
+export type Event = {
+  __typename?: 'Event';
+  attendeeCount: Scalars['Int']['output'];
+  availableTickets: Scalars['Int']['output'];
+  capacity: Scalars['Int']['output'];
+  category: EventCategory;
+  createdAt: Scalars['String']['output'];
+  date: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  endTime: Scalars['String']['output'];
+  featured: Scalars['Boolean']['output'];
+  id: Scalars['ID']['output'];
+  imageUrl: Scalars['String']['output'];
+  location: Scalars['String']['output'];
+  organizer: Organizer;
+  price: Scalars['Float']['output'];
+  registrationEndDate: Scalars['String']['output'];
+  schedule: Array<ScheduleItem>;
+  startTime: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+  venue: Venue;
+};
+
+export enum EventCategory {
+  CHAMPIONSHIP = 'CHAMPIONSHIP',
+  FESTIVAL = 'FESTIVAL',
+  GROUP_RIDE = 'GROUP_RIDE',
+  WORKSHOP = 'WORKSHOP'
+}
+
+export type EventFilter = {
+  category?: InputMaybe<EventCategory>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  featured?: InputMaybe<Scalars['Boolean']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  maxPrice?: InputMaybe<Scalars['Float']['input']>;
+  minPrice?: InputMaybe<Scalars['Float']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum EventStatus {
+  CANCELLED = 'CANCELLED',
+  COMPLETED = 'COMPLETED',
+  ONGOING = 'ONGOING',
+  UPCOMING = 'UPCOMING'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   createBikePark: BikePark;
+  createEvent: Event;
   createReview: Review;
   deleteBikePark: Scalars['Boolean']['output'];
+  deleteEvent: Scalars['Boolean']['output'];
   deleteReview: Scalars['Boolean']['output'];
   login: AuthPayload;
   register: AuthPayload;
+  registerForEvent: Event;
   updateBikePark: BikePark;
+  updateEvent: Event;
   updateProfile: User;
   updateReview: Review;
 };
@@ -128,6 +199,11 @@ export type MutationCreateBikeParkArgs = {
 };
 
 
+export type MutationCreateEventArgs = {
+  input: CreateEventInput;
+};
+
+
 export type MutationCreateReviewArgs = {
   bikeParkId: Scalars['ID']['input'];
   comment: Scalars['String']['input'];
@@ -136,6 +212,11 @@ export type MutationCreateReviewArgs = {
 
 
 export type MutationDeleteBikeParkArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteEventArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -159,9 +240,20 @@ export type MutationRegisterArgs = {
 };
 
 
+export type MutationRegisterForEventArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationUpdateBikeParkArgs = {
   id: Scalars['ID']['input'];
   input: UpdateBikeParkInput;
+};
+
+
+export type MutationUpdateEventArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateEventInput;
 };
 
 
@@ -198,6 +290,19 @@ export type OpeningHoursInput = {
   wednesday?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type Organizer = {
+  __typename?: 'Organizer';
+  description: Scalars['String']['output'];
+  imageUrl: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type OrganizerInput = {
+  description: Scalars['String']['input'];
+  imageUrl: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type PaginatedBikeParks = {
   __typename?: 'PaginatedBikeParks';
   bikeParks: Array<BikePark>;
@@ -228,6 +333,8 @@ export type Query = {
   bikePark?: Maybe<BikePark>;
   bikeParks: PaginatedBikeParks;
   bikeParksByViewport: Array<BikePark>;
+  event?: Maybe<Event>;
+  events: Array<Event>;
   me?: Maybe<User>;
   reviews: Array<Review>;
   searchBikeParks: Array<BikePark>;
@@ -251,6 +358,16 @@ export type QueryBikeParksByViewportArgs = {
 };
 
 
+export type QueryEventArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryEventsArgs = {
+  filter?: InputMaybe<EventFilter>;
+};
+
+
 export type QueryReviewsArgs = {
   bikeParkId: Scalars['ID']['input'];
 };
@@ -269,6 +386,19 @@ export type Review = {
   id: Scalars['ID']['output'];
   rating: Scalars['Float']['output'];
   updatedAt?: Maybe<Scalars['String']['output']>;
+};
+
+export type ScheduleItem = {
+  __typename?: 'ScheduleItem';
+  description: Scalars['String']['output'];
+  time: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type ScheduleItemInput = {
+  description: Scalars['String']['input'];
+  time: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type SocialMedia = {
@@ -307,6 +437,24 @@ export type UpdateBikeParkInput = {
   website?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateEventInput = {
+  capacity?: InputMaybe<Scalars['Int']['input']>;
+  category?: InputMaybe<EventCategory>;
+  date?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  endTime?: InputMaybe<Scalars['String']['input']>;
+  featured?: InputMaybe<Scalars['Boolean']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  organizer?: InputMaybe<OrganizerInput>;
+  price?: InputMaybe<Scalars['Float']['input']>;
+  registrationEndDate?: InputMaybe<Scalars['String']['input']>;
+  schedule?: InputMaybe<Array<ScheduleItemInput>>;
+  startTime?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  venue?: InputMaybe<VenueInput>;
+};
+
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
@@ -316,6 +464,19 @@ export type User = {
   role: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
+};
+
+export type Venue = {
+  __typename?: 'Venue';
+  address: Scalars['String']['output'];
+  mapImageUrl: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type VenueInput = {
+  address: Scalars['String']['input'];
+  mapImageUrl: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type ViewportInput = {
@@ -422,6 +583,11 @@ export type ResolversTypes = {
   Coordinates: ResolverTypeWrapper<Coordinates>;
   CoordinatesInput: CoordinatesInput;
   CoordinatesSearchInput: CoordinatesSearchInput;
+  CreateEventInput: CreateEventInput;
+  Event: ResolverTypeWrapper<Event>;
+  EventCategory: EventCategory;
+  EventFilter: EventFilter;
+  EventStatus: EventStatus;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
@@ -429,17 +595,24 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   OpeningHours: ResolverTypeWrapper<OpeningHours>;
   OpeningHoursInput: OpeningHoursInput;
+  Organizer: ResolverTypeWrapper<Organizer>;
+  OrganizerInput: OrganizerInput;
   PaginatedBikeParks: ResolverTypeWrapper<PaginatedBikeParks>;
   PaginationInput: PaginationInput;
   Price: ResolverTypeWrapper<Price>;
   PriceInput: PriceInput;
   Query: ResolverTypeWrapper<{}>;
   Review: ResolverTypeWrapper<Review>;
+  ScheduleItem: ResolverTypeWrapper<ScheduleItem>;
+  ScheduleItemInput: ScheduleItemInput;
   SocialMedia: ResolverTypeWrapper<SocialMedia>;
   SocialMediaInput: SocialMediaInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   UpdateBikeParkInput: UpdateBikeParkInput;
+  UpdateEventInput: UpdateEventInput;
   User: ResolverTypeWrapper<User>;
+  Venue: ResolverTypeWrapper<Venue>;
+  VenueInput: VenueInput;
   ViewportInput: ViewportInput;
   Weather: ResolverTypeWrapper<Weather>;
   WeatherData: ResolverTypeWrapper<WeatherData>;
@@ -456,6 +629,9 @@ export type ResolversParentTypes = {
   Coordinates: Coordinates;
   CoordinatesInput: CoordinatesInput;
   CoordinatesSearchInput: CoordinatesSearchInput;
+  CreateEventInput: CreateEventInput;
+  Event: Event;
+  EventFilter: EventFilter;
   Float: Scalars['Float']['output'];
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
@@ -463,17 +639,24 @@ export type ResolversParentTypes = {
   Mutation: {};
   OpeningHours: OpeningHours;
   OpeningHoursInput: OpeningHoursInput;
+  Organizer: Organizer;
+  OrganizerInput: OrganizerInput;
   PaginatedBikeParks: PaginatedBikeParks;
   PaginationInput: PaginationInput;
   Price: Price;
   PriceInput: PriceInput;
   Query: {};
   Review: Review;
+  ScheduleItem: ScheduleItem;
+  ScheduleItemInput: ScheduleItemInput;
   SocialMedia: SocialMedia;
   SocialMediaInput: SocialMediaInput;
   String: Scalars['String']['output'];
   UpdateBikeParkInput: UpdateBikeParkInput;
+  UpdateEventInput: UpdateEventInput;
   User: User;
+  Venue: Venue;
+  VenueInput: VenueInput;
   ViewportInput: ViewportInput;
   Weather: Weather;
   WeatherData: WeatherData;
@@ -527,18 +710,46 @@ export type CoordinatesResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
+  attendeeCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  availableTickets?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  capacity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  category?: Resolver<ResolversTypes['EventCategory'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  endTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  location?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  organizer?: Resolver<ResolversTypes['Organizer'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  registrationEndDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  schedule?: Resolver<Array<ResolversTypes['ScheduleItem']>, ParentType, ContextType>;
+  startTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  venue?: Resolver<ResolversTypes['Venue'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationCreateBikeParkArgs, 'name'>>;
+  createEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationCreateEventArgs, 'input'>>;
   createReview?: Resolver<ResolversTypes['Review'], ParentType, ContextType, RequireFields<MutationCreateReviewArgs, 'bikeParkId' | 'comment' | 'rating'>>;
   deleteBikePark?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBikeParkArgs, 'id'>>;
+  deleteEvent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteEventArgs, 'id'>>;
   deleteReview?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteReviewArgs, 'id'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   register?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'password' | 'username'>>;
+  registerForEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationRegisterForEventArgs, 'id'>>;
   updateBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationUpdateBikeParkArgs, 'id' | 'input'>>;
+  updateEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationUpdateEventArgs, 'id' | 'input'>>;
   updateProfile?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateProfileArgs>>;
   updateReview?: Resolver<ResolversTypes['Review'], ParentType, ContextType, RequireFields<MutationUpdateReviewArgs, 'id'>>;
 };
@@ -551,6 +762,13 @@ export type OpeningHoursResolvers<ContextType = any, ParentType extends Resolver
   thursday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tuesday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   wednesday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type OrganizerResolvers<ContextType = any, ParentType extends ResolversParentTypes['Organizer'] = ResolversParentTypes['Organizer']> = {
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -573,6 +791,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   bikePark?: Resolver<Maybe<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParkArgs, 'id'>>;
   bikeParks?: Resolver<ResolversTypes['PaginatedBikeParks'], ParentType, ContextType, RequireFields<QueryBikeParksArgs, 'pagination'>>;
   bikeParksByViewport?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParksByViewportArgs, 'viewport'>>;
+  event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
+  events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   reviews?: Resolver<Array<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
   searchBikeParks?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QuerySearchBikeParksArgs, 'query'>>;
@@ -586,6 +806,13 @@ export type ReviewResolvers<ContextType = any, ParentType extends ResolversParen
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   rating?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ScheduleItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduleItem'] = ResolversParentTypes['ScheduleItem']> = {
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  time?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -605,6 +832,13 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type VenueResolvers<ContextType = any, ParentType extends ResolversParentTypes['Venue'] = ResolversParentTypes['Venue']> = {
+  address?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  mapImageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -632,15 +866,19 @@ export type Resolvers<ContextType = any> = {
   BikePark?: BikeParkResolvers<ContextType>;
   Contact?: ContactResolvers<ContextType>;
   Coordinates?: CoordinatesResolvers<ContextType>;
+  Event?: EventResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   OpeningHours?: OpeningHoursResolvers<ContextType>;
+  Organizer?: OrganizerResolvers<ContextType>;
   PaginatedBikeParks?: PaginatedBikeParksResolvers<ContextType>;
   Price?: PriceResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;
+  ScheduleItem?: ScheduleItemResolvers<ContextType>;
   SocialMedia?: SocialMediaResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  Venue?: VenueResolvers<ContextType>;
   Weather?: WeatherResolvers<ContextType>;
   WeatherData?: WeatherDataResolvers<ContextType>;
 };

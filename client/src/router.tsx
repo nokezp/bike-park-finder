@@ -4,6 +4,7 @@ import BikeParkPage from './pages/BikeParkPage';
 import LandingPage from './pages/LandingPage';
 import BikeParkDetailPage from './pages/BikeParkDetailPage';
 import { MapsPage } from './pages/MapsPage';
+import EventsPage from './pages/EventsPage';
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,14 @@ export const router = createBrowserRouter([
       {
         path: '/maps',
         element: <MapsPage />,
+      },
+      {
+        path: '/events',
+        element: <EventsPage />,
+      },
+      {
+        path: '/events/:id',
+        element: <div />,
       },
     ],
   },

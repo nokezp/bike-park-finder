@@ -96,15 +96,86 @@ export type CoordinatesSearchInput = {
   radius?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type CreateEventInput = {
+  capacity: Scalars['Int']['input'];
+  category: EventCategory;
+  date: Scalars['String']['input'];
+  description: Scalars['String']['input'];
+  endTime: Scalars['String']['input'];
+  featured?: InputMaybe<Scalars['Boolean']['input']>;
+  imageUrl: Scalars['String']['input'];
+  location: Scalars['String']['input'];
+  organizer: OrganizerInput;
+  price: Scalars['Float']['input'];
+  registrationEndDate: Scalars['String']['input'];
+  schedule: Array<ScheduleItemInput>;
+  startTime: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  venue: VenueInput;
+};
+
+export type Event = {
+  __typename?: 'Event';
+  attendeeCount: Scalars['Int']['output'];
+  availableTickets: Scalars['Int']['output'];
+  capacity: Scalars['Int']['output'];
+  category: EventCategory;
+  createdAt: Scalars['String']['output'];
+  date: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  endTime: Scalars['String']['output'];
+  featured: Scalars['Boolean']['output'];
+  id: Scalars['ID']['output'];
+  imageUrl: Scalars['String']['output'];
+  location: Scalars['String']['output'];
+  organizer: Organizer;
+  price: Scalars['Float']['output'];
+  registrationEndDate: Scalars['String']['output'];
+  schedule: Array<ScheduleItem>;
+  startTime: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+  venue: Venue;
+};
+
+export enum EventCategory {
+  Championship = 'CHAMPIONSHIP',
+  Festival = 'FESTIVAL',
+  GroupRide = 'GROUP_RIDE',
+  Workshop = 'WORKSHOP'
+}
+
+export type EventFilter = {
+  category?: InputMaybe<EventCategory>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  featured?: InputMaybe<Scalars['Boolean']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  maxPrice?: InputMaybe<Scalars['Float']['input']>;
+  minPrice?: InputMaybe<Scalars['Float']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum EventStatus {
+  Cancelled = 'CANCELLED',
+  Completed = 'COMPLETED',
+  Ongoing = 'ONGOING',
+  Upcoming = 'UPCOMING'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   createBikePark: BikePark;
+  createEvent: Event;
   createReview: Review;
   deleteBikePark: Scalars['Boolean']['output'];
+  deleteEvent: Scalars['Boolean']['output'];
   deleteReview: Scalars['Boolean']['output'];
   login: AuthPayload;
   register: AuthPayload;
+  registerForEvent: Event;
   updateBikePark: BikePark;
+  updateEvent: Event;
   updateProfile: User;
   updateReview: Review;
 };
@@ -132,6 +203,11 @@ export type MutationCreateBikeParkArgs = {
 };
 
 
+export type MutationCreateEventArgs = {
+  input: CreateEventInput;
+};
+
+
 export type MutationCreateReviewArgs = {
   bikeParkId: Scalars['ID']['input'];
   comment: Scalars['String']['input'];
@@ -140,6 +216,11 @@ export type MutationCreateReviewArgs = {
 
 
 export type MutationDeleteBikeParkArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type MutationDeleteEventArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -163,9 +244,20 @@ export type MutationRegisterArgs = {
 };
 
 
+export type MutationRegisterForEventArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationUpdateBikeParkArgs = {
   id: Scalars['ID']['input'];
   input: UpdateBikeParkInput;
+};
+
+
+export type MutationUpdateEventArgs = {
+  id: Scalars['ID']['input'];
+  input: UpdateEventInput;
 };
 
 
@@ -202,6 +294,19 @@ export type OpeningHoursInput = {
   wednesday?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type Organizer = {
+  __typename?: 'Organizer';
+  description: Scalars['String']['output'];
+  imageUrl: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type OrganizerInput = {
+  description: Scalars['String']['input'];
+  imageUrl: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type PaginatedBikeParks = {
   __typename?: 'PaginatedBikeParks';
   bikeParks: Array<BikePark>;
@@ -232,6 +337,8 @@ export type Query = {
   bikePark?: Maybe<BikePark>;
   bikeParks: PaginatedBikeParks;
   bikeParksByViewport: Array<BikePark>;
+  event?: Maybe<Event>;
+  events: Array<Event>;
   me?: Maybe<User>;
   reviews: Array<Review>;
   searchBikeParks: Array<BikePark>;
@@ -255,6 +362,16 @@ export type QueryBikeParksByViewportArgs = {
 };
 
 
+export type QueryEventArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryEventsArgs = {
+  filter?: InputMaybe<EventFilter>;
+};
+
+
 export type QueryReviewsArgs = {
   bikeParkId: Scalars['ID']['input'];
 };
@@ -273,6 +390,19 @@ export type Review = {
   id: Scalars['ID']['output'];
   rating: Scalars['Float']['output'];
   updatedAt?: Maybe<Scalars['String']['output']>;
+};
+
+export type ScheduleItem = {
+  __typename?: 'ScheduleItem';
+  description: Scalars['String']['output'];
+  time: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type ScheduleItemInput = {
+  description: Scalars['String']['input'];
+  time: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type SocialMedia = {
@@ -311,6 +441,24 @@ export type UpdateBikeParkInput = {
   website?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateEventInput = {
+  capacity?: InputMaybe<Scalars['Int']['input']>;
+  category?: InputMaybe<EventCategory>;
+  date?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  endTime?: InputMaybe<Scalars['String']['input']>;
+  featured?: InputMaybe<Scalars['Boolean']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  organizer?: InputMaybe<OrganizerInput>;
+  price?: InputMaybe<Scalars['Float']['input']>;
+  registrationEndDate?: InputMaybe<Scalars['String']['input']>;
+  schedule?: InputMaybe<Array<ScheduleItemInput>>;
+  startTime?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  venue?: InputMaybe<VenueInput>;
+};
+
 export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
@@ -320,6 +468,19 @@ export type User = {
   role: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
+};
+
+export type Venue = {
+  __typename?: 'Venue';
+  address: Scalars['String']['output'];
+  mapImageUrl: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type VenueInput = {
+  address: Scalars['String']['input'];
+  mapImageUrl: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type ViewportInput = {
@@ -369,6 +530,20 @@ export type GetBikeParksByViewportQueryVariables = Exact<{
 
 export type GetBikeParksByViewportQuery = { __typename?: 'Query', bikeParksByViewport: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> };
 
+export type GetEventsQueryVariables = Exact<{
+  filter?: InputMaybe<EventFilter>;
+}>;
+
+
+export type GetEventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, attendeeCount: number, capacity: number, category: EventCategory, date: string, description: string, featured: boolean, imageUrl: string, location: string, price: number, title: string, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string } }> };
+
+export type GetEventQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetEventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', id: string, attendeeCount: number, capacity: number, category: EventCategory, date: string, description: string, featured: boolean, imageUrl: string, location: string, price: number, title: string, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string } } | null };
+
 export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __typename: NonNullable<T['__typename']> };
 
 export type GraphCacheKeysConfig = {
@@ -376,12 +551,16 @@ export type GraphCacheKeysConfig = {
   BikePark?: (data: WithTypename<BikePark>) => null | string,
   Contact?: (data: WithTypename<Contact>) => null | string,
   Coordinates?: (data: WithTypename<Coordinates>) => null | string,
+  Event?: (data: WithTypename<Event>) => null | string,
   OpeningHours?: (data: WithTypename<OpeningHours>) => null | string,
+  Organizer?: (data: WithTypename<Organizer>) => null | string,
   PaginatedBikeParks?: (data: WithTypename<PaginatedBikeParks>) => null | string,
   Price?: (data: WithTypename<Price>) => null | string,
   Review?: (data: WithTypename<Review>) => null | string,
+  ScheduleItem?: (data: WithTypename<ScheduleItem>) => null | string,
   SocialMedia?: (data: WithTypename<SocialMedia>) => null | string,
   User?: (data: WithTypename<User>) => null | string,
+  Venue?: (data: WithTypename<Venue>) => null | string,
   Weather?: (data: WithTypename<Weather>) => null | string,
   WeatherData?: (data: WithTypename<WeatherData>) => null | string
 }
@@ -391,6 +570,8 @@ export type GraphCacheResolvers = {
     bikePark?: GraphCacheResolver<WithTypename<Query>, QueryBikeParkArgs, WithTypename<BikePark> | string>,
     bikeParks?: GraphCacheResolver<WithTypename<Query>, QueryBikeParksArgs, WithTypename<PaginatedBikeParks> | string>,
     bikeParksByViewport?: GraphCacheResolver<WithTypename<Query>, QueryBikeParksByViewportArgs, Array<WithTypename<BikePark> | string>>,
+    event?: GraphCacheResolver<WithTypename<Query>, QueryEventArgs, WithTypename<Event> | string>,
+    events?: GraphCacheResolver<WithTypename<Query>, QueryEventsArgs, Array<WithTypename<Event> | string>>,
     me?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     reviews?: GraphCacheResolver<WithTypename<Query>, QueryReviewsArgs, Array<WithTypename<Review> | string>>,
     searchBikeParks?: GraphCacheResolver<WithTypename<Query>, QuerySearchBikeParksArgs, Array<WithTypename<BikePark> | string>>
@@ -435,6 +616,28 @@ export type GraphCacheResolvers = {
     latitude?: GraphCacheResolver<WithTypename<Coordinates>, Record<string, never>, Scalars['Float'] | string>,
     longitude?: GraphCacheResolver<WithTypename<Coordinates>, Record<string, never>, Scalars['Float'] | string>
   },
+  Event?: {
+    attendeeCount?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['Int'] | string>,
+    availableTickets?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['Int'] | string>,
+    capacity?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['Int'] | string>,
+    category?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, EventCategory | string>,
+    createdAt?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    date?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    description?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    endTime?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    featured?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['Boolean'] | string>,
+    id?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['ID'] | string>,
+    imageUrl?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    location?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    organizer?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, WithTypename<Organizer> | string>,
+    price?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['Float'] | string>,
+    registrationEndDate?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    schedule?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Array<WithTypename<ScheduleItem> | string>>,
+    startTime?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    title?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
+    venue?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, WithTypename<Venue> | string>
+  },
   OpeningHours?: {
     friday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
     monday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
@@ -443,6 +646,11 @@ export type GraphCacheResolvers = {
     thursday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
     tuesday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
     wednesday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>
+  },
+  Organizer?: {
+    description?: GraphCacheResolver<WithTypename<Organizer>, Record<string, never>, Scalars['String'] | string>,
+    imageUrl?: GraphCacheResolver<WithTypename<Organizer>, Record<string, never>, Scalars['String'] | string>,
+    name?: GraphCacheResolver<WithTypename<Organizer>, Record<string, never>, Scalars['String'] | string>
   },
   PaginatedBikeParks?: {
     bikeParks?: GraphCacheResolver<WithTypename<PaginatedBikeParks>, Record<string, never>, Array<WithTypename<BikePark> | string>>,
@@ -464,6 +672,11 @@ export type GraphCacheResolvers = {
     rating?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['Float'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>
   },
+  ScheduleItem?: {
+    description?: GraphCacheResolver<WithTypename<ScheduleItem>, Record<string, never>, Scalars['String'] | string>,
+    time?: GraphCacheResolver<WithTypename<ScheduleItem>, Record<string, never>, Scalars['String'] | string>,
+    title?: GraphCacheResolver<WithTypename<ScheduleItem>, Record<string, never>, Scalars['String'] | string>
+  },
   SocialMedia?: {
     facebook?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
     instagram?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
@@ -478,6 +691,11 @@ export type GraphCacheResolvers = {
     role?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     username?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
+  },
+  Venue?: {
+    address?: GraphCacheResolver<WithTypename<Venue>, Record<string, never>, Scalars['String'] | string>,
+    mapImageUrl?: GraphCacheResolver<WithTypename<Venue>, Record<string, never>, Scalars['String'] | string>,
+    name?: GraphCacheResolver<WithTypename<Venue>, Record<string, never>, Scalars['String'] | string>
   },
   Weather?: {
     current?: GraphCacheResolver<WithTypename<Weather>, Record<string, never>, Scalars['JSON'] | string>,
@@ -498,12 +716,16 @@ export type GraphCacheResolvers = {
 
 export type GraphCacheOptimisticUpdaters = {
   createBikePark?: GraphCacheOptimisticMutationResolver<MutationCreateBikeParkArgs, WithTypename<BikePark>>,
+  createEvent?: GraphCacheOptimisticMutationResolver<MutationCreateEventArgs, WithTypename<Event>>,
   createReview?: GraphCacheOptimisticMutationResolver<MutationCreateReviewArgs, WithTypename<Review>>,
   deleteBikePark?: GraphCacheOptimisticMutationResolver<MutationDeleteBikeParkArgs, Scalars['Boolean']>,
+  deleteEvent?: GraphCacheOptimisticMutationResolver<MutationDeleteEventArgs, Scalars['Boolean']>,
   deleteReview?: GraphCacheOptimisticMutationResolver<MutationDeleteReviewArgs, Scalars['Boolean']>,
   login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<AuthPayload>>,
   register?: GraphCacheOptimisticMutationResolver<MutationRegisterArgs, WithTypename<AuthPayload>>,
+  registerForEvent?: GraphCacheOptimisticMutationResolver<MutationRegisterForEventArgs, WithTypename<Event>>,
   updateBikePark?: GraphCacheOptimisticMutationResolver<MutationUpdateBikeParkArgs, WithTypename<BikePark>>,
+  updateEvent?: GraphCacheOptimisticMutationResolver<MutationUpdateEventArgs, WithTypename<Event>>,
   updateProfile?: GraphCacheOptimisticMutationResolver<MutationUpdateProfileArgs, WithTypename<User>>,
   updateReview?: GraphCacheOptimisticMutationResolver<MutationUpdateReviewArgs, WithTypename<Review>>
 };
@@ -513,18 +735,24 @@ export type GraphCacheUpdaters = {
     bikePark?: GraphCacheUpdateResolver<{ bikePark: Maybe<WithTypename<BikePark>> }, QueryBikeParkArgs>,
     bikeParks?: GraphCacheUpdateResolver<{ bikeParks: WithTypename<PaginatedBikeParks> }, QueryBikeParksArgs>,
     bikeParksByViewport?: GraphCacheUpdateResolver<{ bikeParksByViewport: Array<WithTypename<BikePark>> }, QueryBikeParksByViewportArgs>,
+    event?: GraphCacheUpdateResolver<{ event: Maybe<WithTypename<Event>> }, QueryEventArgs>,
+    events?: GraphCacheUpdateResolver<{ events: Array<WithTypename<Event>> }, QueryEventsArgs>,
     me?: GraphCacheUpdateResolver<{ me: Maybe<WithTypename<User>> }, Record<string, never>>,
     reviews?: GraphCacheUpdateResolver<{ reviews: Array<WithTypename<Review>> }, QueryReviewsArgs>,
     searchBikeParks?: GraphCacheUpdateResolver<{ searchBikeParks: Array<WithTypename<BikePark>> }, QuerySearchBikeParksArgs>
   },
   Mutation?: {
     createBikePark?: GraphCacheUpdateResolver<{ createBikePark: WithTypename<BikePark> }, MutationCreateBikeParkArgs>,
+    createEvent?: GraphCacheUpdateResolver<{ createEvent: WithTypename<Event> }, MutationCreateEventArgs>,
     createReview?: GraphCacheUpdateResolver<{ createReview: WithTypename<Review> }, MutationCreateReviewArgs>,
     deleteBikePark?: GraphCacheUpdateResolver<{ deleteBikePark: Scalars['Boolean'] }, MutationDeleteBikeParkArgs>,
+    deleteEvent?: GraphCacheUpdateResolver<{ deleteEvent: Scalars['Boolean'] }, MutationDeleteEventArgs>,
     deleteReview?: GraphCacheUpdateResolver<{ deleteReview: Scalars['Boolean'] }, MutationDeleteReviewArgs>,
     login?: GraphCacheUpdateResolver<{ login: WithTypename<AuthPayload> }, MutationLoginArgs>,
     register?: GraphCacheUpdateResolver<{ register: WithTypename<AuthPayload> }, MutationRegisterArgs>,
+    registerForEvent?: GraphCacheUpdateResolver<{ registerForEvent: WithTypename<Event> }, MutationRegisterForEventArgs>,
     updateBikePark?: GraphCacheUpdateResolver<{ updateBikePark: WithTypename<BikePark> }, MutationUpdateBikeParkArgs>,
+    updateEvent?: GraphCacheUpdateResolver<{ updateEvent: WithTypename<Event> }, MutationUpdateEventArgs>,
     updateProfile?: GraphCacheUpdateResolver<{ updateProfile: WithTypename<User> }, MutationUpdateProfileArgs>,
     updateReview?: GraphCacheUpdateResolver<{ updateReview: WithTypename<Review> }, MutationUpdateReviewArgs>
   },
@@ -569,6 +797,28 @@ export type GraphCacheUpdaters = {
     latitude?: GraphCacheUpdateResolver<Maybe<WithTypename<Coordinates>>, Record<string, never>>,
     longitude?: GraphCacheUpdateResolver<Maybe<WithTypename<Coordinates>>, Record<string, never>>
   },
+  Event?: {
+    attendeeCount?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    availableTickets?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    capacity?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    category?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    date?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    description?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    endTime?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    featured?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    imageUrl?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    location?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    organizer?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    price?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    registrationEndDate?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    schedule?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    startTime?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    title?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
+    venue?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>
+  },
   OpeningHours?: {
     friday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
     monday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
@@ -577,6 +827,11 @@ export type GraphCacheUpdaters = {
     thursday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
     tuesday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
     wednesday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>
+  },
+  Organizer?: {
+    description?: GraphCacheUpdateResolver<Maybe<WithTypename<Organizer>>, Record<string, never>>,
+    imageUrl?: GraphCacheUpdateResolver<Maybe<WithTypename<Organizer>>, Record<string, never>>,
+    name?: GraphCacheUpdateResolver<Maybe<WithTypename<Organizer>>, Record<string, never>>
   },
   PaginatedBikeParks?: {
     bikeParks?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedBikeParks>>, Record<string, never>>,
@@ -598,6 +853,11 @@ export type GraphCacheUpdaters = {
     rating?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
     updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>
   },
+  ScheduleItem?: {
+    description?: GraphCacheUpdateResolver<Maybe<WithTypename<ScheduleItem>>, Record<string, never>>,
+    time?: GraphCacheUpdateResolver<Maybe<WithTypename<ScheduleItem>>, Record<string, never>>,
+    title?: GraphCacheUpdateResolver<Maybe<WithTypename<ScheduleItem>>, Record<string, never>>
+  },
   SocialMedia?: {
     facebook?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
     instagram?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
@@ -612,6 +872,11 @@ export type GraphCacheUpdaters = {
     role?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     username?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>
+  },
+  Venue?: {
+    address?: GraphCacheUpdateResolver<Maybe<WithTypename<Venue>>, Record<string, never>>,
+    mapImageUrl?: GraphCacheUpdateResolver<Maybe<WithTypename<Venue>>, Record<string, never>>,
+    name?: GraphCacheUpdateResolver<Maybe<WithTypename<Venue>>, Record<string, never>>
   },
   Weather?: {
     current?: GraphCacheUpdateResolver<Maybe<WithTypename<Weather>>, Record<string, never>>,
@@ -746,10 +1011,64 @@ export const GetBikeParksByViewportDocument = gql`
 export function useGetBikeParksByViewportQuery(options: Omit<Urql.UseQueryArgs<GetBikeParksByViewportQueryVariables>, 'query'>) {
   return Urql.useQuery<GetBikeParksByViewportQuery, GetBikeParksByViewportQueryVariables>({ query: GetBikeParksByViewportDocument, ...options });
 };
+export const GetEventsDocument = gql`
+    query GetEvents($filter: EventFilter) {
+  events(filter: $filter) {
+    id
+    attendeeCount
+    capacity
+    category
+    date
+    description
+    featured
+    imageUrl
+    location
+    organizer {
+      name
+      description
+      imageUrl
+    }
+    price
+    title
+  }
+}
+    `;
+
+export function useGetEventsQuery(options?: Omit<Urql.UseQueryArgs<GetEventsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetEventsQuery, GetEventsQueryVariables>({ query: GetEventsDocument, ...options });
+};
+export const GetEventDocument = gql`
+    query GetEvent($id: ID!) {
+  event(id: $id) {
+    id
+    attendeeCount
+    capacity
+    category
+    date
+    description
+    featured
+    imageUrl
+    location
+    organizer {
+      name
+      description
+      imageUrl
+    }
+    price
+    title
+  }
+}
+    `;
+
+export function useGetEventQuery(options: Omit<Urql.UseQueryArgs<GetEventQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetEventQuery, GetEventQueryVariables>({ query: GetEventDocument, ...options });
+};
 export const namedOperations = {
   Query: {
     GetBikeParks: 'GetBikeParks',
     GetBikePark: 'GetBikePark',
-    GetBikeParksByViewport: 'GetBikeParksByViewport'
+    GetBikeParksByViewport: 'GetBikeParksByViewport',
+    GetEvents: 'GetEvents',
+    GetEvent: 'GetEvent'
   }
 }

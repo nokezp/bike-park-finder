@@ -15,14 +15,6 @@ export default [
         ecmaVersion: 'latest',
         sourceType: 'module',
       },
-      globals: {
-        console: 'readonly',
-        document: 'readonly',
-        window: 'readonly',
-        localStorage: 'readonly',
-        fetch: 'readonly',
-        React: 'readonly'
-      }
     },
     plugins: {
       '@typescript-eslint': tsPlugin,
@@ -37,7 +29,6 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'react/prop-types': 'off',
-      '@typescript-eslint/no-explicit-any': 'warn',
     },
     settings: {
       react: {

@@ -1,19 +1,25 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useBikePark } from '../hooks/useBikeParks';
 import moment from 'moment';
+import { GetBikeParkDocument } from '../lib/graphql/generated/graphql-operations';
+import { useQuery } from 'urql';
 
 const BikeParkDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
-  const { loading, bikePark, error } = useBikePark(id);
+  const [{ data, fetching, error }] = useQuery({
+    query: GetBikeParkDocument,
+    variables: { id },
+  });
 
-  const coordinates: [number, number] = useMemo(() => {
-    return [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude];
-  }, [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude]);
+  // const coordinates: [number, number] = useMemo(() => {
+  //   return [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude];
+  // }, [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude]);
+
+  const bikePark = data.bikePark;
 
   if (!id) return <div>Invalid bike park ID</div>;
-  if (loading) return <div>Loading...</div>;
+  if (fetching) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
   if (!bikePark) return <div>Bike park not found</div>;
 

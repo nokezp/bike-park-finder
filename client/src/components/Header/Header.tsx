@@ -1,62 +1,49 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaBars, FaTimes } from 'react-icons/fa';
+import Navigation from '../Navigation/Navigation';
+import MobileNavigation from './MobileNavigation';
 
-const Header: React.FC = () => {
-  const navigate = useNavigate();
-  const userAvatar = "https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"
-  const navItems = [
-    { label: 'Discover', route: '/discover' },
-    { label: 'Maps', route: '/maps' },
-    { label: 'Community', route: '/community' },
-    { label: 'Events', route: '/events' }
-  ];
-
-  const onNavigate = (route: string) => {
-    navigate(route);
-  };
-
-  const onSearch = () => {
-    navigate('/bike-parks');
-  };
+const Header = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-sm fixed w-full z-50">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center space-x-2" onClick={() => navigate("/")}>
-          <i className="fa-solid fa-mountain-sun text-2xl text-emerald-600"></i>
-          <span className="text-xl font-bold">Bike Park Finder</span>
-        </div>
-
-        {/* Navigation */}
-        <nav className="hidden md:flex space-x-6">
-          {navItems.map((item) => (
-            <span
-              key={item.route}
-              onClick={() => onNavigate(item.route)}
-              className="text-gray-600 hover:text-emerald-600 cursor-pointer transition-colors duration-200"
-            >
-              {item.label}
+    <header className="bg-white shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center">
+            <img
+              className="h-8 w-auto"
+              src="/logo.svg"
+              alt="Bike Park Finder"
+            />
+            <span className="ml-2 text-xl font-bold text-gray-900">
+              Bike Park Finder
             </span>
-          ))}
-        </nav>
+          </Link>
 
-        {/* User Actions */}
-        <div className="flex items-center space-x-4">
-          <button 
-            className="text-gray-600 hover:text-emerald-600 transition-colors duration-200"
-            onClick={onSearch}
-            aria-label="Search"
+          {/* Navigation */}
+          <Navigation />
+
+          {/* Mobile menu button */}
+          <button
+            type="button"
+            className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-emerald-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <i className="fa-solid fa-magnifying-glass text-xl"></i>
+            <span className="sr-only">Open main menu</span>
+            {isMenuOpen ? (
+              <FaTimes className="block h-6 w-6" />
+            ) : (
+              <FaBars className="block h-6 w-6" />
+            )}
           </button>
-          <img 
-            src={userAvatar}
-            className="w-8 h-8 rounded-full cursor-pointer"
-            alt="User avatar"
-          />
         </div>
       </div>
+
+      {/* Mobile menu */}
+      {isMenuOpen && <MobileNavigation onClose={() => setIsMenuOpen(false)} />}
     </header>
   );
 };

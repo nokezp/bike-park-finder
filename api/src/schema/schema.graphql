@@ -96,6 +96,72 @@ type Review {
   updatedAt: String
 }
 
+type Event {
+  id: ID!
+  title: String!
+  date: String!
+  startTime: String!
+  endTime: String!
+  location: String!
+  category: EventCategory!
+  price: Float!
+  imageUrl: String!
+  description: String!
+  capacity: Int!
+  registrationEndDate: String!
+  availableTickets: Int!
+  attendeeCount: Int!
+  featured: Boolean!
+  organizer: Organizer!
+  schedule: [ScheduleItem!]!
+  venue: Venue!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Organizer {
+  name: String!
+  description: String!
+  imageUrl: String!
+}
+
+type ScheduleItem {
+  time: String!
+  title: String!
+  description: String!
+}
+
+type Venue {
+  name: String!
+  address: String!
+  mapImageUrl: String!
+}
+
+enum EventCategory {
+  CHAMPIONSHIP
+  WORKSHOP
+  FESTIVAL
+  GROUP_RIDE
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+input EventFilter {
+  search: String
+  category: EventCategory
+  location: String
+  startDate: String
+  endDate: String
+  minPrice: Float
+  maxPrice: Float
+  featured: Boolean
+}
+
 type Query {
   me: User
   bikeParks(filter: BikeParkFilter, pagination: PaginationInput!): PaginatedBikeParks!
@@ -103,6 +169,8 @@ type Query {
   reviews(bikeParkId: ID!): [Review!]!
   searchBikeParks(query: String!): [BikePark!]!
   bikeParksByViewport(viewport: ViewportInput!, searchQuery: String): [BikePark!]!
+  events(filter: EventFilter): [Event!]!
+  event(id: ID!): Event
 }
 
 type Mutation {
@@ -134,6 +202,10 @@ type Mutation {
   createReview(bikeParkId: ID!, rating: Float!, comment: String!): Review!
   updateReview(id: ID!, rating: Float, comment: String): Review!
   deleteReview(id: ID!): Boolean!
+  createEvent(input: CreateEventInput!): Event!
+  updateEvent(id: ID!, input: UpdateEventInput!): Event!
+  deleteEvent(id: ID!): Boolean!
+  registerForEvent(id: ID!): Event!
 }
 
 type AuthPayload {
@@ -226,6 +298,60 @@ type PaginatedBikeParks {
   currentPage: Int!
   totalPages: Int!
   hasNextPage: Boolean!
+}
+
+input CreateEventInput {
+  title: String!
+  date: String!
+  startTime: String!
+  endTime: String!
+  location: String!
+  category: EventCategory!
+  price: Float!
+  imageUrl: String!
+  description: String!
+  capacity: Int!
+  registrationEndDate: String!
+  featured: Boolean
+  organizer: OrganizerInput!
+  schedule: [ScheduleItemInput!]!
+  venue: VenueInput!
+}
+
+input UpdateEventInput {
+  title: String
+  date: String
+  startTime: String
+  endTime: String
+  location: String
+  category: EventCategory
+  price: Float
+  imageUrl: String
+  description: String
+  capacity: Int
+  registrationEndDate: String
+  featured: Boolean
+  organizer: OrganizerInput
+  schedule: [ScheduleItemInput!]
+  venue: VenueInput
+}
+
+input OrganizerInput {
+  name: String!
+  description: String!
+  imageUrl: String!
+}
+
+input ScheduleItemInput {
+  time: String!
+  title: String!
+  description: String!
+}
+
+input VenueInput {
+  name: String!
+  address: String!
+  mapImageUrl: String!
 }
 
 scalar JSON 
