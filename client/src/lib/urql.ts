@@ -21,7 +21,7 @@ export const client = createClient({
   fetchOptions: () => {
     let token = '';
     if (typeof window !== 'undefined') {
-      token = localStorage.getItem('token') || '';
+      // token = localStorage.getItem('token') || '';
     }
     return {
       headers: {

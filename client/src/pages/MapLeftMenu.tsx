@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BikePark, BikeParkFilter, GetBikeParksDocument } from '../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 
@@ -45,6 +45,7 @@ const MapLeftMenu: React.FC<{
     coordinates: null,
     difficulty: 'All',
   });
+  
   const [{ data, fetching }] = useQuery({
     query: GetBikeParksDocument,
     variables: {

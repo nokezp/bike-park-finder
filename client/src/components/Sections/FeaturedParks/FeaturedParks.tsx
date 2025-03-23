@@ -2,7 +2,8 @@ import React from 'react';
 import ParkCard, { ParkCardProps } from './ParkCard';
 import { getRandomColor } from '../../../utils/colors';
 import { useNavigate } from 'react-router-dom';
-import { useBikeParks } from '../../../hooks/useBikeParks';
+import { GetBikeParksDocument } from '../../../lib/graphql/generated/graphql-operations';
+import { useQuery } from 'urql';
 
 const FeaturedParks: React.FC = () => {
   const navigate = useNavigate();
@@ -13,14 +14,19 @@ const FeaturedParks: React.FC = () => {
     navigate(`/bike-parks/${bikeParkId}`);
   };
 
-  const { bikeParks } = useBikeParks(
-    {
-      location: '',
-      name: '',
-      difficulty: '',
+  const [{ data }] = useQuery({
+    query: GetBikeParksDocument,
+    variables: {
+      filter: {
+        location: '',
+        name: '',
+        difficulty: '',
+      },
+      pagination: { page: 1, limit: 3 },
     },
-    { page: 1, limit: 3 },
-  );
+  });
+
+  const bikeParks = data?.bikeParks;
 
   const parks = bikeParks?.map((park: any) => ({
     id: park.id,
