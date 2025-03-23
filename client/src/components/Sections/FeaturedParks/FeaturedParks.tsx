@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ParkCard, { ParkCardProps } from './ParkCard';
 import { getRandomColor } from '../../../utils/colors';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,7 @@ import { useBikeParks } from '../../../hooks/useBikeParks';
 const FeaturedParks: React.FC = () => {
   const navigate = useNavigate();
 
-  const title = "Popular Bike Parks"
+  const title = 'Popular Bike Parks';
 
   const handleViewDetails = (bikeParkId: string) => {
     navigate(`/bike-parks/${bikeParkId}`);
@@ -19,7 +19,7 @@ const FeaturedParks: React.FC = () => {
       name: '',
       difficulty: '',
     },
-    { page: 1, limit: 3 }
+    { page: 1, limit: 3 },
   );
 
   const parks = bikeParks?.map((park: any) => ({
@@ -30,7 +30,7 @@ const FeaturedParks: React.FC = () => {
     location: park.location,
     tags: park.features?.map((feature: string) => ({
       label: feature,
-      color: getRandomColor()
+      color: getRandomColor(),
     })),
     temperature: park.weather?.current?.temperature,
   }));
@@ -41,11 +41,7 @@ const FeaturedParks: React.FC = () => {
         <h2 className="text-2xl font-bold mb-8">{title}</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {parks?.map((park: ParkCardProps) => (
-            <ParkCard
-              key={park.id}
-              {...park}
-              onViewDetails={handleViewDetails}
-            />
+            <ParkCard key={park.id} {...park} onViewDetails={handleViewDetails} />
           ))}
         </div>
       </div>
@@ -53,4 +49,4 @@ const FeaturedParks: React.FC = () => {
   );
 };
 
-export default FeaturedParks; 
+export default FeaturedParks;

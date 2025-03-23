@@ -227,6 +227,7 @@ export type Query = {
   __typename?: 'Query';
   bikePark?: Maybe<BikePark>;
   bikeParks: PaginatedBikeParks;
+  bikeParksByViewport: Array<BikePark>;
   me?: Maybe<User>;
   reviews: Array<Review>;
   searchBikeParks: Array<BikePark>;
@@ -241,6 +242,12 @@ export type QueryBikeParkArgs = {
 export type QueryBikeParksArgs = {
   filter?: InputMaybe<BikeParkFilter>;
   pagination: PaginationInput;
+};
+
+
+export type QueryBikeParksByViewportArgs = {
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
+  viewport: ViewportInput;
 };
 
 
@@ -309,6 +316,11 @@ export type User = {
   role: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
+};
+
+export type ViewportInput = {
+  northEast: CoordinatesInput;
+  southWest: CoordinatesInput;
 };
 
 export type Weather = {
@@ -428,6 +440,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   UpdateBikeParkInput: UpdateBikeParkInput;
   User: ResolverTypeWrapper<User>;
+  ViewportInput: ViewportInput;
   Weather: ResolverTypeWrapper<Weather>;
   WeatherData: ResolverTypeWrapper<WeatherData>;
 };
@@ -461,6 +474,7 @@ export type ResolversParentTypes = {
   String: Scalars['String']['output'];
   UpdateBikeParkInput: UpdateBikeParkInput;
   User: User;
+  ViewportInput: ViewportInput;
   Weather: Weather;
   WeatherData: WeatherData;
 };
@@ -558,6 +572,7 @@ export type PriceResolvers<ContextType = any, ParentType extends ResolversParent
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   bikePark?: Resolver<Maybe<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParkArgs, 'id'>>;
   bikeParks?: Resolver<ResolversTypes['PaginatedBikeParks'], ParentType, ContextType, RequireFields<QueryBikeParksArgs, 'pagination'>>;
+  bikeParksByViewport?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParksByViewportArgs, 'viewport'>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   reviews?: Resolver<Array<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
   searchBikeParks?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QuerySearchBikeParksArgs, 'query'>>;
