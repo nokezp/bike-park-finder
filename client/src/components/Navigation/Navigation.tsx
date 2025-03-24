@@ -13,6 +13,7 @@ const Navigation = () => {
     { path: '/bike-parks', label: 'Bike Parks' },
     { path: '/maps', label: 'Maps' },
     { path: '/events', label: 'Events' },
+    // { path: '/community', label: 'Community' },
     { path: '/about', label: 'About' },
   ];
 
