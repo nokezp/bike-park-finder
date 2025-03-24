@@ -36,7 +36,7 @@ export type BikePark = {
   createdAt: Scalars['String']['output'];
   createdBy: Scalars['ID']['output'];
   description?: Maybe<Scalars['String']['output']>;
-  difficulty?: Maybe<Scalars['String']['output']>;
+  difficulty?: Maybe<Difficulty>;
   facilities?: Maybe<Array<Scalars['String']['output']>>;
   features?: Maybe<Array<Scalars['String']['output']>>;
   id: Scalars['ID']['output'];
@@ -51,7 +51,7 @@ export type BikePark = {
   reviews?: Maybe<Array<Review>>;
   rules?: Maybe<Array<Scalars['String']['output']>>;
   socialMedia?: Maybe<SocialMedia>;
-  status?: Maybe<Scalars['String']['output']>;
+  status?: Maybe<BikeParkStatus>;
   updatedAt?: Maybe<Scalars['String']['output']>;
   videos?: Maybe<Array<Scalars['String']['output']>>;
   weather?: Maybe<Weather>;
@@ -61,12 +61,18 @@ export type BikePark = {
 export type BikeParkFilter = {
   amenities?: InputMaybe<Array<Scalars['String']['input']>>;
   coordinates?: InputMaybe<CoordinatesSearchInput>;
-  difficulty?: InputMaybe<Scalars['String']['input']>;
+  difficulty?: InputMaybe<Difficulty>;
   features?: InputMaybe<Array<Scalars['String']['input']>>;
   location?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   sortBy?: InputMaybe<Scalars['String']['input']>;
 };
+
+export enum BikeParkStatus {
+  Closed = 'CLOSED',
+  Maintenance = 'MAINTENANCE',
+  Open = 'OPEN'
+}
 
 export type Contact = {
   __typename?: 'Contact';
@@ -113,6 +119,12 @@ export type CreateEventInput = {
   title: Scalars['String']['input'];
   venue: VenueInput;
 };
+
+export enum Difficulty {
+  Beginner = 'BEGINNER',
+  Expert = 'EXPERT',
+  Intermediate = 'INTERMEDIATE'
+}
 
 export type Event = {
   __typename?: 'Event';
@@ -186,7 +198,7 @@ export type MutationCreateBikeParkArgs = {
   contact?: InputMaybe<ContactInput>;
   coordinates?: InputMaybe<CoordinatesInput>;
   description?: InputMaybe<Scalars['String']['input']>;
-  difficulty?: InputMaybe<Scalars['String']['input']>;
+  difficulty?: InputMaybe<Difficulty>;
   facilities?: InputMaybe<Array<Scalars['String']['input']>>;
   features?: InputMaybe<Array<Scalars['String']['input']>>;
   imageUrl?: InputMaybe<Scalars['String']['input']>;
@@ -425,7 +437,7 @@ export type UpdateBikeParkInput = {
   contact?: InputMaybe<ContactInput>;
   coordinates?: InputMaybe<CoordinatesInput>;
   description?: InputMaybe<Scalars['String']['input']>;
-  difficulty?: InputMaybe<Scalars['String']['input']>;
+  difficulty?: InputMaybe<Difficulty>;
   facilities?: InputMaybe<Array<Scalars['String']['input']>>;
   features?: InputMaybe<Array<Scalars['String']['input']>>;
   imageUrl?: InputMaybe<Scalars['String']['input']>;
@@ -536,14 +548,14 @@ export type GetBikeParksQueryVariables = Exact<{
 }>;
 
 
-export type GetBikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> } };
+export type GetBikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, difficulty?: Difficulty | null, status?: BikeParkStatus | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> } };
 
 export type GetBikeParkQueryVariables = Exact<{
   id: Scalars['ID']['input'];
 }>;
 
 
-export type GetBikeParkQuery = { __typename?: 'Query', bikePark?: { __typename?: 'BikePark', id: string, name: string, description?: string | null, difficulty?: string | null, facilities?: Array<string> | null, features?: Array<string> | null, imageUrl?: string | null, location?: string | null, photos?: Array<string> | null, rating?: number | null, rules?: Array<string> | null, status?: string | null, videos?: Array<string> | null, website?: string | null, contact?: { __typename?: 'Contact', email?: string | null, phone?: string | null } | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, openingHours?: { __typename?: 'OpeningHours', friday?: string | null, monday?: string | null, saturday?: string | null, sunday?: string | null, thursday?: string | null, tuesday?: string | null, wednesday?: string | null } | null, price?: { __typename?: 'Price', amount: number, currency: string } | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null } | null, weather?: { __typename?: 'Weather', current?: any | null, forecast?: any | null } | null } | null };
+export type GetBikeParkQuery = { __typename?: 'Query', bikePark?: { __typename?: 'BikePark', id: string, name: string, description?: string | null, difficulty?: Difficulty | null, facilities?: Array<string> | null, features?: Array<string> | null, imageUrl?: string | null, location?: string | null, photos?: Array<string> | null, rating?: number | null, rules?: Array<string> | null, status?: BikeParkStatus | null, videos?: Array<string> | null, website?: string | null, contact?: { __typename?: 'Contact', email?: string | null, phone?: string | null } | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, openingHours?: { __typename?: 'OpeningHours', friday?: string | null, monday?: string | null, saturday?: string | null, sunday?: string | null, thursday?: string | null, tuesday?: string | null, wednesday?: string | null } | null, price?: { __typename?: 'Price', amount: number, currency: string } | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null } | null, weather?: { __typename?: 'Weather', current?: any | null, forecast?: any | null } | null } | null };
 
 export type GetBikeParksByViewportQueryVariables = Exact<{
   viewport: ViewportInput;
@@ -551,7 +563,7 @@ export type GetBikeParksByViewportQueryVariables = Exact<{
 }>;
 
 
-export type GetBikeParksByViewportQuery = { __typename?: 'Query', bikeParksByViewport: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> };
+export type GetBikeParksByViewportQuery = { __typename?: 'Query', bikeParksByViewport: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, difficulty?: Difficulty | null, status?: BikeParkStatus | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> };
 
 export type GetEventsQueryVariables = Exact<{
   filter?: InputMaybe<EventFilter>;
@@ -610,7 +622,7 @@ export type GraphCacheResolvers = {
     createdAt?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
     createdBy?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['ID'] | string>,
     description?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
-    difficulty?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    difficulty?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Difficulty | string>,
     facilities?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
     features?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
     id?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['ID'] | string>,
@@ -625,7 +637,7 @@ export type GraphCacheResolvers = {
     reviews?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<WithTypename<Review> | string>>,
     rules?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
     socialMedia?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<SocialMedia> | string>,
-    status?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    status?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, BikeParkStatus | string>,
     updatedAt?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
     videos?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
     weather?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Weather> | string>,

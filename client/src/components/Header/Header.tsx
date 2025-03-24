@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import Navigation from '../Navigation/Navigation';
-import MobileNavigation from './MobileNavigation';
+import Navigation from './Navigation/Navigation';
+import MobileNavigation from './Navigation/MobileNavigation';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

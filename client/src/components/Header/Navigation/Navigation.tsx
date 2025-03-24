@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from 'urql';
-import { MeDocument, MeQuery } from '../../lib/graphql/generated/graphql-operations';
+import { MeDocument, MeQuery } from '../../../lib/graphql/generated/graphql-operations';
 
 const Navigation = () => {
   const location = useLocation();

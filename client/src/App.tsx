@@ -4,7 +4,7 @@ import EventsPage from './pages/EventsPage';
 import EventDetailPage from './pages/EventDetailPage';
 import { UrqlProvider } from './components/UrqlProvider';
 import LandingPage from './pages/LandingPage';
-import BikeParkPage from './pages/BikeParkPage';
+import BikeParksPage from './pages/BikeParksPage';
 import BikeParkDetailPage from './pages/BikeParkDetailPage';
 import { MapsPage } from './pages/MapsPage';
 import Header from './components/Header/Header';
@@ -24,7 +24,7 @@ const App: React.FC = () => {
           <div className="flex-grow">
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/bike-parks" element={<BikeParkPage />} />
+              <Route path="/bike-parks" element={<BikeParksPage />} />
               <Route path="/bike-parks/:id" element={<BikeParkDetailPage />} />
               <Route path="/events" element={<EventsPage />} />
               <Route path="/maps" element={<MapsPage />} />
