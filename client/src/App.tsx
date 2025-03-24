@@ -7,11 +7,12 @@ import LandingPage from './pages/LandingPage';
 import BikeParkPage from './pages/BikeParkPage';
 import BikeParkDetailPage from './pages/BikeParkDetailPage';
 import { MapsPage } from './pages/MapsPage';
-// import Layout from './components/Layout';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
-// import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
+import CreateUserPage from './pages/CreateUserPage';
+import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
 
 const App: React.FC = () => {
   return (
@@ -21,7 +22,6 @@ const App: React.FC = () => {
           <Header />
           <div className="flex-grow">
             <Routes>
-              {/* <Route element={<Layout />}> */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/bike-parks" element={<BikeParkPage />} />
               <Route path="/bike-parks/:id" element={<BikeParkDetailPage />} />
@@ -29,7 +29,9 @@ const App: React.FC = () => {
               <Route path="/maps" element={<MapsPage />} />
               <Route path="/events/:id" element={<EventDetailPage />} />
               <Route path="/about" element={<AboutPage />} />
-              {/* </Route> */}
+              <Route path="/register" element={<CreateUserPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path='/user-account' element={<ProfilePage />} />
             </Routes>
           </div>
           <Footer />

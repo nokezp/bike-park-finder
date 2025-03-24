@@ -2,16 +2,13 @@ import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/index.js';
 import { AuthContext } from '../utils/auth.js';
+import { JWT_SECRET, JWT_EXPIRES_IN } from '../utils/auth.js';
 
 // User object with optional password field
 interface UserObject {
   password?: string;
   [key: string]: any;
 }
-
-// JWT configuration
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-const JWT_EXPIRES_IN = '7d';
 
 export const authResolvers = {
   Query: {
@@ -57,11 +54,7 @@ export const authResolvers = {
         await user.save();
 
         // Generate JWT token
-        const token = jwt.sign(
-          { id: user._id, role: user.role },
-          JWT_SECRET,
-          { expiresIn: JWT_EXPIRES_IN }
-        );
+        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
         // Remove password from response
         const userObj = user.toObject() as UserObject;
@@ -93,11 +86,7 @@ export const authResolvers = {
         }
 
         // Generate JWT token
-        const token = jwt.sign(
-          { id: user._id, role: user.role },
-          JWT_SECRET,
-          { expiresIn: JWT_EXPIRES_IN }
-        );
+        const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
         // Remove password from response
         const userObj = user.toObject() as UserObject;
@@ -134,4 +123,4 @@ export const authResolvers = {
       }
     },
   },
-}; 
+};

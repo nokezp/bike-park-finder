@@ -104,7 +104,7 @@ const EventDetailPage: React.FC = () => {
                 <div className="border-t pt-6">
                   <h3 className="font-bold text-lg mb-4">Event Schedule</h3>
                   <div className="space-y-4">
-                    {event.schedule?.map((item, index) => (
+                    {/* {event.schedule?.map((item:, index) => (
                       <div key={index} className="flex">
                         <div className="w-32 text-gray-500">{formatTime(item.time)}</div>
                         <div>
@@ -112,7 +112,7 @@ const EventDetailPage: React.FC = () => {
                           <div className="text-gray-600">{item.description}</div>
                         </div>
                       </div>
-                    ))}
+                    ))} */}
                   </div>
                 </div>
               </div>

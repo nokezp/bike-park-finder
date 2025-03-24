@@ -1,6 +1,6 @@
 import { gql } from 'urql';
 
-const GetEventsDocument = gql(`
+export const GetEventsDocument = gql(`
   query GetEvents($filter: EventFilter) {
     events(filter: $filter) {
       id
@@ -23,7 +23,7 @@ const GetEventsDocument = gql(`
   }
 `);
 
-const GetEventDocument = gql(`
+export const GetEventDocument = gql(`
   query GetEvent($id: ID!) {
     event(id: $id) {
       id
