@@ -1,6 +1,6 @@
 import { gql } from 'urql';
 
-const GetBikeParksDocument = gql(`
+export const GetBikeParksDocument = gql(`
   query GetBikeParks($filter: BikeParkFilter, $pagination: PaginationInput!) {
     bikeParks(filter: $filter, pagination: $pagination) {
       bikeParks {
@@ -27,7 +27,7 @@ const GetBikeParksDocument = gql(`
   }
 `);
 
-const GetBikeParkDocument = gql(`
+export const GetBikeParkDocument = gql(`
   query GetBikePark($id: ID!) {
     bikePark(id: $id) {
       id
@@ -79,23 +79,23 @@ const GetBikeParkDocument = gql(`
   }
 `);
 
-const GetBikeParksByViewportDocument = gql(`
+export const GetBikeParksByViewportDocument = gql(`
   query GetBikeParksByViewport($viewport: ViewportInput!, $searchQuery: String) {
-  bikeParksByViewport(viewport: $viewport, searchQuery: $searchQuery) {
-    id
-    name
-    description
-    location
-    difficulty
-    status
-    features
-    createdAt
-    updatedAt
-    createdBy
-    coordinates {
-      latitude
-      longitude
+    bikeParksByViewport(viewport: $viewport, searchQuery: $searchQuery) {
+      id
+      name
+      description
+      location
+      difficulty
+      status
+      features
+      createdAt
+      updatedAt
+      createdBy
+      coordinates {
+        latitude
+        longitude
+      }
     }
   }
-}
 `);

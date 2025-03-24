@@ -507,6 +507,29 @@ export type WeatherData = {
   windSpeed: Scalars['Float']['output'];
 };
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name?: string | null, username: string, email: string, createdAt: string, updatedAt: string } | null };
+
+export type LoginMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthPayload', token: string } };
+
+export type RegisterMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  username: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+}>;
+
+
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'AuthPayload', token: string } };
+
 export type GetBikeParksQueryVariables = Exact<{
   filter?: InputMaybe<BikeParkFilter>;
   pagination: PaginationInput;
@@ -902,6 +925,44 @@ export type GraphCacheConfig = Parameters<typeof cacheExchange>[0] & {
   resolvers?: GraphCacheResolvers,
 };
 
+export const MeDocument = gql`
+    query Me {
+  me {
+    id
+    name
+    username
+    email
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
+  return Urql.useQuery<MeQuery, MeQueryVariables>({ query: MeDocument, ...options });
+};
+export const LoginDocument = gql`
+    mutation Login($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    token
+  }
+}
+    `;
+
+export function useLoginMutation() {
+  return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const RegisterDocument = gql`
+    mutation Register($email: String!, $password: String!, $username: String!, $name: String!) {
+  register(email: $email, password: $password, username: $username, name: $name) {
+    token
+  }
+}
+    `;
+
+export function useRegisterMutation() {
+  return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
 export const GetBikeParksDocument = gql`
     query GetBikeParks($filter: BikeParkFilter, $pagination: PaginationInput!) {
   bikeParks(filter: $filter, pagination: $pagination) {
@@ -1065,10 +1126,15 @@ export function useGetEventQuery(options: Omit<Urql.UseQueryArgs<GetEventQueryVa
 };
 export const namedOperations = {
   Query: {
+    Me: 'Me',
     GetBikeParks: 'GetBikeParks',
     GetBikePark: 'GetBikePark',
     GetBikeParksByViewport: 'GetBikeParksByViewport',
     GetEvents: 'GetEvents',
     GetEvent: 'GetEvent'
+  },
+  Mutation: {
+    Login: 'Login',
+    Register: 'Register'
   }
 }
