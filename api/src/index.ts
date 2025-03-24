@@ -19,10 +19,10 @@ const PORT = process.env.PORT || 4000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder';
 
 // Log environment information for debugging
-Logger.debug('Starting server with environment:', { 
+Logger.debug('Starting server with environment:', {
   NODE_ENV: process.env.NODE_ENV,
   PORT,
-  MONGODB_URI: MONGODB_URI.replace(/mongodb:\/\/.*@/, 'mongodb://[redacted]@') // Redact credentials
+  MONGODB_URI: MONGODB_URI.replace(/mongodb:\/\/.*@/, 'mongodb://[redacted]@'),
 });
 
 // Create executable schema
@@ -34,19 +34,17 @@ const schema = makeExecutableSchema({
 // Create GraphQL Yoga server
 const yoga = createYoga({
   schema,
-  context: createContext,
+  context: async ({ request }) => {
+    const auth = request.headers.get('authorization');
+    return createContext({ auth });
+  },
   graphiql: true,
   cors: {
     origin: ['http://localhost:3000', 'http://localhost:5173'],
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['POST', 'OPTIONS', 'GET', 'HEAD'],
   },
-  // Add logging for GraphQL operations
-  logging: {
-    debug: (...args) => Logger.debug('GraphQL Debug:', ...args),
-    info: (...args) => Logger.info('GraphQL Info: ' + args.join(' ')),
-    warn: (...args) => Logger.error('GraphQL Warning: ' + args.join(' ')),
-    error: (...args) => Logger.error('GraphQL Error: ' + args.join(' ')),
-  }
 });
 
 // Create HTTP server
@@ -63,7 +61,8 @@ const startServer = () => {
 };
 
 // Connect to MongoDB
-mongoose.connect(MONGODB_URI)
+mongoose
+  .connect(MONGODB_URI)
   .then(() => {
     Logger.info('✅ Connected to MongoDB');
     startServer();
@@ -72,4 +71,4 @@ mongoose.connect(MONGODB_URI)
     Logger.error('⚠️  Failed to connect to MongoDB:', error);
     Logger.info('🔄 Starting server with mock data...');
     startServer();
-  }); 
+  });

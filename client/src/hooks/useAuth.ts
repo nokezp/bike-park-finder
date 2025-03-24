@@ -1,71 +1,30 @@
-// import { useCallback } from 'react';
-// import { gql, useMutation } from 'urql';
-// // import { gql } from '../gql/gql';
+import { gql } from 'urql';
 
-// const LoginDocument = gql(`
-//   mutation Login($input: LoginInput!) {
-//     login(input: $input) {
-//       token
-//       user {
-//         id
-//         username
-//         email
-//         role
-//       }
-//     }
-//   }
-// `);
+export const MeDocument = gql(`
+  query Me {
+    me {
+      id
+      name
+      username
+      email
+      createdAt
+      updatedAt
+    }
+  }
+`);
 
-// const RegisterDocument = gql(`
-//   mutation Register($input: RegisterInput!) {
-//     register(input: $input) {
-//       token
-//       user {
-//         id
-//         username
-//         email
-//         role
-//       }
-//     }
-//   }
-// `);
+export const LoginDocument = gql(`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+    }
+  }
+`);
 
-// export function useAuth() {
-//   const [{ data: loginData, error: loginError }, login] = useMutation(LoginDocument);
-//   const [{ data: registerData, error: registerError }, register] = useMutation(RegisterDocument);
-
-//   const handleLogin = useCallback(
-//     async (email: string, password: string) => {
-//       const result = await login({ input: { email, password } });
-//       if (result.data?.login.token) {
-//         localStorage.setItem('token', result.data.login.token);
-//       }
-//       return result;
-//     },
-//     [login]
-//   );
-
-//   const handleRegister = useCallback(
-//     async (username: string, email: string, password: string) => {
-//       const result = await register({ input: { username, email, password } });
-//       if (result.data?.register.token) {
-//         localStorage.setItem('token', result.data.register.token);
-//       }
-//       return result;
-//     },
-//     [register]
-//   );
-
-//   const logout = useCallback(() => {
-//     localStorage.removeItem('token');
-//   }, []);
-
-//   return {
-//     login: handleLogin,
-//     register: handleRegister,
-//     logout,
-//     loginError,
-//     registerError,
-//     isAuthenticated: !!localStorage.getItem('token'),
-//   };
-// } 
+export const RegisterDocument = gql(`
+  mutation Register($email: String!, $password: String!, $username: String!, $name: String!) {
+    register(email: $email, password: $password, username: $username, name: $name) {
+      token
+    }
+  }
+`);

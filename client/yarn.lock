@@ -1799,6 +1799,14 @@
     "@0no-co/graphql.web" "^1.0.5"
     wonka "^6.3.2"
 
+"@urql/exchange-auth@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.npmjs.org/@urql/exchange-auth/-/exchange-auth-2.2.1.tgz#2e6f7b4ff008f0a3f6e5a1c80f0659d1d0856321"
+  integrity sha512-n4xUxxjvY36GJh539sLaPFyvFzreADOv8EFQdTiXOCIRVoXXhWVVI7DjY/HNtLICfbg1+UlbvQ7sNkwaBouDHg==
+  dependencies:
+    "@urql/core" "^5.1.1"
+    wonka "^6.3.2"
+
 "@urql/exchange-graphcache@^4.0.0":
   version "4.4.3"
   resolved "https://registry.npmjs.org/@urql/exchange-graphcache/-/exchange-graphcache-4.4.3.tgz#3c8295a16c730918e1d01de42a2f180a777b98ca"

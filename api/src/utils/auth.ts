@@ -1,9 +1,9 @@
-import { IncomingMessage } from 'node:http';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/index.js';
 
-// JWT secret from environment variables
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+// JWT configuration
+export const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+export const JWT_EXPIRES_IN = '7d';
 
 // Context interface
 export interface AuthContext {
@@ -14,37 +14,35 @@ export interface AuthContext {
 }
 
 // Create GraphQL context with user authentication
-export async function createContext({ request }: { request: IncomingMessage }): Promise<AuthContext> {
-  // Get authorization header
-  const auth = request.headers.authorization || '';
-
-  // Check for Bearer token
-  if (!auth || !auth.startsWith('Bearer ')) {
-    return { user: null };
-  }
-
+export async function createContext({ auth }: { auth: string | null }): Promise<AuthContext> {
   try {
+    // Check for Bearer token
+    if (!auth || !auth.startsWith('Bearer ')) {
+      return { user: null };
+    }
+
     // Extract token
     const token = auth.split(' ')[1];
-    
+
     // Verify token
     const decoded = jwt.verify(token, JWT_SECRET) as { id: string; role: string };
-    
+
     // Find user
     const userDoc = await User.findById(decoded.id);
     if (!userDoc) {
       return { user: null };
     }
-    
+
     // Return user context
-    return {
+    const context = {
       user: {
-        id: userDoc.id, // Mongoose documents have an id getter
-        role: userDoc.get('role') as string
-      }
+        id: userDoc.id,
+        role: userDoc.get('role') as string,
+      },
     };
+    return context;
   } catch (err) {
     // Return null if token is invalid
     return { user: null };
   }
-} 
+}
