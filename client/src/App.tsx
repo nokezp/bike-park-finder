@@ -13,6 +13,7 @@ import AboutPage from './pages/AboutPage';
 import CreateUserPage from './pages/CreateUserPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
+import CommunityPage from './pages/CommunityPage';
 
 const App: React.FC = () => {
   return (
@@ -32,6 +33,7 @@ const App: React.FC = () => {
               <Route path="/register" element={<CreateUserPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path='/user-account' element={<ProfilePage />} />
+              <Route path='/community' element={<CommunityPage />} />
             </Routes>
           </div>
           <Footer />

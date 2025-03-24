@@ -1,13 +1,56 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
-import { GetBikeParkDocument } from '../lib/graphql/generated/graphql-operations';
+import { GetBikeParkDocument, GetBikeParkQuery } from '../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
+
+interface Review {
+  id: string;
+  author: {
+    name: string;
+    avatar: string;
+  };
+  rating: number;
+  content: string;
+  date: string;
+}
+
+interface Trail {
+  id: string;
+  name: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  length: string;
+  elevation: string;
+  type: string;
+}
+
+interface BikePark {
+  id: string;
+  name: string;
+  location: string;
+  description: string;
+  rating: number;
+  reviewCount: number;
+  mainImage: string;
+  galleryImages: string[];
+  features: string[];
+  openingHours: {
+    [key: string]: string;
+  };
+  pricing: {
+    dayPass: string;
+    seasonPass: string;
+    rentals: string;
+  };
+  trails: Trail[];
+  reviews: Review[];
+}
 
 const BikeParkDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const [{ data, fetching, error }] = useQuery({
+    // const [{ data, fetching, error }] = useQuery<GetBikeParkQuery>({
     query: GetBikeParkDocument,
     variables: { id },
   });
@@ -16,7 +59,8 @@ const BikeParkDetailPage: React.FC = () => {
   //   return [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude];
   // }, [bikePark?.coordinates?.longitude, bikePark?.coordinates?.latitude]);
 
-  const bikePark = data.bikePark;
+  const bikePark = data?.bikePark;
+  console.log('bikePark: ', bikePark);
 
   if (!id) return <div>Invalid bike park ID</div>;
   if (fetching) return <div>Loading...</div>;
@@ -25,224 +69,168 @@ const BikeParkDetailPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Park Details Hero */}
-      <section id="park-hero" className="relative h-[500px]">
-        <div className="absolute inset-0">
-          <img className="w-full h-full object-cover" src={bikePark.imageUrl} alt={`${bikePark.name} aerial view`} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-        </div>
-        <div className="container mx-auto px-4 relative h-full flex items-end pb-8">
+      {/* Hero Section */}
+      <section className="relative h-[500px]">
+        <img className="absolute inset-0 w-full h-full object-cover" src={bikePark.imageUrl} alt={bikePark.name} />
+        <div className="absolute inset-0 bg-black bg-opacity-40" />
+        <div className="relative container mx-auto px-4 h-full flex flex-col justify-end pb-12">
           <div className="text-white">
-            <div className="flex items-center space-x-4 mb-4">
-              <span className={`px-3 py-1 rounded-full text-sm ${bikePark.status === 'open' ? 'bg-emerald-500' : 'bg-red-500'}`}>
-                {bikePark.status === 'open' ? 'Open Today' : 'Closed'}
-              </span>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">{bikePark.name}</h1>
+            <div className="flex items-center space-x-4">
               <div className="flex items-center">
-                <i className="fa-solid fa-star text-yellow-400"></i>
-                <span className="ml-1">{bikePark.rating} (324 reviews)</span>
+                <i className="fa-solid fa-star text-yellow-400 mr-1" />
+                <span className="font-semibold">{bikePark.rating}</span>
+                <span className="text-gray-300 ml-1">({bikePark.reviewCount} reviews)</span>
               </div>
-            </div>
-            <h1 className="text-4xl font-bold mb-2">{bikePark.name}</h1>
-            <div className="flex items-center space-x-2">
-              <i className="fa-solid fa-location-dot"></i>
-              <span>{bikePark.location}</span>
+              <div className="flex items-center">
+                <i className="fa-solid fa-location-dot mr-2" />
+                <span>{bikePark.location}</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Quick Info Bar */}
-      <section id="quick-info" className="bg-white shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap justify-between py-4">
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-2">
-                <i className="fa-solid fa-cloud-sun text-2xl text-gray-600"></i>
-                <div>
-                  <p className="text-sm text-gray-600">Weather</p>
-                  <p className="font-bold">{bikePark.weather?.current?.temperature}°C</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <i className="fa-solid fa-clock text-2xl text-gray-600"></i>
-                <div>
-                  <p className="text-sm text-gray-600">Hours</p>
-                  <p className="font-bold">{bikePark.openingHours[moment().format('dddd').toLowerCase()]}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <i className="fa-solid fa-ruler-vertical text-2xl text-gray-600"></i>
-                <div>
-                  <p className="text-sm text-gray-600">Difficulty</p>
-                  <p className="font-bold">{bikePark.difficulty}</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex space-x-3">
-              <button className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700">
-                <i className="fa-solid fa-ticket mr-2"></i>Book Tickets
-              </button>
-              <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                <i className="fa-regular fa-heart mr-2"></i>Save
-              </button>
-              <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                <i className="fa-solid fa-share-nodes mr-2"></i>Share
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid md:grid-cols-3 gap-8">
+          {/* Left Column - Main Info */}
+          <div className="md:col-span-2">
+            {/* Description */}
+            <section className="bg-white rounded-lg shadow-md p-6 mb-8">
+              <h2 className="text-2xl font-bold mb-4">About</h2>
+              <p className="text-gray-600">{bikePark.description}</p>
+            </section>
 
-      {/* Main Content Grid */}
-      <section id="park-content" className="py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Left Column */}
-            <div className="lg:col-span-2">
-              {/* Description */}
-              <div id="park-description" className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h2 className="text-2xl font-bold mb-4">About the Park</h2>
-                <p className="text-gray-600 mb-4">{bikePark.description}</p>
-                <div className="grid grid-cols-2 gap-4 mt-6">
-                  {bikePark.features?.map((feature: string, index: number) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <i className="fa-solid fa-mountain text-emerald-600"></i>
-                      <span>{feature}</span>
+            {/* Trails */}
+            <section className="bg-white rounded-lg shadow-md p-6 mb-8">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Trails</h2>
+                <button className="text-emerald-600 hover:text-emerald-700">View All Trails</button>
+              </div>
+              <div className="space-y-4">
+                {bikePark.trails?.map((trail: Trail) => (
+                  <div key={trail.id} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-bold text-lg">{trail.name}</h3>
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm ${
+                          trail.difficulty === 'beginner'
+                            ? 'bg-green-100 text-green-800'
+                            : trail.difficulty === 'intermediate'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {trail.difficulty.charAt(0).toUpperCase() + trail.difficulty.slice(1)}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Trail Map */}
-              <div id="trail-map" className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-bold">Trail Map</h2>
-                  <button className="text-emerald-600 hover:text-emerald-700">
-                    <i className="fa-solid fa-expand mr-1"></i>View Full Map
-                  </button>
-                </div>
-                <div className="relative h-[400px] bg-gray-100 rounded-lg">
-                  {/* {bikePark.coordinates && (
-                  <Map
-                    center={coordinates}
-                    zoom={13}
-                    markers={[
-                      {
-                        coordinates: coordinates,
-                        title: bikePark.name,
-                        description: bikePark.location
-                      }
-                    ]}
-                    />
-                  )} */}
-                </div>
-              </div>
-
-              {/* Reviews */}
-              <div id="reviews" className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold">Reviews</h2>
-                  <button className="text-emerald-600 hover:text-emerald-700">Write a Review</button>
-                </div>
-
-                {/* Review Card */}
-                <div className="border-b border-gray-200 pb-6 mb-6">
-                  <div className="flex items-start space-x-4">
-                    <img
-                      src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
-                      className="w-12 h-12 rounded-full"
-                      alt="User avatar"
-                    />
-                    <div className="flex-1">
-                      <div className="flex justify-between">
-                        <h4 className="font-bold">Mike Thompson</h4>
-                        <span className="text-gray-500">2 days ago</span>
-                      </div>
-                      <div className="flex items-center space-x-1 text-yellow-400 mb-2">
-                        <i className="fa-solid fa-star"></i>
-                        <i className="fa-solid fa-star"></i>
-                        <i className="fa-solid fa-star"></i>
-                        <i className="fa-solid fa-star"></i>
-                        <i className="fa-solid fa-star"></i>
-                      </div>
-                      <p className="text-gray-600">
-                        Amazing park with world-class trails. The lift system is efficient and the staff is super friendly. A must-visit for
-                        any mountain biker!
-                      </p>
+                    <div className="flex items-center space-x-4 text-gray-600">
+                      <span className="flex items-center">
+                        <i className="fa-solid fa-ruler-horizontal mr-2" />
+                        {trail.length}
+                      </span>
+                      <span className="flex items-center">
+                        <i className="fa-solid fa-arrow-down mr-2" />
+                        {trail.elevation}
+                      </span>
+                      <span className="flex items-center">
+                        <i className="fa-solid fa-mountain mr-2" />
+                        {trail.type}
+                      </span>
                     </div>
                   </div>
-                </div>
-
-                {/* More Reviews Button */}
-                <button className="w-full py-2 text-center text-emerald-600 hover:text-emerald-700">Show More Reviews</button>
+                ))}
               </div>
-            </div>
+            </section>
 
-            {/* Right Column */}
-            <div>
-              {/* Weather Widget */}
-              <div id="weather-widget" className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h3 className="text-xl font-bold mb-4">Weather Forecast</h3>
-                <div className="space-y-4">
-                  {bikePark.weather?.forecast?.slice(0, 5)?.map((day: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <span>{moment().add(index, 'days').format('dddd')}</span>
-                      <div className="flex items-center">
-                        <i className={`fa-solid ${day === 'sunny' ? 'fa-sun text-yellow-400' : 'fa-cloud text-gray-400'} mr-2`}></i>
-                        <span>{day?.temperature}°C</span>
+            {/* Reviews */}
+            <section className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Reviews</h2>
+                <button className="text-emerald-600 hover:text-emerald-700">Write a Review</button>
+              </div>
+              <div className="space-y-6">
+                {bikePark.reviews?.map((review: Review) => (
+                  <div key={review.id} className="border-b last:border-b-0 pb-6 last:pb-0">
+                    <div className="flex items-start">
+                      <img src={review.author.avatar} alt={review.author.name} className="w-10 h-10 rounded-full mr-4" />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-bold">{review.author.name}</h3>
+                          <span className="text-gray-500 text-sm">{review.date}</span>
+                        </div>
+                        <div className="flex items-center mb-2">
+                          {[...Array(5)].map((_, i) => (
+                            <i key={i} className={`fa-solid fa-star ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`} />
+                          ))}
+                        </div>
+                        <p className="text-gray-600">{review.content}</p>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
+            </section>
+          </div>
 
-              {/* Trail Status */}
-              <div id="trail-status" className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <h3 className="text-xl font-bold mb-4">Trail Status</h3>
-                <div className="space-y-4">
-                  {bikePark.facilities?.map((facility: string, index: number) => (
-                    <div key={index} className="flex items-center justify-between">
-                      <span>{facility}</span>
-                      <span className="px-2 py-1 bg-green-100 text-green-600 rounded-full text-sm">Open</span>
-                    </div>
-                  ))}
-                </div>
-                <button className="w-full mt-4 text-center text-emerald-600 hover:text-emerald-700">View All Trails</button>
+          {/* Right Column - Info Cards */}
+          <div className="space-y-6">
+            {/* Features */}
+            <section className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-bold mb-4">Features</h2>
+              <div className="grid grid-cols-2 gap-4">
+                {bikePark.features?.map((feature: string, index: number) => (
+                  <div key={index} className="flex items-center text-gray-600">
+                    <i className="fa-solid fa-check text-emerald-500 mr-2" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
               </div>
+            </section>
 
-              {/* Additional Features */}
-              <div id="additional-features" className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-xl font-bold mb-4">Park Features</h3>
-                <div className="space-y-4">
-                  {bikePark.features?.map((feature: string, index: number) => (
-                    <div key={index} className="flex items-start space-x-3">
-                      <i className="fa-solid fa-check text-emerald-600 mt-1"></i>
-                      <span>{feature}</span>
-                    </div>
-                  ))}
+            {/* Opening Hours */}
+            <section className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-bold mb-4">Opening Hours</h2>
+              <div className="space-y-2">
+                {(Object.entries(bikePark.openingHours) as [string, string][]).map(([day, hours]) => (
+                  <div key={day} className="flex justify-between text-gray-600">
+                    <span>{day}</span>
+                    <span>{hours}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Pricing */}
+            <section className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-bold mb-4">Pricing</h2>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Day Pass</span>
+                  <span className="font-semibold">{bikePark.pricing?.dayPass}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Season Pass</span>
+                  <span className="font-semibold">{bikePark.pricing?.seasonPass}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Bike Rentals</span>
+                  <span className="font-semibold">{bikePark.pricing?.rentals}</span>
                 </div>
               </div>
+            </section>
+
+            {/* Action Buttons */}
+            <div className="space-y-4">
+              <button className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700">Book Now</button>
+              <button className="w-full border border-emerald-600 text-emerald-600 py-3 rounded-lg hover:bg-emerald-50">
+                Save to Favorites
+              </button>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Image Gallery Section */}
-      <section id="image-gallery" className="bg-white py-8">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-6">Park Gallery</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {bikePark.photos?.map((photo: string, index: number) => (
-              <div key={index} className="relative h-48 group cursor-pointer">
-                <img className="w-full h-full object-cover rounded-lg" src={photo} alt={`${bikePark.name} photo ${index + 1}`} />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                  <i className="fa-solid fa-expand text-white text-2xl"></i>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   );
 };
