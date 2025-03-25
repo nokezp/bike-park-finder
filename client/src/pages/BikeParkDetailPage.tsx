@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import moment from 'moment';
-import { GetBikeParkDocument, GetBikeParkQuery } from '../lib/graphql/generated/graphql-operations';
+import { GetBikeParkDocument } from '../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
+import FallbackImage from '../components/FallbackImage';
 
 interface Review {
   id: string;
@@ -24,27 +24,27 @@ interface Trail {
   type: string;
 }
 
-interface BikePark {
-  id: string;
-  name: string;
-  location: string;
-  description: string;
-  rating: number;
-  reviewCount: number;
-  mainImage: string;
-  galleryImages: string[];
-  features: string[];
-  openingHours: {
-    [key: string]: string;
-  };
-  pricing: {
-    dayPass: string;
-    seasonPass: string;
-    rentals: string;
-  };
-  trails: Trail[];
-  reviews: Review[];
-}
+// interface BikePark {
+//   id: string;
+//   name: string;
+//   location: string;
+//   description: string;
+//   rating: number;
+//   reviewCount: number;
+//   mainImage: string;
+//   galleryImages: string[];
+//   features: string[];
+//   openingHours: {
+//     [key: string]: string;
+//   };
+//   pricing: {
+//     dayPass: string;
+//     seasonPass: string;
+//     rentals: string;
+//   };
+//   trails: Trail[];
+//   reviews: Review[];
+// }
 
 const BikeParkDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -72,6 +72,7 @@ const BikeParkDetailPage: React.FC = () => {
       {/* Hero Section */}
       <section className="relative h-[500px]">
         <img className="absolute inset-0 w-full h-full object-cover" src={bikePark.imageUrl} alt={bikePark.name} />
+        <FallbackImage src={bikePark?.imageUrl ?? undefined} alt={bikePark?.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black bg-opacity-40" />
         <div className="relative container mx-auto px-4 h-full flex flex-col justify-end pb-12">
           <div className="text-white">

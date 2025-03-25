@@ -42,7 +42,7 @@ const reviewSchema = new mongoose.Schema({
   difficulty: {
     type: String,
     required: true,
-    enum: ['beginner', 'intermediate', 'advanced', 'pro']
+    enum: ['beginner', 'intermediate', 'expert']
   },
   technicalRating: {
     type: Number,

@@ -1,0 +1,29 @@
+query GetBikeParks($filter: BikeParkFilter) {
+  bikeParks(filter: $filter) {
+    bikeParks {
+      # ...BikePark
+      id
+      name
+      description
+      location
+      imageUrl
+      difficulty
+      status
+      features
+      createdAt
+      updatedAt
+      createdBy
+      coordinates {
+        latitude
+        longitude
+      }
+      weather {
+        current
+      }
+    }
+    totalCount
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}

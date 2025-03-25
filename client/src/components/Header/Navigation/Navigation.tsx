@@ -20,6 +20,7 @@ const Navigation = () => {
     { path: '/events', label: 'Events' },
     // { path: '/community', label: 'Community' },
     { path: '/maps', label: 'Maps' },
+    // { path: '/community', label: 'Community' },
     { path: '/about', label: 'About' },
     // { path: '/user-accout', label: 'User' },
   ];

@@ -1,0 +1,18 @@
+fragment Event on Event {
+  id
+  attendeeCount
+  capacity
+  category
+  date
+  description
+  featured
+  imageUrl
+  location
+  organizer {
+    name
+    description
+    imageUrl
+  }
+  price
+  title
+}

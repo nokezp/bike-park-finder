@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Difficulty } from '../../../lib/graphql/generated/graphql-operations';
+import { Difficulty } from '../../../pages/MapLeftMenu';
 
 const LandingPageHero: React.FC = () => {
   const navigate = useNavigate();

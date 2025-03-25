@@ -1389,16 +1389,6 @@ export default {
                   "kind": "SCALAR",
                   "name": "Any"
                 }
-              },
-              {
-                "name": "pagination",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
               }
             ]
           },

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
-import { Icon, latLngBounds } from 'leaflet';
+import { Icon, latLngBounds, LatLngExpression } from 'leaflet';
 import { BikePark, GetBikeParksByViewportDocument } from '../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 import MarkerClusterGroup from 'react-leaflet-cluster';
@@ -63,6 +63,7 @@ const Map: React.FC<{
   pause?: boolean;
   setPause: (pause: boolean) => void;
 }> = ({ selectedLocation, filteredLocations, setSelectedLocationId, setFilteredLocations, pause, setPause }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);
   const [viewport, setViewport] = useState({} as Viewport);
 
@@ -87,7 +88,7 @@ const Map: React.FC<{
     }
   };
 
-  const fitBounds = (markers: any) => {
+  const fitBounds = (markers: LatLngExpression[]) => {
     const map = mapRef.current;
     if (map) {
       map.flyToBounds(latLngBounds(markers), {
@@ -106,7 +107,7 @@ const Map: React.FC<{
 
   useEffect(() => {
     if (filteredLocations.length > 0 && filteredLocations.length < 10 && pause) {
-      fitBounds(filteredLocations.map(({ coordinates }) => [coordinates?.latitude, coordinates?.longitude]));
+      fitBounds(filteredLocations.map(({ coordinates }) => [coordinates?.latitude, coordinates?.longitude]) as LatLngExpression[]);
     }
   }, [filteredLocations, selectedLocation]);
 
@@ -175,7 +176,8 @@ const Map: React.FC<{
                       <div className="flex justify-between">
                         <h3 className="font-bold text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]">{location.name}</h3>
                         <span className="text-sm">
-                          <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i> {location.rating}
+                          <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i>{' '}
+                          {location.rating}
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 mb-2">{location.location}</p>

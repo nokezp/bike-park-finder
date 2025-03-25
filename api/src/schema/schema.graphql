@@ -164,7 +164,7 @@ input EventFilter {
 
 type Query {
   me: User
-  bikeParks(filter: BikeParkFilter, pagination: PaginationInput!): PaginatedBikeParks!
+  bikeParks(filter: BikeParkFilter): PaginatedBikeParks!
   bikePark(id: ID!): BikePark
   reviews(bikeParkId: ID!): [Review!]!
   searchBikeParks(query: String!): [BikePark!]!
@@ -271,9 +271,11 @@ input BikeParkFilter {
   name: String
   difficulty: String
   features: [String!]
-  amenities: [String!]
+  facilities: [String!]
   coordinates: CoordinatesSearchInput
   sortBy: String
+  skip: Int
+  take: Int
 }
 
 input CoordinatesSearchInput {

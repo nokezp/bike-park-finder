@@ -1,9 +1,8 @@
 import { GraphQLError } from 'graphql';
 import { WeatherService } from '../services/weatherService.js';
-import { BikePark } from '../models/BikePark.js';
-import { Document } from 'mongoose';
 import { AuthContext } from '../utils/auth.js';
-import { Event } from '../models/Event.js';
+import { BikeParkFilter } from '../core/generated-models.js';
+import { BikePark } from '../models/BikePark.js';
 
 interface Context {
   user?: {
@@ -11,54 +10,7 @@ interface Context {
   };
 }
 
-interface CreateBikeParkInput {
-  name: string;
-  description?: string;
-  location?: string;
-  features?: string[];
-  difficulty?: string;
-  address?: string;
-  coordinates?: { latitude: number; longitude: number };
-  imageUrl?: string;
-  openingHours?: { [key: string]: string };
-  contact?: { phone?: string; email?: string };
-  price?: { amount: number; currency: string };
-  facilities?: string[];
-  rules?: string[];
-  photos?: string[];
-  videos?: string[];
-  website?: string;
-  socialMedia?: { [key: string]: string };
-  status?: string;
-}
-
-interface IBikePark {
-  _id: string;
-  name: string;
-  createdBy?: string;
-  createdAt?: string;
-  [key: string]: any;
-}
-
-interface BikeParkFilter {
-  location?: string;
-  name?: string;
-  difficulty?: string;
-  features?: string[];
-  amenities?: string[];
-  coordinates?: {
-    latitude: number;
-    longitude: number;
-    radius?: number;
-  };
-  sortBy?: string;
-}
-
-interface PaginationInput {
-  page: number;
-  limit: number;
-}
-
+const DEFAULT_RESULTS_PER_PAGE = 15;
 const WEATHER_UPDATE_INTERVAL = 30 * 60 * 1000; // 30 minutes
 const DEFAULT_SEARCH_RADIUS_KM = 50;
 
@@ -77,14 +29,11 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 
 export const bikeParkResolvers = {
   Query: {
-    bikeParks: async (
-      _: unknown,
-      { filter, pagination }: { filter?: BikeParkFilter; pagination: PaginationInput },
-      context: AuthContext,
-    ) => {
+    bikeParks: async (_: unknown, { filter }: { filter?: BikeParkFilter }, context: AuthContext) => {
       try {
-        const { page, limit } = pagination;
-        const skip = (page - 1) * limit;
+        const skip = filter?.skip ?? 0;
+        const take = filter?.take ?? DEFAULT_RESULTS_PER_PAGE;
+        // const totalSkip = skip * take;
 
         // Build filter query
         const query: any = {};
@@ -108,9 +57,9 @@ export const bikeParkResolvers = {
             query.features = { $in: filter.features };
           }
 
-          // Amenities filter - match all provided amenities
-          if (filter.amenities && filter.amenities.length > 0) {
-            query.amenities = { $all: filter.amenities };
+          // Amenities filter - match all provided facilities
+          if (filter.facilities && filter.facilities.length > 0) {
+            query.facilities = { $all: filter.facilities };
           }
 
           // Sort order
@@ -147,7 +96,7 @@ export const bikeParkResolvers = {
             (park as any).distance = distance;
 
             // Include only parks within radius
-            return distance <= radius;
+            return distance <= (radius ?? 0);
           });
 
           // Sort by distance if required
@@ -158,21 +107,21 @@ export const bikeParkResolvers = {
           totalCount = bikeParks.length;
 
           // Apply pagination manually
-          bikeParks = bikeParks.slice(skip, skip + limit);
+          bikeParks = bikeParks.slice(skip, skip + take);
         } else {
           // Regular database query with pagination
           totalCount = await BikePark.countDocuments(query);
-          bikeParks = await BikePark.find(query).skip(skip).limit(limit).sort(sort);
+          bikeParks = await BikePark.find(query).skip(skip).limit(take).sort(sort);
         }
 
         // Calculate pagination info
-        const totalPages = Math.ceil(totalCount / limit);
-        const hasNextPage = page < totalPages;
+        const totalPages = Math.ceil(totalCount / take);
+        const hasNextPage = skip < totalPages;
 
         return {
           bikeParks,
           totalCount,
-          currentPage: page,
+          currentPage: skip,
           totalPages,
           hasNextPage,
         };

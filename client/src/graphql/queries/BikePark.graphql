@@ -1,0 +1,55 @@
+query GetBikePark($id: ID!) {
+  bikePark(id: $id) {
+    # ...BikePark
+    id
+    name
+    description
+    location
+    imageUrl
+    difficulty
+    status
+    features
+    createdAt
+    updatedAt
+    createdBy
+    coordinates {
+      latitude
+      longitude
+    }
+    
+    contact {
+      email
+      phone
+    }
+    facilities
+    openingHours {
+      friday
+      monday
+      saturday
+      sunday
+      thursday
+      tuesday
+      wednesday
+    }
+    photos
+    price {
+      amount
+      currency
+    }
+    rating
+    rules
+    status
+    videos
+    website
+    socialMedia {
+      facebook
+      instagram
+      twitter
+      youtube
+    }
+    weather {
+      current
+      forecast
+    }
+  }
+}

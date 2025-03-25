@@ -1,7 +1,6 @@
 import { Context } from '../types';
 import { GraphQLError } from 'graphql';
 import { WeatherService } from '../services/weatherService.js';
-import { BikePark } from '../models/BikePark.js';
 import { Document } from 'mongoose';
 import { AuthContext } from '../utils/auth.js';
 import { Event } from '../models/Event.js';

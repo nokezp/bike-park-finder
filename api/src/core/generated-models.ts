@@ -55,13 +55,15 @@ export type BikePark = {
 };
 
 export type BikeParkFilter = {
-  amenities?: InputMaybe<Array<Scalars['String']['input']>>;
   coordinates?: InputMaybe<CoordinatesSearchInput>;
   difficulty?: InputMaybe<Scalars['String']['input']>;
+  facilities?: InputMaybe<Array<Scalars['String']['input']>>;
   features?: InputMaybe<Array<Scalars['String']['input']>>;
   location?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
   sortBy?: InputMaybe<Scalars['String']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Contact = {
@@ -348,7 +350,6 @@ export type QueryBikeParkArgs = {
 
 export type QueryBikeParksArgs = {
   filter?: InputMaybe<BikeParkFilter>;
-  pagination: PaginationInput;
 };
 
 
@@ -789,7 +790,7 @@ export type PriceResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   bikePark?: Resolver<Maybe<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParkArgs, 'id'>>;
-  bikeParks?: Resolver<ResolversTypes['PaginatedBikeParks'], ParentType, ContextType, RequireFields<QueryBikeParksArgs, 'pagination'>>;
+  bikeParks?: Resolver<ResolversTypes['PaginatedBikeParks'], ParentType, ContextType, Partial<QueryBikeParksArgs>>;
   bikeParksByViewport?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParksByViewportArgs, 'viewport'>>;
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventsArgs>>;

@@ -4,11 +4,11 @@ import { FaGoogle, FaFacebook } from 'react-icons/fa';
 import { useMutation } from 'urql';
 import { LoginDocument, LoginMutation, LoginMutationVariables } from '../lib/graphql/generated/graphql-operations';
 
-interface LoginFormData {
-  email: string;
-  password: string;
-  rememberMe: boolean;
-}
+// interface LoginFormData {
+//   email: string;
+//   password: string;
+//   rememberMe: boolean;
+// }
 
 const LoginPage = () => {
   const navigator = useNavigate();
