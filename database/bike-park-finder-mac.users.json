@@ -1,0 +1,68 @@
+[{
+  "_id": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "username": "admin",
+  "email": "admin@bikepark.com",
+  "password": "$2a$12$uYJ.9WUgSuGqBP7eJVbGoepMas1/0EQgwGRxWmASnYO6LzHzkmKy.",
+  "role": "admin",
+  "profile": {
+    "location": "Whistler, Canada",
+    "preferences": {
+      "ridingStyle": [],
+      "preferredBikeType": []
+    }
+  },
+  "stats": {
+    "totalRides": 0,
+    "totalReviews": 0,
+    "favoriteParks": [],
+    "favoriteTrails": []
+  },
+  "notifications": {
+    "email": true,
+    "push": true
+  },
+  "verified": false,
+  "createdAt": {
+    "$date": "2025-03-25T00:53:34.526Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:34.919Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8ed61e7f0c9c87596a"
+  },
+  "username": "john_rider",
+  "email": "john@example.com",
+  "password": "$2a$12$Zmv8qAmQZL.raGa88i04Re6NAmiBGY.K2rxLYqQAlY.ZKUrVMdQaq",
+  "role": "user",
+  "profile": {
+    "location": "Vancouver, Canada",
+    "preferences": {
+      "ridingStyle": [],
+      "preferredBikeType": []
+    }
+  },
+  "stats": {
+    "totalRides": 0,
+    "totalReviews": 0,
+    "favoriteParks": [],
+    "favoriteTrails": []
+  },
+  "notifications": {
+    "email": true,
+    "push": true
+  },
+  "verified": false,
+  "createdAt": {
+    "$date": "2025-03-25T00:53:34.924Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.305Z"
+  },
+  "__v": 0
+}]
