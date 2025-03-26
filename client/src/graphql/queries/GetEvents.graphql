@@ -1,0 +1,5 @@
+query GetEvents($filter: EventFilter) {
+  events(filter: $filter) {
+    ...Event
+  }
+}

@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from './components/Layout';
-import BikeParkPage from './pages/BikeParkPage';
+import BikeParksPage from './pages/BikeParksPage';
 import LandingPage from './pages/LandingPage';
 import BikeParkDetailPage from './pages/BikeParkDetailPage';
 import { MapsPage } from './pages/MapsPage';
@@ -16,7 +16,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/bike-parks',
-        element: <BikeParkPage />,
+        element: <BikeParksPage />,
       },
       {
         path: '/bike-parks/:id',

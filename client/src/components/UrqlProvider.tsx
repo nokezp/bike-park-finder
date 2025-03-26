@@ -1,11 +1,11 @@
-import { Provider } from "urql";
-import { client } from "../lib/urql";
-import { ReactNode } from "react";
+import { Provider } from 'urql';
+import { ReactNode } from 'react';
+import urqlClient from '../lib/urqlClient';
 
 interface UrqlProviderProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 
-export function UrqlProvider({children}: UrqlProviderProps) {
-    return <Provider value={client}>{children}</Provider>;
+export function UrqlProvider({ children }: UrqlProviderProps) {
+  return <Provider value={urqlClient}>{children}</Provider>;
 }

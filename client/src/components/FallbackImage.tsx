@@ -7,30 +7,22 @@ interface FallbackImageProps {
   defaultSrc?: string;
 }
 
-const FallbackImage: React.FC<FallbackImageProps> = ({
-  src,
-  alt,
-  className = '',
-  defaultSrc = '/images/default-bike-park.jpg'
-}) => {
-  const [imgSrc, setImgSrc] = useState(src || defaultSrc);
+const FallbackImage: React.FC<FallbackImageProps> = ({ src, alt, className = '' }) => {
   const [error, setError] = useState(false);
 
   const handleError = () => {
     if (!error) {
       setError(true);
-      setImgSrc(defaultSrc);
     }
   };
 
-  return (
-    <img
-      src={imgSrc}
-      alt={alt}
-      className={className}
-      onError={handleError}
-    />
+  return error ? (
+    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+      <i className="fa-solid fa-mountain text-6xl text-gray-400"></i>
+    </div>
+  ) : (
+    <img src={src} alt={alt} className={className} onError={handleError} />
   );
-}; 
+};
 
-export default FallbackImage
+export default FallbackImage;

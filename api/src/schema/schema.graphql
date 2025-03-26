@@ -14,19 +14,20 @@ type Coordinates {
 }
 
 type WeatherData {
-  temperature: Float!
-  feelsLike: Float!
-  humidity: Int!
-  windSpeed: Float!
-  description: String!
-  icon: String!
-  precipitation: Float!
-  uvIndex: Float!
+  date: String
+  temperature: Float
+  feelsLike: Float
+  humidity: Int
+  windSpeed: Float
+  description: String
+  icon: String
+  precipitation: Float
+  uvIndex: Float
 }
 
 type Weather {
-  current: JSON
-  forecast: JSON
+  current: WeatherData
+  forecast: [WeatherData]
   lastUpdated: String
 }
 
@@ -57,6 +58,18 @@ type SocialMedia {
   youtube: String
 }
 
+type Trail {
+  id: ID!
+  name: String!
+  difficulty: String!
+  length: Float!
+  verticalDrop: Float!
+  status: String!
+  features: [String!]
+  description: String
+  imageUrl: String
+}
+
 type BikePark {
   id: ID!
   name: String!
@@ -84,6 +97,7 @@ type BikePark {
   lastUpdated: String
   updatedAt: String
   weather: Weather
+  trails: [Trail!]
 }
 
 type Review {
@@ -164,7 +178,7 @@ input EventFilter {
 
 type Query {
   me: User
-  bikeParks(filter: BikeParkFilter, pagination: PaginationInput!): PaginatedBikeParks!
+  bikeParks(filter: BikeParkFilter): PaginatedBikeParks!
   bikePark(id: ID!): BikePark
   reviews(bikeParkId: ID!): [Review!]!
   searchBikeParks(query: String!): [BikePark!]!
@@ -271,9 +285,11 @@ input BikeParkFilter {
   name: String
   difficulty: String
   features: [String!]
-  amenities: [String!]
+  facilities: [String!]
   coordinates: CoordinatesSearchInput
   sortBy: String
+  skip: Int
+  take: Int
 }
 
 input CoordinatesSearchInput {

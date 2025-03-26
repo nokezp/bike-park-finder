@@ -48,6 +48,7 @@ export type BikePark = {
   rules?: Maybe<Array<Scalars['String']['output']>>;
   socialMedia?: Maybe<SocialMedia>;
   status?: Maybe<Scalars['String']['output']>;
+  trails?: Maybe<Array<Trail>>;
   updatedAt?: Maybe<Scalars['String']['output']>;
   videos?: Maybe<Array<Scalars['String']['output']>>;
   weather?: Maybe<Weather>;
@@ -55,13 +56,15 @@ export type BikePark = {
 };
 
 export type BikeParkFilter = {
-  amenities?: InputMaybe<Array<Scalars['String']['input']>>;
   coordinates?: InputMaybe<CoordinatesSearchInput>;
   difficulty?: InputMaybe<Scalars['String']['input']>;
+  facilities?: InputMaybe<Array<Scalars['String']['input']>>;
   features?: InputMaybe<Array<Scalars['String']['input']>>;
   location?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  skip?: InputMaybe<Scalars['Int']['input']>;
   sortBy?: InputMaybe<Scalars['String']['input']>;
+  take?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Contact = {
@@ -348,7 +351,6 @@ export type QueryBikeParkArgs = {
 
 export type QueryBikeParksArgs = {
   filter?: InputMaybe<BikeParkFilter>;
-  pagination: PaginationInput;
 };
 
 
@@ -414,6 +416,19 @@ export type SocialMediaInput = {
   instagram?: InputMaybe<Scalars['String']['input']>;
   twitter?: InputMaybe<Scalars['String']['input']>;
   youtube?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Trail = {
+  __typename?: 'Trail';
+  description?: Maybe<Scalars['String']['output']>;
+  difficulty: Scalars['String']['output'];
+  features?: Maybe<Array<Scalars['String']['output']>>;
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  length: Scalars['Float']['output'];
+  name: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  verticalDrop: Scalars['Float']['output'];
 };
 
 export type UpdateBikeParkInput = {
@@ -486,21 +501,22 @@ export type ViewportInput = {
 
 export type Weather = {
   __typename?: 'Weather';
-  current?: Maybe<Scalars['JSON']['output']>;
-  forecast?: Maybe<Scalars['JSON']['output']>;
+  current?: Maybe<WeatherData>;
+  forecast?: Maybe<Array<Maybe<WeatherData>>>;
   lastUpdated?: Maybe<Scalars['String']['output']>;
 };
 
 export type WeatherData = {
   __typename?: 'WeatherData';
-  description: Scalars['String']['output'];
-  feelsLike: Scalars['Float']['output'];
-  humidity: Scalars['Int']['output'];
-  icon: Scalars['String']['output'];
-  precipitation: Scalars['Float']['output'];
-  temperature: Scalars['Float']['output'];
-  uvIndex: Scalars['Float']['output'];
-  windSpeed: Scalars['Float']['output'];
+  date?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  feelsLike?: Maybe<Scalars['Float']['output']>;
+  humidity?: Maybe<Scalars['Int']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
+  precipitation?: Maybe<Scalars['Float']['output']>;
+  temperature?: Maybe<Scalars['Float']['output']>;
+  uvIndex?: Maybe<Scalars['Float']['output']>;
+  windSpeed?: Maybe<Scalars['Float']['output']>;
 };
 
 
@@ -608,6 +624,7 @@ export type ResolversTypes = {
   SocialMedia: ResolverTypeWrapper<SocialMedia>;
   SocialMediaInput: SocialMediaInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Trail: ResolverTypeWrapper<Trail>;
   UpdateBikeParkInput: UpdateBikeParkInput;
   UpdateEventInput: UpdateEventInput;
   User: ResolverTypeWrapper<User>;
@@ -652,6 +669,7 @@ export type ResolversParentTypes = {
   SocialMedia: SocialMedia;
   SocialMediaInput: SocialMediaInput;
   String: Scalars['String']['output'];
+  Trail: Trail;
   UpdateBikeParkInput: UpdateBikeParkInput;
   UpdateEventInput: UpdateEventInput;
   User: User;
@@ -691,6 +709,7 @@ export type BikeParkResolvers<ContextType = any, ParentType extends ResolversPar
   rules?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   socialMedia?: Resolver<Maybe<ResolversTypes['SocialMedia']>, ParentType, ContextType>;
   status?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  trails?: Resolver<Maybe<Array<ResolversTypes['Trail']>>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videos?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   weather?: Resolver<Maybe<ResolversTypes['Weather']>, ParentType, ContextType>;
@@ -789,7 +808,7 @@ export type PriceResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   bikePark?: Resolver<Maybe<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParkArgs, 'id'>>;
-  bikeParks?: Resolver<ResolversTypes['PaginatedBikeParks'], ParentType, ContextType, RequireFields<QueryBikeParksArgs, 'pagination'>>;
+  bikeParks?: Resolver<ResolversTypes['PaginatedBikeParks'], ParentType, ContextType, Partial<QueryBikeParksArgs>>;
   bikeParksByViewport?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParksByViewportArgs, 'viewport'>>;
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
@@ -824,6 +843,19 @@ export type SocialMediaResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TrailResolvers<ContextType = any, ParentType extends ResolversParentTypes['Trail'] = ResolversParentTypes['Trail']> = {
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  difficulty?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  features?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  length?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  verticalDrop?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -843,21 +875,22 @@ export type VenueResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type WeatherResolvers<ContextType = any, ParentType extends ResolversParentTypes['Weather'] = ResolversParentTypes['Weather']> = {
-  current?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
-  forecast?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  current?: Resolver<Maybe<ResolversTypes['WeatherData']>, ParentType, ContextType>;
+  forecast?: Resolver<Maybe<Array<Maybe<ResolversTypes['WeatherData']>>>, ParentType, ContextType>;
   lastUpdated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type WeatherDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['WeatherData'] = ResolversParentTypes['WeatherData']> = {
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  feelsLike?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  humidity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  icon?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  precipitation?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  temperature?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  uvIndex?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  windSpeed?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  feelsLike?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  humidity?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  icon?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  precipitation?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  temperature?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  uvIndex?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  windSpeed?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -877,6 +910,7 @@ export type Resolvers<ContextType = any> = {
   Review?: ReviewResolvers<ContextType>;
   ScheduleItem?: ScheduleItemResolvers<ContextType>;
   SocialMedia?: SocialMediaResolvers<ContextType>;
+  Trail?: TrailResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   Venue?: VenueResolvers<ContextType>;
   Weather?: WeatherResolvers<ContextType>;

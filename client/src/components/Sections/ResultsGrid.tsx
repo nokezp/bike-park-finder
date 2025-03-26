@@ -1,56 +1,70 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import BikeParkCard from './BikeParkCard';
+import { useQuery } from 'urql';
+import { BikeParkFilter, GetBikeParksDocument, GetBikeParksQuery } from '../../lib/graphql/generated/graphql-operations';
+import { useInView } from 'react-intersection-observer';
+import BikeParkListItem from './BikeParkListItem';
 
-interface BikePark {
-  id: string;
-  name: string;
-  location: string;
-  rating: number;
-  imageUrl: string;
-  features: string[];
-  temperature: number;
-  weatherIcon: string;
+enum View {
+  Grid,
+  List,
 }
 
-const MOCK_BIKE_PARKS: BikePark[] = [
-  {
-    id: '1',
-    name: 'Whistler Mountain Bike Park',
-    location: 'Whistler, BC, Canada',
-    rating: 4.8,
-    imageUrl: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png',
-    features: ['Flow Trails', 'Expert Jumps', 'Lift Access'],
-    temperature: 22,
-    weatherIcon: 'fa-cloud-sun'
-  },
-  {
-    id: '2',
-    name: 'Highland Mountain Bike Park',
-    location: 'New Hampshire, USA',
-    rating: 4.6,
-    imageUrl: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/05bbaf55a7-77d064c5657a8a976d07.png',
-    features: ['Beginner Friendly', 'Skills Park', 'Lift Access'],
-    temperature: 18,
-    weatherIcon: 'fa-cloud'
-  },
-  {
-    id: '3',
-    name: 'Queenstown Bike Park',
-    location: 'Queenstown, New Zealand',
-    rating: 4.7,
-    imageUrl: 'https://storage.googleapis.com/uxpilot-auth.appspot.com/b2860b1595-c4f8b3e9911301d405cb.png',
-    features: ['Flow Trails', 'Technical', 'Gondola'],
-    temperature: 20,
-    weatherIcon: 'fa-sun'
-  }
-];
+const ITEMS_PER_PAGE = 15;
 
-const ResultsGrid: React.FC = () => {
+const ResultsGrid: React.FC<{ searchQuery: BikeParkFilter | undefined }> = ({ searchQuery }) => {
+  const [view, setView] = useState(View.Grid);
+  const [skip, setSkip] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [allBikeParks, setAllBikeParks] = useState<GetBikeParksQuery['bikeParks']['bikeParks']>([]);
+
+  const [{ data, fetching }] = useQuery<GetBikeParksQuery>({
+    query: GetBikeParksDocument,
+    variables: {
+      filter: {
+        ...searchQuery,
+        skip,
+        take: ITEMS_PER_PAGE,
+      },
+    },
+  });
+
+  useEffect(() => {
+    if (data?.bikeParks) {
+      if (data.bikeParks.bikeParks.length < ITEMS_PER_PAGE) {
+        setHasMore(false);
+      }
+      if (skip === 0) {
+        setAllBikeParks(data.bikeParks.bikeParks);
+      } else {
+        setAllBikeParks((prev) => [...prev, ...data.bikeParks.bikeParks]);
+      }
+    }
+  }, [data, skip]);
+
+  // Reset pagination when search query changes
+  useEffect(() => {
+    setSkip(0);
+    setHasMore(true);
+    setAllBikeParks([]);
+  }, [searchQuery]);
+
+  const { ref, inView } = useInView({
+    threshold: 0.1,
+    rootMargin: '100px',
+  });
+
+  useEffect(() => {
+    if (inView && !fetching && hasMore) {
+      setSkip((prev) => prev + ITEMS_PER_PAGE);
+    }
+  }, [inView, fetching, hasMore]);
+
   return (
-    <section id="results-grid" className="py-12">
-      <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold">24 Bike Parks Found</h2>
+          <h2 className="text-2xl font-bold">Found {data?.bikeParks.totalCount || 0} bike parks</h2>
           <div className="flex items-center space-x-4">
             <select className="px-4 py-2 rounded-md border border-gray-200 text-gray-800">
               <option>Sort by: Popular</option>
@@ -58,36 +72,42 @@ const ResultsGrid: React.FC = () => {
               <option>Distance</option>
             </select>
             <div className="flex space-x-2">
-              <button className="p-2 rounded-md bg-emerald-100 text-emerald-600">
-                <i className="fa-solid fa-grid-2"></i>
+              <button
+                className={`p-2 rounded-md ${view === View.Grid ? 'bg-emerald-100 text-emerald-600' : 'text-gray-400 hover:bg-gray-100'}`}
+                onClick={() => setView(View.Grid)}
+              >
+                <i className="fa-solid fa-table-cells-large"></i>
               </button>
-              <button className="p-2 rounded-md text-gray-400 hover:bg-gray-100">
+              <button
+                className={`p-2 rounded-md ${view === View.List ? 'bg-emerald-100 text-emerald-600' : 'text-gray-400 hover:bg-gray-100'}`}
+                onClick={() => setView(View.List)}
+              >
                 <i className="fa-solid fa-list"></i>
               </button>
             </div>
           </div>
         </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MOCK_BIKE_PARKS.map((park) => (
-            <BikeParkCard key={park.id} bikePark={park} />
-          ))}
-        </div>
-
-        {/* Pagination */}
-        <div className="flex justify-center mt-8 space-x-2">
-          <button className="px-4 py-2 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50">
-            <i className="fa-solid fa-chevron-left"></i>
-          </button>
-          <button className="px-4 py-2 rounded-md bg-emerald-600 text-white">1</button>
-          <button className="px-4 py-2 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50">2</button>
-          <button className="px-4 py-2 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50">3</button>
-          <button className="px-4 py-2 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50">
-            <i className="fa-solid fa-chevron-right"></i>
-          </button>
-        </div>
       </div>
-    </section>
+
+      {fetching && allBikeParks?.length === 0 && (
+        <div className="col-span-full flex justify-center p-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
+        </div>
+      )}
+
+      <div className={`${view === View.Grid ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}`}>
+        {allBikeParks.map((park) =>
+          view === View.List ? <BikeParkListItem key={park.id} bikePark={park} /> : <BikeParkCard key={park.id} bikePark={park} />,
+        )}
+
+        {fetching && allBikeParks?.length > 0 && (
+          <div className="col-span-full flex justify-center p-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
+          </div>
+        )}
+        {!fetching && hasMore && <div ref={ref} className="col-span-full h-8" /> /* Invisible scroll trigger */}
+      </div>
+    </div>
   );
 };
 

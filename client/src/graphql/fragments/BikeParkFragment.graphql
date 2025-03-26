@@ -1,0 +1,17 @@
+fragment BikePark on BikePark {
+  id
+  name
+  description
+  location
+  imageUrl
+  difficulty
+  status
+  features
+  createdAt
+  updatedAt
+  createdBy
+  coordinates {
+    latitude
+    longitude
+  }
+}

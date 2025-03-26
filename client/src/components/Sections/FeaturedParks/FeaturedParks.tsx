@@ -2,7 +2,7 @@ import React from 'react';
 import ParkCard, { ParkCardProps } from './ParkCard';
 import { getRandomColor } from '../../../utils/colors';
 import { useNavigate } from 'react-router-dom';
-import { GetBikeParksDocument } from '../../../lib/graphql/generated/graphql-operations';
+import { BikePark, GetBikeParksDocument } from '../../../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 
 const FeaturedParks: React.FC = () => {
@@ -21,14 +21,15 @@ const FeaturedParks: React.FC = () => {
         location: '',
         name: '',
         difficulty: '',
+        skip: 0,
+        take: 3,
       },
-      pagination: { page: 1, limit: 3 },
     },
   });
 
   const bikeParks = data?.bikeParks?.bikeParks;
 
-  const parks = bikeParks?.map((park: any) => ({
+  const parks = bikeParks?.map((park: BikePark) => ({
     id: park.id,
     image: park.imageUrl,
     rating: park.rating,

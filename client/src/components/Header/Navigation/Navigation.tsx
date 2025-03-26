@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from 'urql';
-import { MeDocument, MeQuery } from '../../lib/graphql/generated/graphql-operations';
+import { MeDocument, MeQuery } from '../../../lib/graphql/generated/graphql-operations';
 
 const Navigation = () => {
   const location = useLocation();
@@ -20,6 +20,7 @@ const Navigation = () => {
     { path: '/events', label: 'Events' },
     // { path: '/community', label: 'Community' },
     { path: '/maps', label: 'Maps' },
+    // { path: '/community', label: 'Community' },
     { path: '/about', label: 'About' },
     // { path: '/user-accout', label: 'User' },
   ];

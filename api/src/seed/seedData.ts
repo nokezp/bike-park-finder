@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import { BikePark } from '../models/BikePark.js';
 import { Event } from '../models/Event.js';
 import { Review } from '../models/Review.js';
 import { User } from '../models/User.js';
 import { Trail } from '../models/Trail.js';
+import { BikePark } from '../models/index.js';
 
 interface IBikeParkSeed {
   name: string;
@@ -15,7 +15,7 @@ interface IBikeParkSeed {
   };
   imageUrl: string;
   status: 'open' | 'closed' | 'maintenance';
-  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'pro';
+  difficulty: 'beginner' | 'intermediate' | 'expert';
   features: string[];
   facilities: string[];
   openingHours: {
@@ -50,7 +50,7 @@ const germanBikeParks: IBikeParkSeed[] = [
     description: "One of Germany's largest bike parks with diverse trails for all skill levels",
     location: 'Winterberg, Germany',
     coordinates: { latitude: 51.1948, longitude: 8.5225 },
-    imageUrl: 'https://example.com/winterberg.jpg',
+    imageUrl: 'https://www.bikepark-winterberg.de/wp-content/uploads/2023/05/Bikepark-Winterberg-Flowcountry-scaled.jpg',
     status: 'open',
     difficulty: 'intermediate',
     features: ['Flow Trails', 'Downhill', 'Northshore', 'Dirt Lines'],
@@ -73,7 +73,11 @@ const germanBikeParks: IBikeParkSeed[] = [
       currency: 'EUR',
     },
     rules: ['Helmet Required', 'Protective Gear Recommended'],
-    photos: ['https://example.com/winterberg1.jpg', 'https://example.com/winterberg2.jpg'],
+    photos: [
+      'https://www.bikepark-winterberg.de/wp-content/uploads/2023/05/Bikepark-Winterberg-Flowcountry-scaled.jpg',
+      'https://www.bikepark-winterberg.de/wp-content/uploads/2023/05/Bikepark-Winterberg-Downhill-scaled.jpg',
+      'https://www.bikepark-winterberg.de/wp-content/uploads/2023/05/Bikepark-Winterberg-Slopestyle-scaled.jpg'
+    ],
     videos: ['https://example.com/winterberg-video.mp4'],
     website: 'https://www.bikepark-winterberg.de',
     socialMedia: {
@@ -88,9 +92,9 @@ const germanBikeParks: IBikeParkSeed[] = [
     description: 'Famous bike park in Bavaria with spectacular views and challenging trails',
     location: 'Bischofsmais, Germany',
     coordinates: { latitude: 48.9167, longitude: 13.0833 },
-    imageUrl: 'https://example.com/geisskopf.jpg',
+    imageUrl: 'https://www.mtb-news.de/news/wp-content/uploads/2020/05/Bikepark-Geisskopf-2020-5.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Downhill', 'Freeride', 'Slopestyle', 'Dirt Jump'],
     facilities: ['Bike Shop', 'Rental Service', 'Restaurant', 'Parking'],
     openingHours: {
@@ -111,7 +115,11 @@ const germanBikeParks: IBikeParkSeed[] = [
       currency: 'EUR',
     },
     rules: ['Helmet Mandatory', 'Back Protector Required', 'Full Face Recommended'],
-    photos: ['https://example.com/geisskopf1.jpg', 'https://example.com/geisskopf2.jpg'],
+    photos: [
+      'https://www.mtb-news.de/news/wp-content/uploads/2020/05/Bikepark-Geisskopf-2020-5.jpg',
+      'https://www.mtb-news.de/news/wp-content/uploads/2020/05/Bikepark-Geisskopf-2020-2.jpg',
+      'https://www.mtb-news.de/news/wp-content/uploads/2020/05/Bikepark-Geisskopf-2020-3.jpg'
+    ],
     videos: ['https://example.com/geisskopf-video.mp4'],
     website: 'https://www.bikepark-geisskopf.de',
     socialMedia: {
@@ -126,7 +134,7 @@ const germanBikeParks: IBikeParkSeed[] = [
     description: 'Scenic bike park in the Harz mountains with trails for all abilities',
     location: 'Braunlage, Germany',
     coordinates: { latitude: 51.7333, longitude: 10.6167 },
-    imageUrl: 'https://example.com/harz.jpg',
+    imageUrl: 'https://www.bikepark-braunlage.de/wp-content/uploads/2022/06/bikepark-braunlage-wurmberg-header.jpg',
     status: 'open',
     difficulty: 'intermediate',
     features: ['Flow Trail', 'Single Trails', 'Jump Line', 'Skills Area'],
@@ -149,7 +157,11 @@ const germanBikeParks: IBikeParkSeed[] = [
       currency: 'EUR',
     },
     rules: ['Helmet Required', 'Respect Nature', 'Follow Trail Signs'],
-    photos: ['https://example.com/harz1.jpg', 'https://example.com/harz2.jpg'],
+    photos: [
+      'https://www.bikepark-braunlage.de/wp-content/uploads/2022/06/bikepark-braunlage-wurmberg-header.jpg',
+      'https://www.bikepark-braunlage.de/wp-content/uploads/2022/06/bikepark-braunlage-downhill.jpg',
+      'https://www.bikepark-braunlage.de/wp-content/uploads/2022/06/bikepark-braunlage-freeride.jpg'
+    ],
     videos: ['https://example.com/harz-video.mp4'],
     website: 'https://www.bikepark-braunlage.de',
     socialMedia: {
@@ -164,7 +176,7 @@ const germanBikeParks: IBikeParkSeed[] = [
     description: 'Family-friendly bike park with a mix of natural and built features',
     location: 'Goslar-Hahnenklee, Germany',
     coordinates: { latitude: 51.8667, longitude: 10.3333 },
-    imageUrl: 'https://example.com/hahnenklee.jpg',
+    imageUrl: 'https://www.bikepark-hahnenklee.de/wp-content/uploads/2023/04/bikepark-hahnenklee-header-2023.jpg',
     status: 'open',
     difficulty: 'beginner',
     features: ['Beginner Trail', 'Family Line', 'Flow Country Trail', 'Pump Track'],
@@ -187,7 +199,11 @@ const germanBikeParks: IBikeParkSeed[] = [
       currency: 'EUR',
     },
     rules: ['Helmet Required', 'Beginners Welcome', 'Group Discounts Available'],
-    photos: ['https://example.com/hahnenklee1.jpg', 'https://example.com/hahnenklee2.jpg'],
+    photos: [
+      'https://www.bikepark-hahnenklee.de/wp-content/uploads/2023/04/bikepark-hahnenklee-header-2023.jpg',
+      'https://www.bikepark-hahnenklee.de/wp-content/uploads/2023/04/bikepark-hahnenklee-flow-trail.jpg',
+      'https://www.bikepark-hahnenklee.de/wp-content/uploads/2023/04/bikepark-hahnenklee-family-trail.jpg'
+    ],
     videos: ['https://example.com/hahnenklee-video.mp4'],
     website: 'https://www.bikepark-hahnenklee.de',
     socialMedia: {
@@ -202,9 +218,9 @@ const germanBikeParks: IBikeParkSeed[] = [
     description: 'Historic bike park in the Black Forest with challenging downhill tracks',
     location: 'Todtnau, Germany',
     coordinates: { latitude: 47.8333, longitude: 7.9333 },
-    imageUrl: 'https://example.com/todtnau.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1572111504021-40abd3479ddb?q=80&w=1932&auto=format&fit=crop',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['World Cup DH Track', 'Pro Line', 'Expert Trail', 'Technical Sections'],
     facilities: ['Pro Shop', 'Bike Service', 'Restaurant', 'Camping Area'],
     openingHours: {
@@ -225,8 +241,12 @@ const germanBikeParks: IBikeParkSeed[] = [
       currency: 'EUR',
     },
     rules: ['Full Face Helmet Required', 'Body Protection Mandatory', 'Expert Riders Only'],
-    photos: ['https://example.com/todtnau1.jpg', 'https://example.com/todtnau2.jpg'],
-    videos: ['https://example.com/todtnau-video.mp4'],
+    photos: [
+      'https://images.unsplash.com/photo-1572111504021-40abd3479ddb?q=80&w=1932&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1572111503825-c5c7c76c6b16?q=80&w=1932&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1572111504319-312a9e4f1cf3?q=80&w=1932&auto=format&fit=crop'
+    ],
+    videos: [],
     website: 'https://www.bikepark-todtnau.de',
     socialMedia: {
       facebook: 'https://facebook.com/bikepark.todtnau',
@@ -240,7 +260,7 @@ const germanBikeParks: IBikeParkSeed[] = [
     description: 'Modern bike park with extensive trail network and excellent facilities',
     location: 'Willingen, Germany',
     coordinates: { latitude: 51.2967, longitude: 8.6083 },
-    imageUrl: 'https://example.com/willingen.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1604762524889-3b2a380a7a0f?q=80&w=2069&auto=format&fit=crop',
     status: 'open',
     difficulty: 'intermediate',
     features: ['Freeride', 'Continental Track', 'Flow Country', 'Kids Area'],
@@ -263,8 +283,12 @@ const germanBikeParks: IBikeParkSeed[] = [
       currency: 'EUR',
     },
     rules: ['Helmet Required', 'Respect Other Riders', 'No Unauthorized Building'],
-    photos: ['https://example.com/willingen1.jpg', 'https://example.com/willingen2.jpg'],
-    videos: ['https://example.com/willingen-video.mp4'],
+    photos: [
+      'https://images.unsplash.com/photo-1604762524889-3b2a380a7a0f?q=80&w=2069&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1604762525953-f7b5ee0fc919?q=80&w=2067&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1604762512526-b7ce043b3b06?q=80&w=2071&auto=format&fit=crop'
+    ],
+    videos: [],
     website: 'https://www.bikepark-willingen.de',
     socialMedia: {
       facebook: 'https://facebook.com/bikeparkwillingen',
@@ -318,7 +342,7 @@ const germanBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 48.75, longitude: 8.55 },
     imageUrl: 'https://example.com/badwildbad.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['DH Track', 'IXS Track', 'Northshore', 'Rock Garden'],
     facilities: ['Bike Service', 'Equipment Shop', 'Cafe', 'Shuttle Service'],
     openingHours: {
@@ -436,7 +460,7 @@ const austrianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 47.3892, longitude: 12.6384 },
     imageUrl: 'https://example.com/saalbach.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Freeride', 'Downhill', 'Flow Country', 'Single Trails'],
     facilities: ['Bike Rental', 'Bike School', 'Service Station', 'Restaurant'],
     openingHours: {
@@ -474,7 +498,7 @@ const austrianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 47.4258, longitude: 12.7481 },
     imageUrl: 'https://example.com/leogang.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['World Cup Track', 'Pro Line', 'Flow Trail', 'Northshore'],
     facilities: ['Pro Shop', 'Bike School', 'Service Center', 'Restaurant'],
     openingHours: {
@@ -512,7 +536,7 @@ const austrianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 47.395, longitude: 13.6891 },
     imageUrl: 'https://example.com/schladming.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Downhill Tracks', 'Flow Country Trail', 'Pump Track', 'Skills Area'],
     facilities: ['Bike Rental', 'Bike School', 'Workshop', 'Mountain Restaurant'],
     openingHours: {
@@ -550,7 +574,7 @@ const austrianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 47.2692, longitude: 11.4041 },
     imageUrl: 'https://example.com/innsbruck.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['City View Trail', 'Jump Line', 'Skills Park', 'Urban Features'],
     facilities: ['Bike Shop', 'Training Area', 'Cafe', 'City Shuttle'],
     openingHours: {
@@ -588,7 +612,7 @@ const austrianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 47.3319, longitude: 13.3039 },
     imageUrl: 'https://example.com/wagrain.jpg',
     status: 'open',
-    difficulty: 'beginner',
+    difficulty: 'expert',
     features: ['Learning Trail', 'Family Line', 'Easy Jumps', 'Practice Area'],
     facilities: ['Beginner School', 'Kids Rental', 'Family Restaurant', 'Practice Lift'],
     openingHours: {
@@ -626,7 +650,7 @@ const austrianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 47.6297, longitude: 15.8297 },
     imageUrl: 'https://example.com/semmering.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Classic DH', 'Modern Flow', 'Technical Trail', 'Old School Line'],
     facilities: ['Historic Lodge', 'Bike Service', 'Traditional Restaurant', 'Vintage Lift'],
     openingHours: {
@@ -664,7 +688,7 @@ const austrianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 47.4456, longitude: 12.3161 },
     imageUrl: 'https://example.com/kirchberg.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['Alpine Trail', 'Flow Line', 'Natural Obstacles', 'Scenic Routes'],
     facilities: ['Mountain Station', 'Bike Rental', 'Alpine Restaurant', 'Photo Point'],
     openingHours: {
@@ -778,7 +802,7 @@ const austrianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 47.0793, longitude: 11.4647 },
     imageUrl: 'https://example.com/tirol.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Alpine DH', 'Glacier View', 'Mountain Cross', 'High Altitude Line'],
     facilities: ['Mountain Hub', 'Altitude Training', 'Panorama Restaurant', 'Pro Shop'],
     openingHours: {
@@ -820,7 +844,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 46.1539, longitude: 6.6667 },
     imageUrl: 'https://example.com/lesgets.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['World Cup DH Track', 'Jump Park', 'Flow Trails', 'Technical Trails'],
     facilities: ['Bike Shop', 'Bike School', 'Repair Center', 'Cafe'],
     openingHours: {
@@ -858,7 +882,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 46.1789, longitude: 6.7089 },
     imageUrl: 'https://example.com/morzine.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Freeride Trails', 'Natural Singles', 'North Shore', 'Drop Zone'],
     facilities: ['Bike Shop', 'Rental Center', 'Skills Area', 'Mountain Restaurant'],
     openingHours: {
@@ -896,7 +920,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 46.2697, longitude: 6.8397 },
     imageUrl: 'https://example.com/chatel.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['Competition Tracks', 'Jump Lines', 'Wooden Features', 'Beginner Area'],
     facilities: ['Bike School', 'Equipment Rental', 'Repair Shop', 'Cafe'],
     openingHours: {
@@ -934,7 +958,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 45.0167, longitude: 6.1167 },
     imageUrl: 'https://example.com/les2alpes.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['Glacier View Trail', 'Enduro Lines', 'Alpine Single Tracks', 'Snow Line'],
     facilities: ['High Altitude Station', 'Pro Shop', 'Medical Center', 'Gondola'],
     openingHours: {
@@ -972,7 +996,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 48.0047, longitude: 6.8789 },
     imageUrl: 'https://example.com/labresse.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Technical DH', 'Rock Gardens', 'Forest Lines', 'Race Track'],
     facilities: ['Bike Wash', 'Technical Area', 'Restaurant', 'Parking'],
     openingHours: {
@@ -1010,7 +1034,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 45.45, longitude: 6.9 },
     imageUrl: 'https://example.com/valdisere.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['Alpine Trails', 'Flow Lines', 'Panoramic Routes', 'Skills Park'],
     facilities: ['Alpine Center', 'Bike Rental', 'Mountain Restaurant', 'First Aid'],
     openingHours: {
@@ -1048,7 +1072,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 45.5722, longitude: 6.7833 },
     imageUrl: 'https://example.com/lesarcs.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['Enduro Trails', 'Family Lines', 'Cross-Country', 'Pump Track'],
     facilities: ['Bike Center', 'Training Area', 'Restaurant', 'Shop'],
     openingHours: {
@@ -1086,7 +1110,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 45.0906, longitude: 6.0706 },
     imageUrl: 'https://example.com/alpedhuez.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Tour de France Trail', 'DH Tracks', 'Enduro Routes', 'XC Trails'],
     facilities: ['Historic Center', 'Bike Service', 'Cafe', 'Museum'],
     openingHours: {
@@ -1124,7 +1148,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 42.5069, longitude: 2.0347 },
     imageUrl: 'https://example.com/fontromeu.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['Mediterranean Trails', 'Sun Trail', 'Mountain Cross', 'Learning Area'],
     facilities: ['Sun Terrace', 'Bike School', 'Mediterranean Restaurant', 'Shop'],
     openingHours: {
@@ -1162,7 +1186,7 @@ const frenchBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 45.5117, longitude: 2.8442 },
     imageUrl: 'https://example.com/superbesse.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['Volcanic Trail', 'Lava Line', 'Crater Jump', 'Volcanic Flow'],
     facilities: ['Volcanic Center', 'Unique Terrain Park', 'Themed Restaurant', 'Geology Station'],
     openingHours: {
@@ -1204,7 +1228,7 @@ const italianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 46.5196, longitude: 10.1367 },
     imageUrl: 'https://example.com/mottolino.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Downhill Tracks', 'Flow Lines', 'Dirt Jumps', 'Skills Area'],
     facilities: ['Bike Rental', 'Bike School', 'Workshop', 'Restaurant'],
     openingHours: {
@@ -1242,7 +1266,7 @@ const italianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 46.3167, longitude: 10.6833 },
     imageUrl: 'https://example.com/valdisole.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['World Cup Track', 'Pro Lines', 'Technical DH', 'Training Area'],
     facilities: ['Pro Workshop', 'Race Support', 'Medical Center', "Athletes' Area"],
     openingHours: {
@@ -1280,7 +1304,7 @@ const italianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 45.7333, longitude: 7.3167 },
     imageUrl: 'https://example.com/pila.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Alpine DH', 'Freeride', 'Natural Trails', 'Panoramic Routes'],
     facilities: ['Bike School', 'Equipment Rental', 'Mountain Restaurant', 'Photo Point'],
     openingHours: {
@@ -1318,7 +1342,7 @@ const italianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 46.1667, longitude: 11.0 },
     imageUrl: 'https://example.com/paganella.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['Flow Lines', 'Jump Park', 'Skills Area', 'Family Trails'],
     facilities: ['Bike Academy', 'Rental Center', 'Service Point', 'Kids Area'],
     openingHours: {
@@ -1356,7 +1380,7 @@ const italianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 45.0833, longitude: 6.7 },
     imageUrl: 'https://example.com/bardonecchia.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Olympic Track', 'Technical Trails', 'Cross-Border Routes', 'Training Zones'],
     facilities: ['Olympic Center', 'Bike Shop', 'Medical Station', 'International Lodge'],
     openingHours: {
@@ -1432,7 +1456,7 @@ const italianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 46.1, longitude: 8.8667 },
     imageUrl: 'https://example.com/tamaro.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['Border Trail', 'Alpine Flow', 'Lake View Track', 'International Line'],
     facilities: ['International Hub', 'Customs Point', 'Lake View Restaurant', 'Border Shop'],
     openingHours: {
@@ -1470,7 +1494,7 @@ const italianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 37.75, longitude: 14.9933 },
     imageUrl: 'https://example.com/etna.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Volcanic Trails', 'Lava Flow Lines', 'Crater Views', 'Ash Jumps'],
     facilities: ['Volcano Center', 'Geological Station', 'Safety Hub', 'Emergency Point'],
     openingHours: {
@@ -1508,7 +1532,7 @@ const italianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 44.9578, longitude: 6.8786 },
     imageUrl: 'https://example.com/sestriere.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['Olympic Routes', 'High Altitude Lines', 'Competition Track', 'Training Zones'],
     facilities: ['Olympic Village', 'Pro Shop', 'High Altitude Center', 'Training Camp'],
     openingHours: {
@@ -1546,7 +1570,7 @@ const italianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 46.4333, longitude: 9.35 },
     imageUrl: 'https://example.com/madesimo.jpg',
     status: 'open',
-    difficulty: 'intermediate',
+    difficulty: 'expert',
     features: ['Lake View Trails', 'Alpine Routes', 'Mountain Cross', 'Scenic Lines'],
     facilities: ['Lake Center', 'Alpine School', 'Panorama Restaurant', 'Mountain Hub'],
     openingHours: {
@@ -1626,7 +1650,7 @@ const ukBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 52.8261, longitude: -3.4291 },
     imageUrl: 'https://example.com/revolution.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['Extreme DH', 'Pro Lines', 'Big Jumps', 'Technical Sections'],
     facilities: ['Uplift Service', 'Basic Shop', 'Parking', 'First Aid'],
     openingHours: {
@@ -1664,7 +1688,7 @@ const ukBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 56.8198, longitude: -5.1052 },
     imageUrl: 'https://example.com/fortwilliam.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['World Cup Track', 'Gondola Access', 'Training Area', 'Pro Lines'],
     facilities: ['Pro Shop', 'Bike Hire', 'Cafe', 'World Cup Facilities'],
     openingHours: {
@@ -1740,7 +1764,7 @@ const ukBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 52.9958, longitude: -3.9425 },
     imageUrl: 'https://example.com/anturstiniog.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Downhill Tracks', 'Rocky Terrain', 'Welsh Slate', 'Natural Features'],
     facilities: ['Uplift Service', 'Bike Shop', 'Cafe', 'Training Area'],
     openingHours: {
@@ -1816,7 +1840,7 @@ const ukBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 52.5847, longitude: -3.8524 },
     imageUrl: 'https://example.com/dyfi.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['Pro Lines', 'Atherton Features', 'Natural Terrain', 'Big Mountain'],
     facilities: ['Pro Shop', 'Coaching', 'Uplift', 'Athlete Zone'],
     openingHours: {
@@ -1892,7 +1916,7 @@ const ukBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 52.0391, longitude: -0.375 },
     imageUrl: 'https://example.com/chicksands.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Dirt Jumps', 'Freeride Area', 'Pump Track', 'Old School Lines'],
     facilities: ['Basic Shop', 'Parking', 'Rest Area', 'Training Zone'],
     openingHours: {
@@ -1972,7 +1996,7 @@ const usBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 50.1163, longitude: -122.9574 },
     imageUrl: 'https://example.com/whistler.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Downhill Trails', 'Jump Lines', 'Technical Trails', 'Beginner Area'],
     facilities: ['Bike Rental', 'Bike School', 'Repair Shop', 'Restaurant'],
     openingHours: {
@@ -2012,7 +2036,7 @@ const usBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 36.3874, longitude: -105.2724 },
     imageUrl: 'https://example.com/angelfire.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['High Altitude DH', 'Flow Trails', 'Technical Terrain', 'Jump Lines'],
     facilities: ['Bike Shop', 'Rental Center', 'Lodge', 'Medical Center'],
     openingHours: {
@@ -2050,7 +2074,7 @@ const usBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 43.4445, longitude: -71.609 },
     imageUrl: 'https://example.com/highland.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['Pro Jump Lines', 'Learning Center', 'Expert DH', 'Progression Park'],
     facilities: ['Highland Training Center', 'Pro Shop', 'Cafe', 'Coaching'],
     openingHours: {
@@ -2089,7 +2113,7 @@ const usBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 39.8868, longitude: -105.7625 },
     imageUrl: 'https://example.com/trestle.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Alpine DH', 'Jump Trails', 'Technical Routes', 'Learning Zone'],
     facilities: ['Trestle Shop', 'Rental Fleet', 'Training Center', 'Alpine Lodge'],
     openingHours: {
@@ -2127,7 +2151,7 @@ const usBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 37.6308, longitude: -119.0326 },
     imageUrl: 'https://example.com/mammoth.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['Volcanic DH', 'Pro Lines', 'Enduro Trails', 'Beginner Zone'],
     facilities: ['Pro Shop', 'High Altitude Center', 'Medical Station', 'Training Area'],
     openingHours: {
@@ -2165,7 +2189,7 @@ const usBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 41.1819, longitude: -74.5134 },
     imageUrl: 'https://example.com/mountaincreek.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['East Coast DH', 'Technical Trails', 'Drop Zone', 'Skills Park'],
     facilities: ['Bike Shop', 'Rental Center', 'Training Facility', 'First Aid'],
     openingHours: {
@@ -2203,7 +2227,7 @@ const usBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 47.7446, longitude: -121.089 },
     imageUrl: 'https://example.com/stevenspass.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['PNW Style', 'Root Sections', 'Technical DH', 'Flow Trails'],
     facilities: ['Northwest Shop', 'Repair Station', 'Lodge', 'Training Center'],
     openingHours: {
@@ -2279,7 +2303,7 @@ const usBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 43.6045, longitude: -72.8201 },
     imageUrl: 'https://example.com/killington.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['East Coast Tech', 'Flow Trails', 'Drop Zone', 'Skills Area'],
     facilities: ['Beast Shop', 'Rental Center', 'Lodge', 'Training Facility'],
     openingHours: {
@@ -2317,7 +2341,7 @@ const usBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 38.4019, longitude: -79.9937 },
     imageUrl: 'https://example.com/snowshoe.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['World Cup Track', 'Eastern DH', 'Flow Trails', 'Skills Park'],
     facilities: ['Pro Shop', 'World Cup Center', 'Lodge', 'Training Facility'],
     openingHours: {
@@ -2359,7 +2383,7 @@ const australianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: -36.5037, longitude: 148.3039 },
     imageUrl: 'https://example.com/thredbo.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Gravity Trails', 'Flow Trails', 'Skills Park', 'Cross Country'],
     facilities: ['Bike Shop', 'Rental', 'Lessons', 'Cafe'],
     openingHours: {
@@ -2397,7 +2421,7 @@ const australianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: -36.8607, longitude: 147.2828 },
     imageUrl: 'https://example.com/fallscreek.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Alpine DH', 'Flow Trails', 'Technical Terrain', 'Cross Country'],
     facilities: ['Bike Shop', 'Rental Center', 'Alpine Lodge', 'Training Area'],
     openingHours: {
@@ -2435,7 +2459,7 @@ const australianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: -37.1467, longitude: 146.446 },
     imageUrl: 'https://example.com/mtbuller.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['World Trail Design', 'Epic Descents', 'Skills Park', 'XC Network'],
     facilities: ['Pro Shop', 'Bike School', 'Medical Center', 'Village Access'],
     openingHours: {
@@ -2511,7 +2535,7 @@ const australianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: -42.7528, longitude: 146.6011 },
     imageUrl: 'https://example.com/maydena.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['Gravity Trails', 'Wilderness Setting', 'Jump Lines', 'Skills Zone'],
     facilities: ['Base Lodge', 'Pro Shop', 'Cafe', 'Shuttle Service'],
     openingHours: {
@@ -2549,7 +2573,7 @@ const australianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: -35.3167, longitude: 149.0 },
     imageUrl: 'https://example.com/stromlo.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['World Cup Track', 'XC Trails', 'Skills Park', 'Race Venue'],
     facilities: ['Olympic Center', 'Bike Shop', 'Cafe', 'Training Facility'],
     openingHours: {
@@ -2701,7 +2725,7 @@ const australianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: -36.8607, longitude: 147.2828 },
     imageUrl: 'https://example.com/fallscreek.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Alpine DH', 'Flow Trails', 'Technical Terrain', 'Cross Country'],
     facilities: ['Bike Shop', 'Rental Center', 'Alpine Lodge', 'Training Area'],
     openingHours: {
@@ -2819,7 +2843,7 @@ const bosnianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 43.7167, longitude: 18.2833 },
     imageUrl: 'https://example.com/bjelasnica.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Alpine Trails', 'Olympic Routes', 'Technical Descents', 'Cross Country'],
     facilities: ['Bike Rental', 'Mountain Lodge', 'Service Station', 'Restaurant'],
     openingHours: {
@@ -2933,7 +2957,7 @@ const bosnianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 43.9833, longitude: 17.2833 },
     imageUrl: 'https://example.com/kupres.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Alpine Trails', 'Downhill Runs', 'Natural Features', 'Enduro Routes'],
     facilities: ['Equipment Rental', 'Mountain Lodge', 'Service Center', 'Training Area'],
     openingHours: {
@@ -3051,7 +3075,7 @@ const croatianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 43.3167, longitude: 17.05 },
     imageUrl: 'https://example.com/biokovo.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Sea View Trails', 'Technical Descents', 'Natural Features', 'Enduro Routes'],
     facilities: ['Equipment Rental', 'Guide Service', 'First Aid Station', 'Viewpoint'],
     openingHours: {
@@ -3089,7 +3113,7 @@ const croatianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 44.5333, longitude: 15.2667 },
     imageUrl: 'https://example.com/velebit.jpg',
     status: 'open',
-    difficulty: 'pro',
+    difficulty: 'expert',
     features: ['Wilderness Trails', 'Alpine Routes', 'Technical Challenges', 'Natural Obstacles'],
     facilities: ['Mountain Huts', 'Basic Repairs', 'Guide Services', 'Emergency Point'],
     openingHours: {
@@ -3207,7 +3231,7 @@ const serbianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 43.7167, longitude: 18.2833 },
     imageUrl: 'https://example.com/bjelasnica.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Alpine Trails', 'Olympic Routes', 'Technical Descents', 'Cross Country'],
     facilities: ['Bike Rental', 'Mountain Lodge', 'Service Station', 'Restaurant'],
     openingHours: {
@@ -3321,7 +3345,7 @@ const serbianBikeParks: IBikeParkSeed[] = [
     coordinates: { latitude: 43.9833, longitude: 17.2833 },
     imageUrl: 'https://example.com/kupres.jpg',
     status: 'open',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     features: ['Alpine Trails', 'Downhill Runs', 'Natural Features', 'Enduro Routes'],
     facilities: ['Equipment Rental', 'Mountain Lodge', 'Service Center', 'Training Area'],
     openingHours: {
@@ -3745,7 +3769,7 @@ const trails = [
     name: 'Black Lightning',
     description: 'Signature downhill track at Winterberg featuring technical rock gardens and big drops',
     bikePark: 'Bikepark Winterberg',
-    difficulty: 'pro',
+    difficulty: 'expert',
     type: 'downhill',
     length: 2.8,
     elevation: {
@@ -3783,7 +3807,7 @@ const trails = [
     name: 'Geisskopf DH',
     description: 'World Cup level downhill track with multiple line choices',
     bikePark: 'Bikepark Geisskopf',
-    difficulty: 'pro',
+    difficulty: 'expert',
     type: 'downhill',
     length: 2.1,
     elevation: {
@@ -3821,7 +3845,7 @@ const trails = [
     name: 'Harz Lightning',
     description: 'Fast and technical track through the Harz mountains',
     bikePark: 'Bikepark Harz',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     type: 'technical',
     length: 2.4,
     elevation: {
@@ -3859,7 +3883,7 @@ const trails = [
     name: 'Black Forest Express',
     description: 'High-speed track through the Black Forest',
     bikePark: 'Bikepark Todtnau',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     type: 'downhill',
     length: 2.9,
     elevation: {
@@ -3897,7 +3921,7 @@ const trails = [
     name: 'Willingen Pro Line',
     description: 'Professional-level jump line with massive features',
     bikePark: 'Bikepark Willingen',
-    difficulty: 'pro',
+    difficulty: 'expert',
     type: 'jump',
     length: 1.2,
     elevation: {
@@ -3916,7 +3940,7 @@ const trails = [
     name: 'Freeride Paradise',
     description: 'Creative freeride line with multiple options',
     bikePark: 'Bikepark Willingen',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     type: 'technical',
     length: 2.6,
     elevation: {
@@ -3935,7 +3959,7 @@ const trails = [
     name: 'Bad Wildbad DH',
     description: "One of Germany's most technical downhill tracks",
     bikePark: 'Bikepark Bad Wildbad',
-    difficulty: 'pro',
+    difficulty: 'expert',
     type: 'downhill',
     length: 1.9,
     elevation: {
@@ -3973,7 +3997,7 @@ const trails = [
     name: 'Gravity Express',
     description: 'Fast and flowy downhill track',
     bikePark: 'Bikepark Ochsenkopf',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     type: 'downhill',
     length: 2.3,
     elevation: {
@@ -4068,7 +4092,7 @@ const trails = [
     name: 'Harz Enduro',
     description: 'Long enduro track with varied terrain',
     bikePark: 'Bikepark Hahnenklee',
-    difficulty: 'advanced',
+    difficulty: 'expert',
     type: 'enduro',
     length: 6.2,
     elevation: {
@@ -4106,7 +4130,7 @@ const trails = [
     name: 'Pro Jump Line',
     description: 'Competition-level slopestyle course',
     bikePark: 'Bikepark Winterberg',
-    difficulty: 'pro',
+    difficulty: 'expert',
     type: 'jump',
     length: 0.9,
     elevation: {
@@ -4400,7 +4424,7 @@ export const seedDatabase = async (): Promise<void> => {
         title: 'Epic Downhill Paradise',
         content: 'Amazing bike park with world-class trails!',
         rating: 5,
-        difficulty: 'advanced',
+        difficulty: 'expert',
         technicalRating: 5,
         scenicRating: 5,
         maintenanceRating: 4,

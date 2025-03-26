@@ -4,7 +4,7 @@ export interface ITrail extends mongoose.Document {
   name: string;
   description: string;
   bikeParkId: mongoose.Schema.Types.ObjectId;
-  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'pro';
+  difficulty: 'beginner' | 'intermediate' | 'expert';
   type: 'downhill' | 'flow' | 'technical' | 'enduro' | 'jump' | 'skills';
   length: number;
   elevation: {
@@ -32,7 +32,7 @@ const trailSchema = new mongoose.Schema({
   difficulty: { 
     type: String, 
     required: true,
-    enum: ['beginner', 'intermediate', 'advanced', 'pro']
+    enum: ['beginner', 'intermediate', 'expert']
   },
   type: {
     type: String,

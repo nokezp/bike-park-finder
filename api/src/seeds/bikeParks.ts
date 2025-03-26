@@ -12,7 +12,7 @@ export async function seedBikeParks(adminId: string) {
       },
       difficulty: ['beginner', 'intermediate', 'advanced', 'expert'],
       features: ['jumps', 'drops', 'berms', 'technical', 'flow trails', 'wooden features'],
-      amenities: ['parking', 'bike rentals', 'lessons', 'food', 'bike shop', 'lift access'],
+      facilities: ['parking', 'bike rentals', 'lessons', 'food', 'bike shop', 'lift access'],
       createdBy: adminId
     },
     {
@@ -25,7 +25,7 @@ export async function seedBikeParks(adminId: string) {
       },
       difficulty: ['beginner', 'intermediate', 'advanced'],
       features: ['jumps', 'drops', 'berms', 'flow trails', 'skills area'],
-      amenities: ['parking', 'bike rentals', 'lessons', 'food', 'bike shop'],
+      facilities: ['parking', 'bike rentals', 'lessons', 'food', 'bike shop'],
       createdBy: adminId
     },
     {
@@ -38,7 +38,7 @@ export async function seedBikeParks(adminId: string) {
       },
       difficulty: ['beginner', 'intermediate', 'advanced', 'expert'],
       features: ['jumps', 'drops', 'berms', 'technical', 'flow trails'],
-      amenities: ['parking', 'bike rentals', 'lessons', 'cafe', 'bike shop', 'uplift service'],
+      facilities: ['parking', 'bike rentals', 'lessons', 'cafe', 'bike shop', 'uplift service'],
       createdBy: adminId
     }
   ];

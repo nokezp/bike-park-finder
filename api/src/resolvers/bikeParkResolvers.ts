@@ -1,9 +1,9 @@
 import { GraphQLError } from 'graphql';
 import { WeatherService } from '../services/weatherService.js';
-import { BikePark } from '../models/BikePark.js';
-import { Document } from 'mongoose';
 import { AuthContext } from '../utils/auth.js';
-import { Event } from '../models/Event.js';
+import { BikeParkFilter } from '../core/generated-models.js';
+import { BikePark as BikeParkModel } from '../models/BikePark.js';
+import { Trail } from '../models/Trail.js';
 
 interface Context {
   user?: {
@@ -11,54 +11,7 @@ interface Context {
   };
 }
 
-interface CreateBikeParkInput {
-  name: string;
-  description?: string;
-  location?: string;
-  features?: string[];
-  difficulty?: string;
-  address?: string;
-  coordinates?: { latitude: number; longitude: number };
-  imageUrl?: string;
-  openingHours?: { [key: string]: string };
-  contact?: { phone?: string; email?: string };
-  price?: { amount: number; currency: string };
-  facilities?: string[];
-  rules?: string[];
-  photos?: string[];
-  videos?: string[];
-  website?: string;
-  socialMedia?: { [key: string]: string };
-  status?: string;
-}
-
-interface IBikePark {
-  _id: string;
-  name: string;
-  createdBy?: string;
-  createdAt?: string;
-  [key: string]: any;
-}
-
-interface BikeParkFilter {
-  location?: string;
-  name?: string;
-  difficulty?: string;
-  features?: string[];
-  amenities?: string[];
-  coordinates?: {
-    latitude: number;
-    longitude: number;
-    radius?: number;
-  };
-  sortBy?: string;
-}
-
-interface PaginationInput {
-  page: number;
-  limit: number;
-}
-
+const DEFAULT_RESULTS_PER_PAGE = 15;
 const WEATHER_UPDATE_INTERVAL = 30 * 60 * 1000; // 30 minutes
 const DEFAULT_SEARCH_RADIUS_KM = 50;
 
@@ -77,14 +30,11 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 
 export const bikeParkResolvers = {
   Query: {
-    bikeParks: async (
-      _: unknown,
-      { filter, pagination }: { filter?: BikeParkFilter; pagination: PaginationInput },
-      context: AuthContext,
-    ) => {
+    bikeParks: async (_: unknown, { filter }: { filter?: BikeParkFilter }, context: AuthContext) => {
       try {
-        const { page, limit } = pagination;
-        const skip = (page - 1) * limit;
+        const skip = filter?.skip ?? 0;
+        const take = filter?.take ?? DEFAULT_RESULTS_PER_PAGE;
+        // const totalSkip = skip * take;
 
         // Build filter query
         const query: any = {};
@@ -108,9 +58,9 @@ export const bikeParkResolvers = {
             query.features = { $in: filter.features };
           }
 
-          // Amenities filter - match all provided amenities
-          if (filter.amenities && filter.amenities.length > 0) {
-            query.amenities = { $all: filter.amenities };
+          // Amenities filter - match all provided facilities
+          if (filter.facilities && filter.facilities.length > 0) {
+            query.facilities = { $all: filter.facilities };
           }
 
           // Sort order
@@ -131,7 +81,7 @@ export const bikeParkResolvers = {
         // Special handling for location-based search with coordinates
         if (filter?.coordinates) {
           // Get all matching parks first
-          bikeParks = await BikePark.find(query).sort(sort);
+          bikeParks = await BikeParkModel.find(query).sort(sort);
 
           // Filter by distance
           const { latitude, longitude, radius = DEFAULT_SEARCH_RADIUS_KM } = filter.coordinates;
@@ -147,7 +97,7 @@ export const bikeParkResolvers = {
             (park as any).distance = distance;
 
             // Include only parks within radius
-            return distance <= radius;
+            return distance <= (radius ?? 0);
           });
 
           // Sort by distance if required
@@ -158,21 +108,21 @@ export const bikeParkResolvers = {
           totalCount = bikeParks.length;
 
           // Apply pagination manually
-          bikeParks = bikeParks.slice(skip, skip + limit);
+          bikeParks = bikeParks.slice(skip, skip + take);
         } else {
           // Regular database query with pagination
-          totalCount = await BikePark.countDocuments(query);
-          bikeParks = await BikePark.find(query).skip(skip).limit(limit).sort(sort);
+          totalCount = await BikeParkModel.countDocuments(query);
+          bikeParks = await BikeParkModel.find(query).skip(skip).limit(take).sort(sort);
         }
 
         // Calculate pagination info
-        const totalPages = Math.ceil(totalCount / limit);
-        const hasNextPage = page < totalPages;
+        const totalPages = Math.ceil(totalCount / take);
+        const hasNextPage = skip < totalPages;
 
         return {
           bikeParks,
           totalCount,
-          currentPage: page,
+          currentPage: skip,
           totalPages,
           hasNextPage,
         };
@@ -183,7 +133,7 @@ export const bikeParkResolvers = {
 
     bikePark: async (_: unknown, { id }: { id: string }, context: AuthContext) => {
       try {
-        const bikePark = await BikePark.findById(id);
+        const bikePark = await BikeParkModel.findById(id);
         if (!bikePark) {
           throw new GraphQLError('Bike park not found');
         }
@@ -195,7 +145,7 @@ export const bikeParkResolvers = {
 
     searchBikeParks: async (_: unknown, { query }: { query: string }, context: AuthContext) => {
       try {
-        const bikeParks = await BikePark.find({
+        const bikeParks = await BikeParkModel.find({
           $or: [
             { name: { $regex: query, $options: 'i' } },
             { location: { $regex: query, $options: 'i' } },
@@ -241,7 +191,7 @@ export const bikeParkResolvers = {
           query = coord;
         }
 
-        const bikeParks = await BikePark.find(query);
+        const bikeParks = await BikeParkModel.find(query);
         return bikeParks;
       } catch (error) {
         console.error('Error fetching bike parks by viewport:', error);
@@ -257,7 +207,7 @@ export const bikeParkResolvers = {
       }
 
       try {
-        const bikePark = new BikePark({
+        const bikePark = new BikeParkModel({
           ...args,
           createdBy: context.user.id,
         });
@@ -274,7 +224,7 @@ export const bikeParkResolvers = {
       }
 
       try {
-        const bikePark = await BikePark.findById(id);
+        const bikePark = await BikeParkModel.findById(id);
         if (!bikePark) {
           throw new GraphQLError('Bike park not found');
         }
@@ -298,7 +248,7 @@ export const bikeParkResolvers = {
       }
 
       try {
-        const bikePark = await BikePark.findById(id);
+        const bikePark = await BikeParkModel.findById(id);
         if (!bikePark) {
           throw new GraphQLError('Bike park not found');
         }
@@ -348,7 +298,7 @@ export const bikeParkResolvers = {
         console.log('Weather data fetched successfully');
 
         // Update bike park with new weather data
-        const updatedBikePark = await BikePark.findByIdAndUpdate(
+        const updatedBikePark = await BikeParkModel.findByIdAndUpdate(
           bikePark._id,
           {
             weather: {
@@ -387,6 +337,25 @@ export const bikeParkResolvers = {
       } catch (error: any) {
         console.error(`Error calculating rating for bike park ${bikePark._id}:`, error);
         return 0;
+      }
+    },
+    trails: async (parent: any) => {
+      try {
+        const trails = await Trail.find({ bikeParkId: parent.id });
+        return trails.map(trail => ({
+          id: trail.id,
+          name: trail.name,
+          difficulty: trail.difficulty,
+          length: trail.length,
+          verticalDrop: trail.elevation.loss, // Using elevation loss as vertical drop
+          status: trail.status,
+          features: trail.features,
+          description: trail.description,
+          imageUrl: trail.photos[0] // Using first photo as main image
+        }));
+      } catch (error) {
+        console.error('Error fetching trails:', error);
+        return [];
       }
     },
   },

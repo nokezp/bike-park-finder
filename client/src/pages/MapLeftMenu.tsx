@@ -3,20 +3,21 @@ import { BikePark, BikeParkFilter, GetBikeParksDocument } from '../lib/graphql/g
 import { useQuery } from 'urql';
 
 export enum Difficulty {
-  ALL = 'All Levels',
+  ALL = 'All',
   BEGINNER = 'Beginner',
   INTERMEDIATE = 'Intermediate',
-  ADVANCED = 'Advanced',
-  PRO = 'Pro',
+  EXPERT = 'Expert',
 }
 
 export enum Feature {
-  ALL = 'All Features',
+  ALL = 'All',
   FLOW = 'Flow Trails',
   JUMP = 'Jump Lines',
   TECHNICAL = 'Technical',
   SKILLS = 'Skills',
 }
+
+const ITEMS_PER_PAGE = 15;
 
 const MapLeftMenu: React.FC<{
   selectedLocationId?: string;
@@ -45,12 +46,15 @@ const MapLeftMenu: React.FC<{
     coordinates: null,
     difficulty: 'All',
   });
-  
+
   const [{ data, fetching }] = useQuery({
     query: GetBikeParksDocument,
     variables: {
-      filter: filter,
-      pagination: { page: 1, limit: 100 },
+      filter: {
+        ...filter,
+        skip: 0,
+        take: ITEMS_PER_PAGE,
+      },
     },
     pause: !filter.location,
   });
@@ -78,6 +82,7 @@ const MapLeftMenu: React.FC<{
   };
 
   const setRef = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (node: any) => {
       if (node && selectedLocationId === node.dataset.index) {
         node.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -96,11 +101,7 @@ const MapLeftMenu: React.FC<{
         className="absolute right-px m-[10px] text-gray-600 hover:text-emerald-600 transition-colors duration-200"
         onClick={() => setMinimizeLeftMenu(!minimizeLeftMenu)}
       >
-        {minimizeLeftMenu ? (
-          <i className="fa-solid text-xl fa-maximize"></i>
-        ) : (
-          <i className="fa-solid text-xl fa-minimize"></i>
-        )}
+        {minimizeLeftMenu ? <i className="fa-solid text-xl fa-maximize"></i> : <i className="fa-solid text-xl fa-minimize"></i>}
       </button>
       <div className="p-6 w-[372px]">
         <div className="space-y-4">
@@ -113,7 +114,7 @@ const MapLeftMenu: React.FC<{
                 placeholder="Enter location"
                 className="w-full pl-10 pr-4 py-2 rounded-md border border-gray-200"
                 value={tempFilter.location || ''}
-                onChange={(e: any) =>
+                onChange={(e) =>
                   setTempFilter({
                     ...tempFilter,
                     location: e.target.value,
@@ -232,7 +233,8 @@ const MapLeftMenu: React.FC<{
                       <div className="flex justify-between">
                         <h3 className="font-bold text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]">{park.name}</h3>
                         <span className="text-sm">
-                          <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i> {park.rating}
+                          <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i>{' '}
+                          {park.rating}
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 mb-2">{park.location}</p>
