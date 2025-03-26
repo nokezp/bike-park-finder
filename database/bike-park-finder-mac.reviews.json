@@ -1,0 +1,80 @@
+[{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a18"
+  },
+  "title": "Epic Downhill Paradise",
+  "content": "Amazing bike park with world-class trails!",
+  "rating": 5,
+  "difficulty": "expert",
+  "technicalRating": 5,
+  "scenicRating": 5,
+  "maintenanceRating": 4,
+  "bikeUsed": "Downhill",
+  "rideDate": {
+    "$date": "2025-03-25T00:53:35.504Z"
+  },
+  "conditions": {
+    "weather": "sunny",
+    "trailCondition": "dry"
+  },
+  "photos": [
+    "https://example.com/review1.jpg"
+  ],
+  "videos": [
+    "https://example.com/review1.mp4"
+  ],
+  "likes": 0,
+  "bikePark": {
+    "$oid": "67e1fe8fd61e7f0c9c87596c"
+  },
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.504Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.506Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a19"
+  },
+  "title": "Great Trail Variety",
+  "content": "Great variety of trails for all skill levels.",
+  "rating": 4,
+  "difficulty": "intermediate",
+  "technicalRating": 4,
+  "scenicRating": 5,
+  "maintenanceRating": 4,
+  "bikeUsed": "Trail",
+  "rideDate": {
+    "$date": "2025-03-25T00:53:35.504Z"
+  },
+  "conditions": {
+    "weather": "cloudy",
+    "trailCondition": "dry"
+  },
+  "photos": [
+    "https://example.com/review2.jpg"
+  ],
+  "videos": [
+    "https://example.com/review2.mp4"
+  ],
+  "likes": 0,
+  "bikePark": {
+    "$oid": "67e1fe8fd61e7f0c9c87596c"
+  },
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c87596a"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.504Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.506Z"
+  },
+  "__v": 0
+}]

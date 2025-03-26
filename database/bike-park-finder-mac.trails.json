@@ -1,0 +1,860 @@
+[{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a1f"
+  },
+  "name": "Black Lightning",
+  "description": "Signature downhill track at Winterberg featuring technical rock gardens and big drops",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596c"
+  },
+  "difficulty": "expert",
+  "type": "downhill",
+  "length": 2.8,
+  "elevation": {
+    "gain": 0,
+    "loss": 450
+  },
+  "features": [
+    "Rock Gardens",
+    "Drops",
+    "Gap Jumps",
+    "Technical Sections"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.8,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.524Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a20"
+  },
+  "name": "Flow Country",
+  "description": "Smooth, flowing trail perfect for beginners and intermediates",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596c"
+  },
+  "difficulty": "beginner",
+  "type": "flow",
+  "length": 4.2,
+  "elevation": {
+    "gain": 0,
+    "loss": 320
+  },
+  "features": [
+    "Berms",
+    "Small Jumps",
+    "Rollers",
+    "Wide Track"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "excellent",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.7,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.524Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a21"
+  },
+  "name": "Geisskopf DH",
+  "description": "World Cup level downhill track with multiple line choices",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596d"
+  },
+  "difficulty": "expert",
+  "type": "downhill",
+  "length": 2.1,
+  "elevation": {
+    "gain": 0,
+    "loss": 520
+  },
+  "features": [
+    "Rock Gardens",
+    "Step-downs",
+    "Gap Jumps",
+    "North Shore"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.9,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.524Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a22"
+  },
+  "name": "Forest Flow",
+  "description": "Natural single track through dense Bavarian forest",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596d"
+  },
+  "difficulty": "intermediate",
+  "type": "enduro",
+  "length": 5.6,
+  "elevation": {
+    "gain": 50,
+    "loss": 480
+  },
+  "features": [
+    "Natural Obstacles",
+    "Root Sections",
+    "Berms",
+    "Small Drops"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.6,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.525Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a23"
+  },
+  "name": "Harz Lightning",
+  "description": "Fast and technical track through the Harz mountains",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596e"
+  },
+  "difficulty": "expert",
+  "type": "technical",
+  "length": 2.4,
+  "elevation": {
+    "gain": 0,
+    "loss": 380
+  },
+  "features": [
+    "Rock Gardens",
+    "Step-downs",
+    "Technical Sections",
+    "Drops"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.7,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.525Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a24"
+  },
+  "name": "Green Monster",
+  "description": "Beginner-friendly trail with progressive features",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596e"
+  },
+  "difficulty": "beginner",
+  "type": "flow",
+  "length": 3.8,
+  "elevation": {
+    "gain": 0,
+    "loss": 280
+  },
+  "features": [
+    "Table Tops",
+    "Berms",
+    "Rollers",
+    "Small Drops"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "excellent",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.5,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.525Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a25"
+  },
+  "name": "Black Forest Express",
+  "description": "High-speed track through the Black Forest",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875970"
+  },
+  "difficulty": "expert",
+  "type": "downhill",
+  "length": 2.9,
+  "elevation": {
+    "gain": 0,
+    "loss": 460
+  },
+  "features": [
+    "Gap Jumps",
+    "Rock Gardens",
+    "High-Speed Sections",
+    "Drops"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.8,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.525Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a26"
+  },
+  "name": "Todtnau Flow",
+  "description": "Smooth flow trail with progressive jumps",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875970"
+  },
+  "difficulty": "intermediate",
+  "type": "flow",
+  "length": 4.1,
+  "elevation": {
+    "gain": 0,
+    "loss": 340
+  },
+  "features": [
+    "Table Tops",
+    "Berms",
+    "Step-ups",
+    "Wall Rides"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.6,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.526Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a27"
+  },
+  "name": "Willingen Pro Line",
+  "description": "Professional-level jump line with massive features",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875971"
+  },
+  "difficulty": "expert",
+  "type": "jump",
+  "length": 1.2,
+  "elevation": {
+    "gain": 0,
+    "loss": 180
+  },
+  "features": [
+    "Big Jumps",
+    "Step-ups",
+    "Step-downs",
+    "Drops"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.9,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.526Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a28"
+  },
+  "name": "Freeride Paradise",
+  "description": "Creative freeride line with multiple options",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875971"
+  },
+  "difficulty": "expert",
+  "type": "technical",
+  "length": 2.6,
+  "elevation": {
+    "gain": 0,
+    "loss": 320
+  },
+  "features": [
+    "Natural Hits",
+    "Drops",
+    "Hip Jumps",
+    "Wood Features"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.7,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.526Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a29"
+  },
+  "name": "Bad Wildbad DH",
+  "description": "One of Germany's most technical downhill tracks",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875973"
+  },
+  "difficulty": "expert",
+  "type": "downhill",
+  "length": 1.9,
+  "elevation": {
+    "gain": 0,
+    "loss": 420
+  },
+  "features": [
+    "Rock Gardens",
+    "Technical Sections",
+    "Steep Chutes",
+    "Drops"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "challenging",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.9,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.526Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a2c"
+  },
+  "name": "Nature Trail",
+  "description": "Natural single track with minimal artificial features",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875974"
+  },
+  "difficulty": "intermediate",
+  "type": "enduro",
+  "length": 4.7,
+  "elevation": {
+    "gain": 80,
+    "loss": 420
+  },
+  "features": [
+    "Natural Obstacles",
+    "Root Sections",
+    "Rock Gardens",
+    "Stream Crossings"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.6,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.527Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a2d"
+  },
+  "name": "Progression Line",
+  "description": "Perfect trail for improving jumping skills",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875975"
+  },
+  "difficulty": "intermediate",
+  "type": "jump",
+  "length": 3.2,
+  "elevation": {
+    "gain": 0,
+    "loss": 280
+  },
+  "features": [
+    "Progressive Jumps",
+    "Table Tops",
+    "Berms",
+    "Small Gaps"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "excellent",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.5,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.527Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a2e"
+  },
+  "name": "Skills Area",
+  "description": "Dedicated skills training area with various features",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875975"
+  },
+  "difficulty": "beginner",
+  "type": "skills",
+  "length": 0.8,
+  "elevation": {
+    "gain": 0,
+    "loss": 40
+  },
+  "features": [
+    "Balance Features",
+    "Small Drops",
+    "Pump Track",
+    "Practice Areas"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "excellent",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.4,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.528Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a2f"
+  },
+  "name": "Night Rider",
+  "description": "Illuminated evening trail with flow features",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596f"
+  },
+  "difficulty": "intermediate",
+  "type": "flow",
+  "length": 2.6,
+  "elevation": {
+    "gain": 0,
+    "loss": 290
+  },
+  "features": [
+    "Lit Track",
+    "Table Tops",
+    "Berms",
+    "Rollers"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.6,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.528Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a30"
+  },
+  "name": "Harz Enduro",
+  "description": "Long enduro track with varied terrain",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596f"
+  },
+  "difficulty": "expert",
+  "type": "enduro",
+  "length": 6.2,
+  "elevation": {
+    "gain": 120,
+    "loss": 580
+  },
+  "features": [
+    "Technical Climbs",
+    "Fast Descents",
+    "Natural Features",
+    "Rock Gardens"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.8,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.528Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a31"
+  },
+  "name": "Family Line",
+  "description": "Super beginner-friendly trail for first-timers",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596c"
+  },
+  "difficulty": "beginner",
+  "type": "flow",
+  "length": 1.8,
+  "elevation": {
+    "gain": 0,
+    "loss": 120
+  },
+  "features": [
+    "Wide Track",
+    "Small Rollers",
+    "Gentle Berms",
+    "Rest Areas"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "excellent",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.5,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.529Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a32"
+  },
+  "name": "Pro Jump Line",
+  "description": "Competition-level slopestyle course",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c87596c"
+  },
+  "difficulty": "expert",
+  "type": "jump",
+  "length": 0.9,
+  "elevation": {
+    "gain": 0,
+    "loss": 140
+  },
+  "features": [
+    "Big Air Jumps",
+    "Step-ups",
+    "Step-downs",
+    "Hip Jumps"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.9,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.529Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a2a"
+  },
+  "name": "Wild Child",
+  "description": "Intermediate jump line with progressive features",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875973"
+  },
+  "difficulty": "intermediate",
+  "type": "jump",
+  "length": 2.8,
+  "elevation": {
+    "gain": 0,
+    "loss": 310
+  },
+  "features": [
+    "Table Tops",
+    "Step-ups",
+    "Berms",
+    "Small Gaps"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.5,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.527Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67e1fe8fd61e7f0c9c875a2b"
+  },
+  "name": "Gravity Express",
+  "description": "Fast and flowy downhill track",
+  "bikeParkId": {
+    "$oid": "67e1fe8fd61e7f0c9c875974"
+  },
+  "difficulty": "expert",
+  "type": "downhill",
+  "length": 2.3,
+  "elevation": {
+    "gain": 0,
+    "loss": 390
+  },
+  "features": [
+    "High-Speed Sections",
+    "Jumps",
+    "Berms",
+    "Technical Sections"
+  ],
+  "status": "open",
+  "conditions": {
+    "current": "good",
+    "lastUpdated": {
+      "$date": "2025-03-25T00:53:34.407Z"
+    }
+  },
+  "rating": 4.7,
+  "photos": [],
+  "videos": [],
+  "createdBy": {
+    "$oid": "67e1fe8ed61e7f0c9c875968"
+  },
+  "createdAt": {
+    "$date": "2025-03-25T00:53:35.527Z"
+  },
+  "updatedAt": {
+    "$date": "2025-03-25T00:53:35.533Z"
+  },
+  "__v": 0
+}]
