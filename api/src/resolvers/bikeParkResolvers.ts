@@ -2,7 +2,8 @@ import { GraphQLError } from 'graphql';
 import { WeatherService } from '../services/weatherService.js';
 import { AuthContext } from '../utils/auth.js';
 import { BikeParkFilter } from '../core/generated-models.js';
-import { BikePark } from '../models/BikePark.js';
+import { BikePark as BikeParkModel } from '../models/BikePark.js';
+import { Trail } from '../models/Trail.js';
 
 interface Context {
   user?: {
@@ -80,7 +81,7 @@ export const bikeParkResolvers = {
         // Special handling for location-based search with coordinates
         if (filter?.coordinates) {
           // Get all matching parks first
-          bikeParks = await BikePark.find(query).sort(sort);
+          bikeParks = await BikeParkModel.find(query).sort(sort);
 
           // Filter by distance
           const { latitude, longitude, radius = DEFAULT_SEARCH_RADIUS_KM } = filter.coordinates;
@@ -110,8 +111,8 @@ export const bikeParkResolvers = {
           bikeParks = bikeParks.slice(skip, skip + take);
         } else {
           // Regular database query with pagination
-          totalCount = await BikePark.countDocuments(query);
-          bikeParks = await BikePark.find(query).skip(skip).limit(take).sort(sort);
+          totalCount = await BikeParkModel.countDocuments(query);
+          bikeParks = await BikeParkModel.find(query).skip(skip).limit(take).sort(sort);
         }
 
         // Calculate pagination info
@@ -132,7 +133,7 @@ export const bikeParkResolvers = {
 
     bikePark: async (_: unknown, { id }: { id: string }, context: AuthContext) => {
       try {
-        const bikePark = await BikePark.findById(id);
+        const bikePark = await BikeParkModel.findById(id);
         if (!bikePark) {
           throw new GraphQLError('Bike park not found');
         }
@@ -144,7 +145,7 @@ export const bikeParkResolvers = {
 
     searchBikeParks: async (_: unknown, { query }: { query: string }, context: AuthContext) => {
       try {
-        const bikeParks = await BikePark.find({
+        const bikeParks = await BikeParkModel.find({
           $or: [
             { name: { $regex: query, $options: 'i' } },
             { location: { $regex: query, $options: 'i' } },
@@ -190,7 +191,7 @@ export const bikeParkResolvers = {
           query = coord;
         }
 
-        const bikeParks = await BikePark.find(query);
+        const bikeParks = await BikeParkModel.find(query);
         return bikeParks;
       } catch (error) {
         console.error('Error fetching bike parks by viewport:', error);
@@ -206,7 +207,7 @@ export const bikeParkResolvers = {
       }
 
       try {
-        const bikePark = new BikePark({
+        const bikePark = new BikeParkModel({
           ...args,
           createdBy: context.user.id,
         });
@@ -223,7 +224,7 @@ export const bikeParkResolvers = {
       }
 
       try {
-        const bikePark = await BikePark.findById(id);
+        const bikePark = await BikeParkModel.findById(id);
         if (!bikePark) {
           throw new GraphQLError('Bike park not found');
         }
@@ -247,7 +248,7 @@ export const bikeParkResolvers = {
       }
 
       try {
-        const bikePark = await BikePark.findById(id);
+        const bikePark = await BikeParkModel.findById(id);
         if (!bikePark) {
           throw new GraphQLError('Bike park not found');
         }
@@ -297,7 +298,7 @@ export const bikeParkResolvers = {
         console.log('Weather data fetched successfully');
 
         // Update bike park with new weather data
-        const updatedBikePark = await BikePark.findByIdAndUpdate(
+        const updatedBikePark = await BikeParkModel.findByIdAndUpdate(
           bikePark._id,
           {
             weather: {
@@ -336,6 +337,25 @@ export const bikeParkResolvers = {
       } catch (error: any) {
         console.error(`Error calculating rating for bike park ${bikePark._id}:`, error);
         return 0;
+      }
+    },
+    trails: async (parent: any) => {
+      try {
+        const trails = await Trail.find({ bikeParkId: parent.id });
+        return trails.map(trail => ({
+          id: trail.id,
+          name: trail.name,
+          difficulty: trail.difficulty,
+          length: trail.length,
+          verticalDrop: trail.elevation.loss, // Using elevation loss as vertical drop
+          status: trail.status,
+          features: trail.features,
+          description: trail.description,
+          imageUrl: trail.photos[0] // Using first photo as main image
+        }));
+      } catch (error) {
+        console.error('Error fetching trails:', error);
+        return [];
       }
     },
   },

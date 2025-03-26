@@ -21,7 +21,7 @@ const App: React.FC = () => {
       <Router>
         <div className="flex flex-col min-h-screen">
           <Header />
-          <div className="flex-grow">
+          <div className="flex-grow mt-[65px]">
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/bike-parks" element={<BikeParksPage />} />

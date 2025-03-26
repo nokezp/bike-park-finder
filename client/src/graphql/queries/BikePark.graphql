@@ -48,8 +48,38 @@ query GetBikePark($id: ID!) {
       youtube
     }
     weather {
-      current
-      forecast
+      current {
+        description
+        feelsLike
+        humidity
+        icon
+        precipitation
+        temperature
+        uvIndex
+        windSpeed
+      }
+      forecast {
+        date
+        description
+        feelsLike
+        humidity
+        icon
+        precipitation
+        temperature
+        uvIndex
+        windSpeed
+      }
+    }
+    trails {
+      id
+      imageUrl
+      length
+      name
+      status
+      verticalDrop
+      features
+      difficulty
+      description
     }
   }
 }

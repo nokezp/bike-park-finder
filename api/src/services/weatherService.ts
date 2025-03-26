@@ -1,9 +1,10 @@
 import axios from 'axios';
 
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || "f8526a6c25cefc4039879801b90bd545";
+const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || 'f8526a6c25cefc4039879801b90bd545';
 const BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 export interface WeatherData {
+  date?: number;
   temperature: number;
   feelsLike: number;
   humidity: number;
@@ -22,8 +23,8 @@ export class WeatherService {
           lat,
           lon: lng,
           appid: OPENWEATHER_API_KEY,
-          units: 'metric'
-        }
+          units: 'metric',
+        },
       });
       const data = response.data;
       return {
@@ -34,7 +35,7 @@ export class WeatherService {
         description: data.weather[0].description,
         icon: data.weather[0].icon,
         precipitation: data.rain ? data.rain['1h'] || 0 : 0,
-        uvIndex: 0 // UV index requires a separate API call
+        uvIndex: 0, // UV index requires a separate API call
       };
     } catch (error: any) {
       console.error('Error fetching current weather:', error.response?.data || error.message);
@@ -49,22 +50,28 @@ export class WeatherService {
           lat,
           lon: lng,
           appid: OPENWEATHER_API_KEY,
-          units: 'metric'
-        }
+          units: 'metric',
+          exclude: 'current,minutely,hourly,alerts',
+        },
       });
-      return response.data.list.map((item: any) => ({
-        temperature: Math.round(item.main.temp),
-        feelsLike: Math.round(item.main.feels_like),
-        humidity: item.main.humidity,
-        windSpeed: item.wind.speed,
-        description: item.weather[0].description,
-        icon: item.weather[0].icon,
-        precipitation: item.rain ? item.rain['3h'] || 0 : 0,
-        uvIndex: 0
-      }));
+
+      return response.data.list
+        .filter((item: any, index: number) => index % 8 === 0)
+        .slice(0, 3)
+        .map((item: any) => ({
+          date: item.dt,
+          temperature: Math.round(item.main.temp_max),
+          feelsLike: Math.round(item.main.feels_like),
+          humidity: item.main.humidity,
+          windSpeed: item.wind.speed,
+          description: item.weather[0].description,
+          icon: item.weather[0].icon,
+          precipitation: item.rain ? item.rain['3h'] || 0 : 0,
+          uvIndex: 0,
+        }));
     } catch (error: any) {
       console.error('Error fetching forecast:', error.response?.data || error.message);
       throw error;
     }
   }
-} 
+}

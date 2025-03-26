@@ -52,6 +52,7 @@ export type BikePark = {
   rules?: Maybe<Array<Scalars['String']['output']>>;
   socialMedia?: Maybe<SocialMedia>;
   status?: Maybe<Scalars['String']['output']>;
+  trails?: Maybe<Array<Trail>>;
   updatedAt?: Maybe<Scalars['String']['output']>;
   videos?: Maybe<Array<Scalars['String']['output']>>;
   weather?: Maybe<Weather>;
@@ -421,6 +422,19 @@ export type SocialMediaInput = {
   youtube?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type Trail = {
+  __typename?: 'Trail';
+  description?: Maybe<Scalars['String']['output']>;
+  difficulty: Scalars['String']['output'];
+  features?: Maybe<Array<Scalars['String']['output']>>;
+  id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
+  length: Scalars['Float']['output'];
+  name: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  verticalDrop: Scalars['Float']['output'];
+};
+
 export type UpdateBikeParkInput = {
   address?: InputMaybe<Scalars['String']['input']>;
   contact?: InputMaybe<ContactInput>;
@@ -491,21 +505,22 @@ export type ViewportInput = {
 
 export type Weather = {
   __typename?: 'Weather';
-  current?: Maybe<Scalars['JSON']['output']>;
-  forecast?: Maybe<Scalars['JSON']['output']>;
+  current?: Maybe<WeatherData>;
+  forecast?: Maybe<Array<Maybe<WeatherData>>>;
   lastUpdated?: Maybe<Scalars['String']['output']>;
 };
 
 export type WeatherData = {
   __typename?: 'WeatherData';
-  description: Scalars['String']['output'];
-  feelsLike: Scalars['Float']['output'];
-  humidity: Scalars['Int']['output'];
-  icon: Scalars['String']['output'];
-  precipitation: Scalars['Float']['output'];
-  temperature: Scalars['Float']['output'];
-  uvIndex: Scalars['Float']['output'];
-  windSpeed: Scalars['Float']['output'];
+  date?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  feelsLike?: Maybe<Scalars['Float']['output']>;
+  humidity?: Maybe<Scalars['Int']['output']>;
+  icon?: Maybe<Scalars['String']['output']>;
+  precipitation?: Maybe<Scalars['Float']['output']>;
+  temperature?: Maybe<Scalars['Float']['output']>;
+  uvIndex?: Maybe<Scalars['Float']['output']>;
+  windSpeed?: Maybe<Scalars['Float']['output']>;
 };
 
 export type BikeParkFragment = { __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null };
@@ -535,14 +550,14 @@ export type GetBikeParkQueryVariables = Exact<{
 }>;
 
 
-export type GetBikeParkQuery = { __typename?: 'Query', bikePark?: { __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, facilities?: Array<string> | null, photos?: Array<string> | null, rating?: number | null, rules?: Array<string> | null, videos?: Array<string> | null, website?: string | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, contact?: { __typename?: 'Contact', email?: string | null, phone?: string | null } | null, openingHours?: { __typename?: 'OpeningHours', friday?: string | null, monday?: string | null, saturday?: string | null, sunday?: string | null, thursday?: string | null, tuesday?: string | null, wednesday?: string | null } | null, price?: { __typename?: 'Price', amount: number, currency: string } | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null } | null, weather?: { __typename?: 'Weather', current?: any | null, forecast?: any | null } | null } | null };
+export type GetBikeParkQuery = { __typename?: 'Query', bikePark?: { __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, facilities?: Array<string> | null, photos?: Array<string> | null, rating?: number | null, rules?: Array<string> | null, videos?: Array<string> | null, website?: string | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, contact?: { __typename?: 'Contact', email?: string | null, phone?: string | null } | null, openingHours?: { __typename?: 'OpeningHours', friday?: string | null, monday?: string | null, saturday?: string | null, sunday?: string | null, thursday?: string | null, tuesday?: string | null, wednesday?: string | null } | null, price?: { __typename?: 'Price', amount: number, currency: string } | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null } | null, weather?: { __typename?: 'Weather', current?: { __typename?: 'WeatherData', description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null, forecast?: Array<{ __typename?: 'WeatherData', date?: string | null, description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null> | null } | null, trails?: Array<{ __typename?: 'Trail', id: string, imageUrl?: string | null, length: number, name: string, status: string, verticalDrop: number, features?: Array<string> | null, difficulty: string, description?: string | null }> | null } | null };
 
 export type GetBikeParksQueryVariables = Exact<{
   filter?: InputMaybe<BikeParkFilter>;
 }>;
 
 
-export type GetBikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, weather?: { __typename?: 'Weather', current?: any | null } | null }> } };
+export type GetBikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, weather?: { __typename?: 'Weather', current?: { __typename?: 'WeatherData', description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null } | null }> } };
 
 export type GetBikeParksByViewportQueryVariables = Exact<{
   viewport: ViewportInput;
@@ -586,6 +601,7 @@ export type GraphCacheKeysConfig = {
   Review?: (data: WithTypename<Review>) => null | string,
   ScheduleItem?: (data: WithTypename<ScheduleItem>) => null | string,
   SocialMedia?: (data: WithTypename<SocialMedia>) => null | string,
+  Trail?: (data: WithTypename<Trail>) => null | string,
   User?: (data: WithTypename<User>) => null | string,
   Venue?: (data: WithTypename<Venue>) => null | string,
   Weather?: (data: WithTypename<Weather>) => null | string,
@@ -630,6 +646,7 @@ export type GraphCacheResolvers = {
     rules?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
     socialMedia?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<SocialMedia> | string>,
     status?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    trails?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<WithTypename<Trail> | string>>,
     updatedAt?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
     videos?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
     weather?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Weather> | string>,
@@ -710,6 +727,17 @@ export type GraphCacheResolvers = {
     twitter?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
     youtube?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>
   },
+  Trail?: {
+    description?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['String'] | string>,
+    difficulty?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['String'] | string>,
+    features?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Array<Scalars['String'] | string>>,
+    id?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['ID'] | string>,
+    imageUrl?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['String'] | string>,
+    length?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['Float'] | string>,
+    name?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['String'] | string>,
+    status?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['String'] | string>,
+    verticalDrop?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['Float'] | string>
+  },
   User?: {
     createdAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     email?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
@@ -725,11 +753,12 @@ export type GraphCacheResolvers = {
     name?: GraphCacheResolver<WithTypename<Venue>, Record<string, never>, Scalars['String'] | string>
   },
   Weather?: {
-    current?: GraphCacheResolver<WithTypename<Weather>, Record<string, never>, Scalars['JSON'] | string>,
-    forecast?: GraphCacheResolver<WithTypename<Weather>, Record<string, never>, Scalars['JSON'] | string>,
+    current?: GraphCacheResolver<WithTypename<Weather>, Record<string, never>, WithTypename<WeatherData> | string>,
+    forecast?: GraphCacheResolver<WithTypename<Weather>, Record<string, never>, Array<WithTypename<WeatherData> | string>>,
     lastUpdated?: GraphCacheResolver<WithTypename<Weather>, Record<string, never>, Scalars['String'] | string>
   },
   WeatherData?: {
+    date?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['String'] | string>,
     description?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['String'] | string>,
     feelsLike?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['Float'] | string>,
     humidity?: GraphCacheResolver<WithTypename<WeatherData>, Record<string, never>, Scalars['Int'] | string>,
@@ -811,6 +840,7 @@ export type GraphCacheUpdaters = {
     rules?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     socialMedia?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     status?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    trails?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     videos?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     weather?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
@@ -891,6 +921,17 @@ export type GraphCacheUpdaters = {
     twitter?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
     youtube?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>
   },
+  Trail?: {
+    description?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
+    difficulty?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
+    features?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
+    imageUrl?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
+    length?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
+    name?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
+    status?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
+    verticalDrop?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>
+  },
   User?: {
     createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     email?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
@@ -911,6 +952,7 @@ export type GraphCacheUpdaters = {
     lastUpdated?: GraphCacheUpdateResolver<Maybe<WithTypename<Weather>>, Record<string, never>>
   },
   WeatherData?: {
+    date?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
     description?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
     feelsLike?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
     humidity?: GraphCacheUpdateResolver<Maybe<WithTypename<WeatherData>>, Record<string, never>>,
@@ -1038,8 +1080,38 @@ export const GetBikeParkDocument = gql`
       youtube
     }
     weather {
-      current
-      forecast
+      current {
+        description
+        feelsLike
+        humidity
+        icon
+        precipitation
+        temperature
+        uvIndex
+        windSpeed
+      }
+      forecast {
+        date
+        description
+        feelsLike
+        humidity
+        icon
+        precipitation
+        temperature
+        uvIndex
+        windSpeed
+      }
+    }
+    trails {
+      id
+      imageUrl
+      length
+      name
+      status
+      verticalDrop
+      features
+      difficulty
+      description
     }
   }
 }
@@ -1068,7 +1140,16 @@ export const GetBikeParksDocument = gql`
         longitude
       }
       weather {
-        current
+        current {
+          description
+          feelsLike
+          humidity
+          icon
+          precipitation
+          temperature
+          uvIndex
+          windSpeed
+        }
       }
     }
     totalCount

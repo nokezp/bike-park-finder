@@ -10,7 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import './Map.scss';
 
 // Simple marker icon without image imports
-const defaultIcon = new Icon({
+export const defaultMapIcon = new Icon({
   iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
   iconSize: [25, 41],
@@ -159,7 +159,7 @@ const Map: React.FC<{
             <Marker
               key={location.id}
               position={[location?.coordinates?.latitude ?? 0, location?.coordinates?.longitude ?? 0]}
-              icon={selectedLocation?.id === location.id ? selectedIcon : defaultIcon}
+              icon={selectedLocation?.id === location.id ? selectedIcon : defaultMapIcon}
               eventHandlers={{ click: () => handleMarkerClick(location) }}
             >
               <Popup closeButton={false} closeOnEscapeKey={true} autoClose={true} autoPan={false}>
