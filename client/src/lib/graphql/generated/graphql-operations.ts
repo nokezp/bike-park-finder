@@ -34,7 +34,7 @@ export type BikePark = {
   contact?: Maybe<Contact>;
   coordinates?: Maybe<Coordinates>;
   createdAt: Scalars['String']['output'];
-  createdBy: Scalars['ID']['output'];
+  createdBy: User;
   description?: Maybe<Scalars['String']['output']>;
   difficulty?: Maybe<Scalars['String']['output']>;
   facilities?: Maybe<Array<Scalars['String']['output']>>;
@@ -214,7 +214,11 @@ export type MutationCreateEventArgs = {
 export type MutationCreateReviewArgs = {
   bikeParkId: Scalars['ID']['input'];
   comment: Scalars['String']['input'];
+  photos?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   rating: Scalars['Float']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+  trailDifficulty?: InputMaybe<Scalars['String']['input']>;
+  visitDate?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -240,8 +244,10 @@ export type MutationLoginArgs = {
 
 
 export type MutationRegisterArgs = {
+  confirmPassword: Scalars['String']['input'];
   email: Scalars['String']['input'];
-  name?: InputMaybe<Scalars['String']['input']>;
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
 };
@@ -319,6 +325,15 @@ export type PaginatedBikeParks = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type PaginatedReviews = {
+  __typename?: 'PaginatedReviews';
+  currentPage: Scalars['Int']['output'];
+  hasNextPage: Scalars['Boolean']['output'];
+  reviews: Array<Review>;
+  totalCount: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
 export type PaginationInput = {
   limit: Scalars['Int']['input'];
   page: Scalars['Int']['input'];
@@ -343,7 +358,7 @@ export type Query = {
   event?: Maybe<Event>;
   events: Array<Event>;
   me?: Maybe<User>;
-  reviews: Array<Review>;
+  reviews: PaginatedReviews;
   searchBikeParks: Array<BikePark>;
 };
 
@@ -376,6 +391,8 @@ export type QueryEventsArgs = {
 
 export type QueryReviewsArgs = {
   bikeParkId: Scalars['ID']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -388,10 +405,14 @@ export type Review = {
   bikePark: Scalars['ID']['output'];
   comment: Scalars['String']['output'];
   createdAt: Scalars['String']['output'];
-  createdBy: Scalars['ID']['output'];
+  createdBy: User;
   id: Scalars['ID']['output'];
+  photos?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   rating: Scalars['Float']['output'];
+  title?: Maybe<Scalars['String']['output']>;
+  trailDifficulty?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['String']['output']>;
+  visitDate?: Maybe<Scalars['String']['output']>;
 };
 
 export type ScheduleItem = {
@@ -478,8 +499,9 @@ export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  name?: Maybe<Scalars['String']['output']>;
+  lastName: Scalars['String']['output'];
   role: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
@@ -523,9 +545,22 @@ export type WeatherData = {
   windSpeed?: Maybe<Scalars['Float']['output']>;
 };
 
-export type BikeParkFragment = { __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null };
+export type BikeParkFragment = { __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null };
 
 export type EventFragment = { __typename?: 'Event', id: string, attendeeCount: number, capacity: number, category: EventCategory, date: string, description: string, featured: boolean, imageUrl: string, location: string, price: number, title: string, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string } };
+
+export type CreateReviewMutationVariables = Exact<{
+  bikeParkId: Scalars['ID']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+  rating: Scalars['Float']['input'];
+  comment: Scalars['String']['input'];
+  visitDate?: InputMaybe<Scalars['String']['input']>;
+  trailDifficulty?: InputMaybe<Scalars['String']['input']>;
+  photos?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
+}>;
+
+
+export type CreateReviewMutation = { __typename?: 'Mutation', createReview: { __typename?: 'Review', id: string, title?: string | null, comment: string, rating: number, bikePark: string, createdAt: string, updatedAt?: string | null, createdBy: { __typename?: 'User', id: string, username: string, email: string } } };
 
 export type LoginMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -536,10 +571,12 @@ export type LoginMutationVariables = Exact<{
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'AuthPayload', token: string } };
 
 export type RegisterMutationVariables = Exact<{
+  username: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  username: Scalars['String']['input'];
-  name: Scalars['String']['input'];
+  confirmPassword: Scalars['String']['input'];
 }>;
 
 
@@ -550,14 +587,14 @@ export type GetBikeParkQueryVariables = Exact<{
 }>;
 
 
-export type GetBikeParkQuery = { __typename?: 'Query', bikePark?: { __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, facilities?: Array<string> | null, photos?: Array<string> | null, rating?: number | null, rules?: Array<string> | null, videos?: Array<string> | null, website?: string | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, contact?: { __typename?: 'Contact', email?: string | null, phone?: string | null } | null, openingHours?: { __typename?: 'OpeningHours', friday?: string | null, monday?: string | null, saturday?: string | null, sunday?: string | null, thursday?: string | null, tuesday?: string | null, wednesday?: string | null } | null, price?: { __typename?: 'Price', amount: number, currency: string } | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null } | null, weather?: { __typename?: 'Weather', current?: { __typename?: 'WeatherData', description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null, forecast?: Array<{ __typename?: 'WeatherData', date?: string | null, description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null> | null } | null, trails?: Array<{ __typename?: 'Trail', id: string, imageUrl?: string | null, length: number, name: string, status: string, verticalDrop: number, features?: Array<string> | null, difficulty: string, description?: string | null }> | null } | null };
+export type GetBikeParkQuery = { __typename?: 'Query', bikePark?: { __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, facilities?: Array<string> | null, photos?: Array<string> | null, rating?: number | null, rules?: Array<string> | null, videos?: Array<string> | null, website?: string | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, contact?: { __typename?: 'Contact', email?: string | null, phone?: string | null } | null, openingHours?: { __typename?: 'OpeningHours', friday?: string | null, monday?: string | null, saturday?: string | null, sunday?: string | null, thursday?: string | null, tuesday?: string | null, wednesday?: string | null } | null, price?: { __typename?: 'Price', amount: number, currency: string } | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null } | null, weather?: { __typename?: 'Weather', current?: { __typename?: 'WeatherData', description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null, forecast?: Array<{ __typename?: 'WeatherData', date?: string | null, description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null> | null } | null, trails?: Array<{ __typename?: 'Trail', id: string, imageUrl?: string | null, length: number, name: string, status: string, verticalDrop: number, features?: Array<string> | null, difficulty: string, description?: string | null }> | null, reviews?: Array<{ __typename?: 'Review', id: string, title?: string | null, comment: string, rating: number, createdAt: string, updatedAt?: string | null, createdBy: { __typename?: 'User', id: string, username: string, email: string } }> | null } | null };
 
 export type GetBikeParksQueryVariables = Exact<{
   filter?: InputMaybe<BikeParkFilter>;
 }>;
 
 
-export type GetBikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, weather?: { __typename?: 'Weather', current?: { __typename?: 'WeatherData', description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null } | null }> } };
+export type GetBikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, weather?: { __typename?: 'Weather', current?: { __typename?: 'WeatherData', description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null } | null }> } };
 
 export type GetBikeParksByViewportQueryVariables = Exact<{
   viewport: ViewportInput;
@@ -565,7 +602,7 @@ export type GetBikeParksByViewportQueryVariables = Exact<{
 }>;
 
 
-export type GetBikeParksByViewportQuery = { __typename?: 'Query', bikeParksByViewport: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, createdAt: string, updatedAt?: string | null, createdBy: string, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> };
+export type GetBikeParksByViewportQuery = { __typename?: 'Query', bikeParksByViewport: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> };
 
 export type GetEventQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -581,10 +618,19 @@ export type GetEventsQueryVariables = Exact<{
 
 export type GetEventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, attendeeCount: number, capacity: number, category: EventCategory, date: string, description: string, featured: boolean, imageUrl: string, location: string, price: number, title: string, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string } }> };
 
+export type GetReviewsQueryVariables = Exact<{
+  bikeParkId: Scalars['ID']['input'];
+  page?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type GetReviewsQuery = { __typename?: 'Query', reviews: { __typename?: 'PaginatedReviews', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, reviews: Array<{ __typename?: 'Review', id: string, comment: string, createdAt: string, rating: number, title?: string | null, trailDifficulty?: string | null, visitDate?: string | null, createdBy: { __typename?: 'User', id: string, username: string } }> } };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, name?: string | null, username: string, email: string, createdAt: string, updatedAt: string } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, email: string, role: string, createdAt: string, updatedAt: string } | null };
 
 export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __typename: NonNullable<T['__typename']> };
 
@@ -597,6 +643,7 @@ export type GraphCacheKeysConfig = {
   OpeningHours?: (data: WithTypename<OpeningHours>) => null | string,
   Organizer?: (data: WithTypename<Organizer>) => null | string,
   PaginatedBikeParks?: (data: WithTypename<PaginatedBikeParks>) => null | string,
+  PaginatedReviews?: (data: WithTypename<PaginatedReviews>) => null | string,
   Price?: (data: WithTypename<Price>) => null | string,
   Review?: (data: WithTypename<Review>) => null | string,
   ScheduleItem?: (data: WithTypename<ScheduleItem>) => null | string,
@@ -616,7 +663,7 @@ export type GraphCacheResolvers = {
     event?: GraphCacheResolver<WithTypename<Query>, QueryEventArgs, WithTypename<Event> | string>,
     events?: GraphCacheResolver<WithTypename<Query>, QueryEventsArgs, Array<WithTypename<Event> | string>>,
     me?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
-    reviews?: GraphCacheResolver<WithTypename<Query>, QueryReviewsArgs, Array<WithTypename<Review> | string>>,
+    reviews?: GraphCacheResolver<WithTypename<Query>, QueryReviewsArgs, WithTypename<PaginatedReviews> | string>,
     searchBikeParks?: GraphCacheResolver<WithTypename<Query>, QuerySearchBikeParksArgs, Array<WithTypename<BikePark> | string>>
   },
   AuthPayload?: {
@@ -628,7 +675,7 @@ export type GraphCacheResolvers = {
     contact?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Contact> | string>,
     coordinates?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Coordinates> | string>,
     createdAt?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
-    createdBy?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['ID'] | string>,
+    createdBy?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<User> | string>,
     description?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
     difficulty?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
     facilities?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
@@ -703,6 +750,13 @@ export type GraphCacheResolvers = {
     totalCount?: GraphCacheResolver<WithTypename<PaginatedBikeParks>, Record<string, never>, Scalars['Int'] | string>,
     totalPages?: GraphCacheResolver<WithTypename<PaginatedBikeParks>, Record<string, never>, Scalars['Int'] | string>
   },
+  PaginatedReviews?: {
+    currentPage?: GraphCacheResolver<WithTypename<PaginatedReviews>, Record<string, never>, Scalars['Int'] | string>,
+    hasNextPage?: GraphCacheResolver<WithTypename<PaginatedReviews>, Record<string, never>, Scalars['Boolean'] | string>,
+    reviews?: GraphCacheResolver<WithTypename<PaginatedReviews>, Record<string, never>, Array<WithTypename<Review> | string>>,
+    totalCount?: GraphCacheResolver<WithTypename<PaginatedReviews>, Record<string, never>, Scalars['Int'] | string>,
+    totalPages?: GraphCacheResolver<WithTypename<PaginatedReviews>, Record<string, never>, Scalars['Int'] | string>
+  },
   Price?: {
     amount?: GraphCacheResolver<WithTypename<Price>, Record<string, never>, Scalars['Float'] | string>,
     currency?: GraphCacheResolver<WithTypename<Price>, Record<string, never>, Scalars['String'] | string>
@@ -711,10 +765,14 @@ export type GraphCacheResolvers = {
     bikePark?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['ID'] | string>,
     comment?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>,
     createdAt?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>,
-    createdBy?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['ID'] | string>,
+    createdBy?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, WithTypename<User> | string>,
     id?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['ID'] | string>,
+    photos?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Array<Scalars['String'] | string>>,
     rating?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['Float'] | string>,
-    updatedAt?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>
+    title?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>,
+    trailDifficulty?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>,
+    visitDate?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['String'] | string>
   },
   ScheduleItem?: {
     description?: GraphCacheResolver<WithTypename<ScheduleItem>, Record<string, never>, Scalars['String'] | string>,
@@ -741,8 +799,9 @@ export type GraphCacheResolvers = {
   User?: {
     createdAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     email?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    firstName?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     id?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['ID'] | string>,
-    name?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    lastName?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     role?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     updatedAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     username?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
@@ -794,7 +853,7 @@ export type GraphCacheUpdaters = {
     event?: GraphCacheUpdateResolver<{ event: Maybe<WithTypename<Event>> }, QueryEventArgs>,
     events?: GraphCacheUpdateResolver<{ events: Array<WithTypename<Event>> }, QueryEventsArgs>,
     me?: GraphCacheUpdateResolver<{ me: Maybe<WithTypename<User>> }, Record<string, never>>,
-    reviews?: GraphCacheUpdateResolver<{ reviews: Array<WithTypename<Review>> }, QueryReviewsArgs>,
+    reviews?: GraphCacheUpdateResolver<{ reviews: WithTypename<PaginatedReviews> }, QueryReviewsArgs>,
     searchBikeParks?: GraphCacheUpdateResolver<{ searchBikeParks: Array<WithTypename<BikePark>> }, QuerySearchBikeParksArgs>
   },
   Mutation?: {
@@ -897,6 +956,13 @@ export type GraphCacheUpdaters = {
     totalCount?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedBikeParks>>, Record<string, never>>,
     totalPages?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedBikeParks>>, Record<string, never>>
   },
+  PaginatedReviews?: {
+    currentPage?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedReviews>>, Record<string, never>>,
+    hasNextPage?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedReviews>>, Record<string, never>>,
+    reviews?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedReviews>>, Record<string, never>>,
+    totalCount?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedReviews>>, Record<string, never>>,
+    totalPages?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedReviews>>, Record<string, never>>
+  },
   Price?: {
     amount?: GraphCacheUpdateResolver<Maybe<WithTypename<Price>>, Record<string, never>>,
     currency?: GraphCacheUpdateResolver<Maybe<WithTypename<Price>>, Record<string, never>>
@@ -907,8 +973,12 @@ export type GraphCacheUpdaters = {
     createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
     createdBy?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
     id?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    photos?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
     rating?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
-    updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>
+    title?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    trailDifficulty?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
+    visitDate?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>
   },
   ScheduleItem?: {
     description?: GraphCacheUpdateResolver<Maybe<WithTypename<ScheduleItem>>, Record<string, never>>,
@@ -935,8 +1005,9 @@ export type GraphCacheUpdaters = {
   User?: {
     createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     email?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    firstName?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     id?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
-    name?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    lastName?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     role?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     username?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>
@@ -980,9 +1051,6 @@ export const BikeParkFragmentDoc = gql`
   difficulty
   status
   features
-  createdAt
-  updatedAt
-  createdBy
   coordinates {
     latitude
     longitude
@@ -1009,6 +1077,36 @@ export const EventFragmentDoc = gql`
   title
 }
     `;
+export const CreateReviewDocument = gql`
+    mutation CreateReview($bikeParkId: ID!, $title: String, $rating: Float!, $comment: String!, $visitDate: String, $trailDifficulty: String, $photos: [String]) {
+  createReview(
+    bikeParkId: $bikeParkId
+    title: $title
+    rating: $rating
+    comment: $comment
+    visitDate: $visitDate
+    trailDifficulty: $trailDifficulty
+    photos: $photos
+  ) {
+    id
+    title
+    comment
+    rating
+    bikePark
+    createdAt
+    createdBy {
+      id
+      username
+      email
+    }
+    updatedAt
+  }
+}
+    `;
+
+export function useCreateReviewMutation() {
+  return Urql.useMutation<CreateReviewMutation, CreateReviewMutationVariables>(CreateReviewDocument);
+};
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -1021,8 +1119,15 @@ export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
 };
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $password: String!, $username: String!, $name: String!) {
-  register(email: $email, password: $password, username: $username, name: $name) {
+    mutation Register($username: String!, $firstName: String!, $lastName: String!, $email: String!, $password: String!, $confirmPassword: String!) {
+  register(
+    username: $username
+    firstName: $firstName
+    lastName: $lastName
+    email: $email
+    password: $password
+    confirmPassword: $confirmPassword
+  ) {
     token
   }
 }
@@ -1042,9 +1147,6 @@ export const GetBikeParkDocument = gql`
     difficulty
     status
     features
-    createdAt
-    updatedAt
-    createdBy
     coordinates {
       latitude
       longitude
@@ -1113,6 +1215,19 @@ export const GetBikeParkDocument = gql`
       difficulty
       description
     }
+    reviews {
+      id
+      title
+      comment
+      rating
+      createdAt
+      createdBy {
+        id
+        username
+        email
+      }
+      updatedAt
+    }
   }
 }
     `;
@@ -1132,9 +1247,6 @@ export const GetBikeParksDocument = gql`
       difficulty
       status
       features
-      createdAt
-      updatedAt
-      createdBy
       coordinates {
         latitude
         longitude
@@ -1196,13 +1308,42 @@ export const GetEventsDocument = gql`
 export function useGetEventsQuery(options?: Omit<Urql.UseQueryArgs<GetEventsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetEventsQuery, GetEventsQueryVariables>({ query: GetEventsDocument, ...options });
 };
+export const GetReviewsDocument = gql`
+    query GetReviews($bikeParkId: ID!, $page: Int, $limit: Int) {
+  reviews(bikeParkId: $bikeParkId, page: $page, limit: $limit) {
+    reviews {
+      id
+      comment
+      createdAt
+      createdBy {
+        id
+        username
+      }
+      rating
+      title
+      trailDifficulty
+      visitDate
+    }
+    totalCount
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}
+    `;
+
+export function useGetReviewsQuery(options: Omit<Urql.UseQueryArgs<GetReviewsQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetReviewsQuery, GetReviewsQueryVariables>({ query: GetReviewsDocument, ...options });
+};
 export const MeDocument = gql`
     query Me {
   me {
     id
-    name
     username
+    firstName
+    lastName
     email
+    role
     createdAt
     updatedAt
   }
@@ -1219,9 +1360,11 @@ export const namedOperations = {
     GetBikeParksByViewport: 'GetBikeParksByViewport',
     GetEvent: 'GetEvent',
     GetEvents: 'GetEvents',
+    GetReviews: 'GetReviews',
     Me: 'Me'
   },
   Mutation: {
+    CreateReview: 'CreateReview',
     Login: 'Login',
     Register: 'Register'
   },

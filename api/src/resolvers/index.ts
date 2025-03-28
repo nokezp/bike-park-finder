@@ -20,4 +20,7 @@ export const resolvers = {
   BikePark: {
     ...bikeParkResolvers.BikePark,
   },
+  Review: {
+    ...reviewResolvers.Review,
+  },
 };

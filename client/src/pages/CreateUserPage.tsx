@@ -1,8 +1,11 @@
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
+import { useMutation } from 'urql';
+import { RegisterDocument, RegisterMutation } from '../lib/graphql/generated/graphql-operations';
 
 interface FormData {
+  username: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -13,7 +16,9 @@ interface FormData {
 }
 
 const CreateUserPage = () => {
+  const navigator = useNavigate();
   const [formData, setFormData] = useState<FormData>({
+    username: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -23,6 +28,14 @@ const CreateUserPage = () => {
     agreeToTerms: false
   });
 
+  const [{ data }, register] = useMutation<RegisterMutation>(RegisterDocument);
+
+  useEffect(() => {
+    if (data?.register.token) {
+      navigator('/login');
+    }
+  }, [data?.register?.token]);
+  
   // eslint-disable-next-line no-undef
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -45,6 +58,7 @@ const CreateUserPage = () => {
     e.preventDefault();
     // TODO: Add form validation and API call
     console.log('Form submitted:', formData);
+    register(formData);
   };
 
   return (
@@ -86,17 +100,31 @@ const CreateUserPage = () => {
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-gray-700 mb-2">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                    placeholder="Enter your email"
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-gray-700 mb-2">Username</label>
+                    <input
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      placeholder="Username"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-2">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-gray-700 mb-2">Password</label>
@@ -159,6 +187,7 @@ const CreateUserPage = () => {
                 <button
                   type="submit"
                   className="w-full bg-emerald-600 text-white py-3 px-4 rounded-lg hover:bg-emerald-700 transition duration-200"
+                  onClick={handleSubmit}
                 >
                   Create Account
                 </button>

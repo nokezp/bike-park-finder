@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 // User interface
 export interface IUser extends mongoose.Document {
   username: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   name?: string;
@@ -21,6 +23,22 @@ const userSchema = new mongoose.Schema({
     unique: true,
     trim: true,
     minlength: 3,
+    maxlength: 30
+  },
+  firstName: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    minlength: 3,
+    maxlength: 30
+  },
+  lastName: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    minlength: 2,
     maxlength: 30
   },
   email: {
@@ -137,6 +155,8 @@ const userSchema = new mongoose.Schema({
 // Add text index for search functionality
 userSchema.index({ 
   username: 'text',
+  firstName: 'text',
+  lastName: 'text',
   'profile.firstName': 'text',
   'profile.lastName': 'text',
   'profile.location': 'text'

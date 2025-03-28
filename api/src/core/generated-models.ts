@@ -30,7 +30,7 @@ export type BikePark = {
   contact?: Maybe<Contact>;
   coordinates?: Maybe<Coordinates>;
   createdAt: Scalars['String']['output'];
-  createdBy: Scalars['ID']['output'];
+  createdBy: User;
   description?: Maybe<Scalars['String']['output']>;
   difficulty?: Maybe<Scalars['String']['output']>;
   facilities?: Maybe<Array<Scalars['String']['output']>>;
@@ -210,7 +210,11 @@ export type MutationCreateEventArgs = {
 export type MutationCreateReviewArgs = {
   bikeParkId: Scalars['ID']['input'];
   comment: Scalars['String']['input'];
+  photos?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   rating: Scalars['Float']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
+  trailDifficulty?: InputMaybe<Scalars['String']['input']>;
+  visitDate?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -236,8 +240,10 @@ export type MutationLoginArgs = {
 
 
 export type MutationRegisterArgs = {
+  confirmPassword: Scalars['String']['input'];
   email: Scalars['String']['input'];
-  name?: InputMaybe<Scalars['String']['input']>;
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
   username: Scalars['String']['input'];
 };
@@ -315,6 +321,15 @@ export type PaginatedBikeParks = {
   totalPages: Scalars['Int']['output'];
 };
 
+export type PaginatedReviews = {
+  __typename?: 'PaginatedReviews';
+  currentPage: Scalars['Int']['output'];
+  hasNextPage: Scalars['Boolean']['output'];
+  reviews: Array<Review>;
+  totalCount: Scalars['Int']['output'];
+  totalPages: Scalars['Int']['output'];
+};
+
 export type PaginationInput = {
   limit: Scalars['Int']['input'];
   page: Scalars['Int']['input'];
@@ -339,7 +354,7 @@ export type Query = {
   event?: Maybe<Event>;
   events: Array<Event>;
   me?: Maybe<User>;
-  reviews: Array<Review>;
+  reviews: PaginatedReviews;
   searchBikeParks: Array<BikePark>;
 };
 
@@ -372,6 +387,8 @@ export type QueryEventsArgs = {
 
 export type QueryReviewsArgs = {
   bikeParkId: Scalars['ID']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -384,10 +401,14 @@ export type Review = {
   bikePark: Scalars['ID']['output'];
   comment: Scalars['String']['output'];
   createdAt: Scalars['String']['output'];
-  createdBy: Scalars['ID']['output'];
+  createdBy: User;
   id: Scalars['ID']['output'];
+  photos?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   rating: Scalars['Float']['output'];
+  title?: Maybe<Scalars['String']['output']>;
+  trailDifficulty?: Maybe<Scalars['String']['output']>;
   updatedAt?: Maybe<Scalars['String']['output']>;
+  visitDate?: Maybe<Scalars['String']['output']>;
 };
 
 export type ScheduleItem = {
@@ -474,8 +495,9 @@ export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  name?: Maybe<Scalars['String']['output']>;
+  lastName: Scalars['String']['output'];
   role: Scalars['String']['output'];
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
@@ -614,6 +636,7 @@ export type ResolversTypes = {
   Organizer: ResolverTypeWrapper<Organizer>;
   OrganizerInput: OrganizerInput;
   PaginatedBikeParks: ResolverTypeWrapper<PaginatedBikeParks>;
+  PaginatedReviews: ResolverTypeWrapper<PaginatedReviews>;
   PaginationInput: PaginationInput;
   Price: ResolverTypeWrapper<Price>;
   PriceInput: PriceInput;
@@ -659,6 +682,7 @@ export type ResolversParentTypes = {
   Organizer: Organizer;
   OrganizerInput: OrganizerInput;
   PaginatedBikeParks: PaginatedBikeParks;
+  PaginatedReviews: PaginatedReviews;
   PaginationInput: PaginationInput;
   Price: Price;
   PriceInput: PriceInput;
@@ -691,7 +715,7 @@ export type BikeParkResolvers<ContextType = any, ParentType extends ResolversPar
   contact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType>;
   coordinates?: Resolver<Maybe<ResolversTypes['Coordinates']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdBy?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   difficulty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   facilities?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
@@ -765,7 +789,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteEvent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteEventArgs, 'id'>>;
   deleteReview?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteReviewArgs, 'id'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
-  register?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'password' | 'username'>>;
+  register?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'confirmPassword' | 'email' | 'firstName' | 'lastName' | 'password' | 'username'>>;
   registerForEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationRegisterForEventArgs, 'id'>>;
   updateBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationUpdateBikeParkArgs, 'id' | 'input'>>;
   updateEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationUpdateEventArgs, 'id' | 'input'>>;
@@ -800,6 +824,15 @@ export type PaginatedBikeParksResolvers<ContextType = any, ParentType extends Re
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type PaginatedReviewsResolvers<ContextType = any, ParentType extends ResolversParentTypes['PaginatedReviews'] = ResolversParentTypes['PaginatedReviews']> = {
+  currentPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  reviews?: Resolver<Array<ResolversTypes['Review']>, ParentType, ContextType>;
+  totalCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type PriceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Price'] = ResolversParentTypes['Price']> = {
   amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -813,7 +846,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  reviews?: Resolver<Array<ResolversTypes['Review']>, ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
+  reviews?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
   searchBikeParks?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QuerySearchBikeParksArgs, 'query'>>;
 };
 
@@ -821,10 +854,14 @@ export type ReviewResolvers<ContextType = any, ParentType extends ResolversParen
   bikePark?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   comment?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdBy?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  photos?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   rating?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  trailDifficulty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  visitDate?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -859,8 +896,9 @@ export type TrailResolvers<ContextType = any, ParentType extends ResolversParent
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   role?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -905,6 +943,7 @@ export type Resolvers<ContextType = any> = {
   OpeningHours?: OpeningHoursResolvers<ContextType>;
   Organizer?: OrganizerResolvers<ContextType>;
   PaginatedBikeParks?: PaginatedBikeParksResolvers<ContextType>;
+  PaginatedReviews?: PaginatedReviewsResolvers<ContextType>;
   Price?: PriceResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;

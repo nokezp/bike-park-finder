@@ -30,9 +30,16 @@ export const authResolvers = {
   },
 
   Mutation: {
-    register: async (_: unknown, args: { username: string; email: string; password: string; name?: string }) => {
+    register: async (_: unknown, args: { 
+      username: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    }) => {
       try {
-        const { username, email, password, name } = args;
+        const { username, firstName, lastName, email, password, confirmPassword } = args;
 
         // Check if user already exists
         const existingUser = await User.findOne({
@@ -46,9 +53,18 @@ export const authResolvers = {
         // Create user
         const user = new User({
           username,
-          email,
+          email, 
           password,
-          name,
+          confirmPassword,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          role: 'user',
+          agreeToTerms: false,
+          profile: {
+            firstName,
+            lastName,
+            ridingLevel: 'Beginner',
+          },
         });
 
         await user.save();
@@ -72,13 +88,13 @@ export const authResolvers = {
     login: async (_: unknown, args: { email: string; password: string }) => {
       try {
         const { email, password } = args;
-
+        
         // Find user
         const user = await User.findOne({ email }).select('+password');
         if (!user) {
           throw new GraphQLError('Invalid credentials');
         }
-
+        
         // Check password
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {

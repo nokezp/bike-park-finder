@@ -36,3 +36,8 @@ export interface Hotel {
   }>;
   price: number;
 }
+
+export interface OpeningHours {
+  days: string;
+  hours: string;
+}

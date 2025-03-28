@@ -1,0 +1,21 @@
+query GetReviews($bikeParkId: ID!, $page: Int, $limit: Int) {
+  reviews(bikeParkId: $bikeParkId, page: $page, limit: $limit) {
+    reviews {
+      id
+      comment
+      createdAt
+      createdBy {
+        id
+        username
+      }
+      rating
+      title
+      trailDifficulty
+      visitDate
+    }
+    totalCount
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}

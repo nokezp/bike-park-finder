@@ -4,12 +4,6 @@ import { FaGoogle, FaFacebook } from 'react-icons/fa';
 import { useMutation } from 'urql';
 import { LoginDocument, LoginMutation, LoginMutationVariables } from '../lib/graphql/generated/graphql-operations';
 
-// interface LoginFormData {
-//   email: string;
-//   password: string;
-//   rememberMe: boolean;
-// }
-
 const LoginPage = () => {
   const navigator = useNavigate();
   const [formData, setFormData] = useState<LoginMutationVariables>({
@@ -22,10 +16,10 @@ const LoginPage = () => {
   console.log('loginData: ', data);
 
   useEffect(() => {
-    if (data?.login.token) {
+    if (data?.login?.token) {
       navigator('/user-account');
     }
-  }, [data?.login.token]);
+  }, [data?.login?.token]);
 
   // eslint-disable-next-line no-undef
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
