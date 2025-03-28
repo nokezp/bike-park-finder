@@ -1,5 +1,5 @@
 import React from 'react';
-import FallbackImage from '../../FallbackImage';
+import FallbackImage from '../../common/FallbackImage';
 
 interface Tag {
   label: string;

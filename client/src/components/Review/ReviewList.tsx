@@ -4,7 +4,7 @@ import { useQuery } from "urql";
 import { ReviewsDocument, ReviewsQuery } from "../../lib/graphql/generated/graphql-operations";
 import moment from "moment";
 import StarRating from "./StarRating";
-import Loading from "../Loading";
+import Loading from "../common/Loading";
 
 const LIMIT = 3; // Show 3 reviews per page
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Difficulty } from '../../../pages/MapLeftMenu';
+import { Difficulty } from '../../Map/MapLeftMenu';
 
 const LandingPageHero: React.FC = () => {
   const navigate = useNavigate();

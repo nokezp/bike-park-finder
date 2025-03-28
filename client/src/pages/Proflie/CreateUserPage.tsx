@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
 import { useMutation } from 'urql';
-import { RegisterDocument, RegisterMutation } from '../lib/graphql/generated/graphql-operations';
+import { RegisterDocument, RegisterMutation } from '../../lib/graphql/generated/graphql-operations';
 
 interface FormData {
   username: string;

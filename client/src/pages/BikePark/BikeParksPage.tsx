@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import BikeParkSearchSection from '../components/Sections/BikeParkSearchSection';
-import ResultsGrid from '../components/Sections/ResultsGrid';
-import { BikeParkFilter } from '../lib/graphql/generated/graphql-operations';
+import BikeParkSearchSection from '../../components/Sections/BikeParkSearchSection';
+import ResultsGrid from '../../components/Sections/ResultsGrid';
+import { BikeParkFilter } from '../../lib/graphql/generated/graphql-operations';
 import { useSearchParams } from 'react-router-dom';
 
 const BikeParksPage: React.FC = () => {

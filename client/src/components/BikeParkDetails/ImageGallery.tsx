@@ -1,5 +1,5 @@
 import React from 'react';
-import FallbackImage from '../FallbackImage';
+import FallbackImage from '../common/FallbackImage';
 import { BikePark } from '../../lib/graphql/generated/graphql-operations';
 
 const ImageGallery: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ParkCard, Event, Hotel } from '../utils/types';
-import LandingPageHero from '../components/Sections/Hero/LandingPageHero';
+import { ParkCard, Event, Hotel } from '../../utils/types';
+import LandingPageHero from '../../components/Sections/Hero/LandingPageHero';
 
 const featuredParks: ParkCard[] = [
   {
@@ -123,7 +123,7 @@ const hotels: Hotel[] = [
   },
 ];
 
-const LandingPage: React.FC = () => {
+const HomePage: React.FC = () => {
   return (
     <>
       <LandingPageHero />
@@ -287,4 +287,4 @@ const LandingPage: React.FC = () => {
   );
 };
 
-export default LandingPage;
+export default HomePage;

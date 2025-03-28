@@ -1,19 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import EventsPage from './pages/EventsPage';
-import EventDetailPage from './pages/EventDetailPage';
-import { UrqlProvider } from './components/UrqlProvider';
-import LandingPage from './pages/LandingPage';
-import BikeParksPage from './pages/BikeParksPage';
-import BikeParkDetailPage from './pages/BikeParkDetailPage';
-import { MapsPage } from './pages/MapsPage';
+import EventsPage from './pages/Event/EventsPage';
+import EventDetailPage from './pages/Event/EventDetailPage';
+import { UrqlProvider } from './provider/UrqlProvider';
+import HomePage from './pages/Home/HomePage';
+import BikeParksPage from './pages/BikePark/BikeParksPage';
+import BikeParkDetailPage from './pages/BikePark/BikeParkDetailPage';
+import { MapsPage } from './pages/Map/MapsPage';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
-import AboutPage from './pages/AboutPage';
-import CreateUserPage from './pages/CreateUserPage';
-import LoginPage from './pages/LoginPage';
-import ProfilePage from './pages/ProfilePage';
-import CommunityPage from './pages/CommunityPage';
+import AboutPage from './pages/About/AboutPage';
+import CreateUserPage from './pages/Proflie/CreateUserPage';
+import LoginPage from './pages/Proflie/LoginPage';
+import ProfilePage from './pages/Proflie/ProfilePage';
+import CommunityPage from './pages/Community/CommunityPage';
 
 const App: React.FC = () => {
   return (
@@ -23,7 +23,7 @@ const App: React.FC = () => {
           <Header />
           <div className="flex-grow mt-[65px]">
             <Routes>
-              <Route path="/" element={<LandingPage />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/bike-parks" element={<BikeParksPage />} />
               <Route path="/bike-parks/:id" element={<BikeParkDetailPage />} />
               <Route path="/events" element={<EventsPage />} />

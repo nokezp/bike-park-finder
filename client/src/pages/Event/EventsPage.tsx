@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from 'urql';
-import { EventsDocument } from '../lib/graphql/generated/graphql-operations';
+import { EventsDocument } from '../../lib/graphql/generated/graphql-operations';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 
