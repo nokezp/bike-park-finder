@@ -13,6 +13,8 @@ import AboutPage from './pages/About/AboutPage';
 import CreateUserPage from './pages/Proflie/CreateUserPage';
 import LoginPage from './pages/Proflie/LoginPage';
 import ProfilePage from './pages/Proflie/ProfilePage';
+import ForgotPasswordPage from './pages/Proflie/ForgotPasswordPage';
+import ResetPasswordPage from './pages/Proflie/ResetPasswordPage';
 import CommunityPage from './pages/Community/CommunityPage';
 
 const App: React.FC = () => {
@@ -32,6 +34,8 @@ const App: React.FC = () => {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/register" element={<CreateUserPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path='/user-account' element={<ProfilePage />} />
               <Route path='/community' element={<CommunityPage />} />
             </Routes>

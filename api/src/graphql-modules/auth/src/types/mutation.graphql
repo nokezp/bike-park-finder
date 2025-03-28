@@ -7,6 +7,9 @@ type Mutation {
     password: String!
     confirmPassword: String!
   ): AuthPayload!
-  login(email: String!, password: String!): AuthPayload!
+  login(email: String!, password: String!, rememberMe: Boolean): AuthPayload!
+  googleLogin(idToken: String!): AuthPayload!
+  forgotPassword(email: String!): Boolean!
+  resetPassword(token: String!, password: String!, confirmPassword: String!): AuthPayload!
   updateProfile(name: String, email: String): User!
 }

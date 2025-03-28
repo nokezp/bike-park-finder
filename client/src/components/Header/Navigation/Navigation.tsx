@@ -1,9 +1,15 @@
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from 'urql';
 import { MeDocument, MeQuery } from '../../../lib/graphql/generated/graphql-operations';
+import { useEffect, useRef, useState } from 'react';
+import { removeToken } from '../../../lib/graphql/urqlClient';
 
 const Navigation = () => {
   const location = useLocation();
+  const ref = useRef<any>(null);
+  const [showMoreLinks, setShowMoreLinks] = useState(false);
 
   const [{ data }] = useQuery<MeQuery>({
     query: MeDocument,
@@ -21,8 +27,20 @@ const Navigation = () => {
     // { path: '/community', label: 'Community' },
     { path: '/maps', label: 'Maps' },
     { path: '/about', label: 'About' },
-    // { path: '/user-accout', label: 'User' },
   ];
+
+  useEffect(() => {
+    function handleClickOutside(event: any) {
+      if (ref.current && !ref.current?.contains(event.target)) {
+        setShowMoreLinks(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className="hidden md:flex items-center space-x-8">
@@ -30,28 +48,47 @@ const Navigation = () => {
         <Link
           key={path}
           to={path}
-          className={`text-base font-medium transition-colors duration-200 hover:text-emerald-500 ${
-            isSelected(path) ? 'text-emerald-500 border-b-2 border-emerald-500' : 'text-gray-700'
-          }`}
+          className={`text-base font-medium transition-colors duration-200 hover:text-emerald-500 ${isSelected(path) ? 'text-emerald-500 border-b-2 border-emerald-500' : 'text-gray-700'
+            }`}
         >
           {label}
         </Link>
       ))}
       {data?.me?.id ? (
-        <Link
-          key="/user-account"
-          to="/user-account"
+        <div
           className={`text-base font-medium transition-colors duration-200 hover:text-emerald-500`}
+          onClick={() => setShowMoreLinks(!showMoreLinks)}
         >
-          <img src={userAvatar} className="w-8 h-8 rounded-full cursor-pointer" alt="User avatar" />
-        </Link>
+          <div className="relative">
+            <img src={userAvatar} className="w-8 h-8 rounded-full cursor-pointer" alt="User avatar" />
+            {showMoreLinks && (
+              <div ref={ref} className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                <Link to="/user-account" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                  <i className="fa-regular fa-user mr-2"></i>
+                  Profile
+                </Link>
+                <Link to="/settings" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                  <i className="fa-regular fa-gear mr-2"></i>
+                  Settings
+                </Link>
+                <Link to="/saved-parks" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                  <i className="fa-regular fa-bookmark mr-2"></i>
+                  Saved Parks
+                </Link>
+                <div className="border-t border-gray-100 my-1"></div>
+                <Link to="/logout" className="block px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={removeToken}>
+                  <i className="fa-solid fa-right-from-bracket mr-2"></i>
+                  Logout
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
       ) : (
         <Link
-          key="/login"
           to="/login"
-          className={`text-base font-medium transition-colors duration-200 hover:text-emerald-500 ${
-            isSelected('/login') ? 'text-emerald-500 border-b-2 border-emerald-500' : 'text-gray-700'
-          }`}
+          className={`text-base font-medium transition-colors duration-200 hover:text-emerald-500 ${isSelected('/login') ? 'text-emerald-500 border-b-2 border-emerald-500' : 'text-gray-700'
+            }`}
         >
           Login
         </Link>

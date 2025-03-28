@@ -197,9 +197,12 @@ export type Mutation = {
   deleteBikePark: Scalars['Boolean']['output'];
   deleteEvent: Scalars['Boolean']['output'];
   deleteReview: Scalars['Boolean']['output'];
+  forgotPassword: Scalars['Boolean']['output'];
+  googleLogin: AuthPayload;
   login: AuthPayload;
   register: AuthPayload;
   registerForEvent: Event;
+  resetPassword: AuthPayload;
   updateBikePark: BikePark;
   updateEvent: Event;
   updateProfile: User;
@@ -260,9 +263,20 @@ export type MutationDeleteReviewArgs = {
 };
 
 
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type MutationGoogleLoginArgs = {
+  idToken: Scalars['String']['input'];
+};
+
+
 export type MutationLoginArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+  rememberMe?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -278,6 +292,13 @@ export type MutationRegisterArgs = {
 
 export type MutationRegisterForEventArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationResetPasswordArgs = {
+  confirmPassword: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  token: Scalars['String']['input'];
 };
 
 
@@ -586,9 +607,24 @@ export type CreateReviewMutationVariables = Exact<{
 
 export type CreateReviewMutation = { __typename?: 'Mutation', createReview: { __typename?: 'Review', id: string, title?: string | null, comment: string, rating: number, bikePark: string, createdAt: string, updatedAt?: string | null, createdBy: { __typename?: 'User', id: string, username: string, email: string } } };
 
+export type ForgotPasswordMutationVariables = Exact<{
+  email: Scalars['String']['input'];
+}>;
+
+
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
+
+export type GoogleLoginMutationVariables = Exact<{
+  idToken: Scalars['String']['input'];
+}>;
+
+
+export type GoogleLoginMutation = { __typename?: 'Mutation', googleLogin: { __typename?: 'AuthPayload', token: string, user: { __typename?: 'User', id: string, username: string, email: string } } };
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+  rememberMe?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 
@@ -605,6 +641,15 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'AuthPayload', token: string } };
+
+export type ResetPasswordMutationVariables = Exact<{
+  token: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  confirmPassword: Scalars['String']['input'];
+}>;
+
+
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'AuthPayload', token: string, user: { __typename?: 'User', id: string, username: string, email: string } } };
 
 export type BikeParkQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -867,9 +912,12 @@ export type GraphCacheOptimisticUpdaters = {
   deleteBikePark?: GraphCacheOptimisticMutationResolver<MutationDeleteBikeParkArgs, Scalars['Boolean']>,
   deleteEvent?: GraphCacheOptimisticMutationResolver<MutationDeleteEventArgs, Scalars['Boolean']>,
   deleteReview?: GraphCacheOptimisticMutationResolver<MutationDeleteReviewArgs, Scalars['Boolean']>,
+  forgotPassword?: GraphCacheOptimisticMutationResolver<MutationForgotPasswordArgs, Scalars['Boolean']>,
+  googleLogin?: GraphCacheOptimisticMutationResolver<MutationGoogleLoginArgs, WithTypename<AuthPayload>>,
   login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<AuthPayload>>,
   register?: GraphCacheOptimisticMutationResolver<MutationRegisterArgs, WithTypename<AuthPayload>>,
   registerForEvent?: GraphCacheOptimisticMutationResolver<MutationRegisterForEventArgs, WithTypename<Event>>,
+  resetPassword?: GraphCacheOptimisticMutationResolver<MutationResetPasswordArgs, WithTypename<AuthPayload>>,
   updateBikePark?: GraphCacheOptimisticMutationResolver<MutationUpdateBikeParkArgs, WithTypename<BikePark>>,
   updateEvent?: GraphCacheOptimisticMutationResolver<MutationUpdateEventArgs, WithTypename<Event>>,
   updateProfile?: GraphCacheOptimisticMutationResolver<MutationUpdateProfileArgs, WithTypename<User>>,
@@ -895,9 +943,12 @@ export type GraphCacheUpdaters = {
     deleteBikePark?: GraphCacheUpdateResolver<{ deleteBikePark: Scalars['Boolean'] }, MutationDeleteBikeParkArgs>,
     deleteEvent?: GraphCacheUpdateResolver<{ deleteEvent: Scalars['Boolean'] }, MutationDeleteEventArgs>,
     deleteReview?: GraphCacheUpdateResolver<{ deleteReview: Scalars['Boolean'] }, MutationDeleteReviewArgs>,
+    forgotPassword?: GraphCacheUpdateResolver<{ forgotPassword: Scalars['Boolean'] }, MutationForgotPasswordArgs>,
+    googleLogin?: GraphCacheUpdateResolver<{ googleLogin: WithTypename<AuthPayload> }, MutationGoogleLoginArgs>,
     login?: GraphCacheUpdateResolver<{ login: WithTypename<AuthPayload> }, MutationLoginArgs>,
     register?: GraphCacheUpdateResolver<{ register: WithTypename<AuthPayload> }, MutationRegisterArgs>,
     registerForEvent?: GraphCacheUpdateResolver<{ registerForEvent: WithTypename<Event> }, MutationRegisterForEventArgs>,
+    resetPassword?: GraphCacheUpdateResolver<{ resetPassword: WithTypename<AuthPayload> }, MutationResetPasswordArgs>,
     updateBikePark?: GraphCacheUpdateResolver<{ updateBikePark: WithTypename<BikePark> }, MutationUpdateBikeParkArgs>,
     updateEvent?: GraphCacheUpdateResolver<{ updateEvent: WithTypename<Event> }, MutationUpdateEventArgs>,
     updateProfile?: GraphCacheUpdateResolver<{ updateProfile: WithTypename<User> }, MutationUpdateProfileArgs>,
@@ -1144,9 +1195,34 @@ export const CreateReviewDocument = gql`
 export function useCreateReviewMutation() {
   return Urql.useMutation<CreateReviewMutation, CreateReviewMutationVariables>(CreateReviewDocument);
 };
+export const ForgotPasswordDocument = gql`
+    mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email)
+}
+    `;
+
+export function useForgotPasswordMutation() {
+  return Urql.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument);
+};
+export const GoogleLoginDocument = gql`
+    mutation GoogleLogin($idToken: String!) {
+  googleLogin(idToken: $idToken) {
+    token
+    user {
+      id
+      username
+      email
+    }
+  }
+}
+    `;
+
+export function useGoogleLoginMutation() {
+  return Urql.useMutation<GoogleLoginMutation, GoogleLoginMutationVariables>(GoogleLoginDocument);
+};
 export const LoginDocument = gql`
-    mutation Login($email: String!, $password: String!) {
-  login(email: $email, password: $password) {
+    mutation Login($email: String!, $password: String!, $rememberMe: Boolean) {
+  login(email: $email, password: $password, rememberMe: $rememberMe) {
     token
   }
 }
@@ -1172,6 +1248,26 @@ export const RegisterDocument = gql`
 
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
+};
+export const ResetPasswordDocument = gql`
+    mutation ResetPassword($token: String!, $password: String!, $confirmPassword: String!) {
+  resetPassword(
+    token: $token
+    password: $password
+    confirmPassword: $confirmPassword
+  ) {
+    token
+    user {
+      id
+      username
+      email
+    }
+  }
+}
+    `;
+
+export function useResetPasswordMutation() {
+  return Urql.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(ResetPasswordDocument);
 };
 export const BikeParkDocument = gql`
     query BikePark($id: ID!) {
@@ -1402,8 +1498,11 @@ export const namedOperations = {
   },
   Mutation: {
     CreateReview: 'CreateReview',
+    ForgotPassword: 'ForgotPassword',
+    GoogleLogin: 'GoogleLogin',
     Login: 'Login',
-    Register: 'Register'
+    Register: 'Register',
+    ResetPassword: 'ResetPassword'
   },
   Fragment: {
     BikePark: 'BikePark',

@@ -1,0 +1,10 @@
+mutation GoogleLogin($idToken: String!) {
+  googleLogin(idToken: $idToken) {
+    token
+    user {
+      id
+      username
+      email
+    }
+  }
+}
