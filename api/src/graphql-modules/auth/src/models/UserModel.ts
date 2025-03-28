@@ -1,17 +1,54 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+interface IStats {
+  totalRides?: number;
+  totalReviews?: number;
+  favoriteParks?: mongoose.Types.ObjectId[];
+  favoriteTrails?: mongoose.Types.ObjectId[]; 
+}
+
+interface ISocialMedia {
+  instagram?: string;
+  facebook?: string;
+  youtube?: string;
+  strava?: string;
+}
+
+interface IPreferences {
+  ridingStyle?: string[];
+  skillLevel?: string;
+  preferredBikeType?: string[];
+}
+
+interface IProfile {
+  firstName?: string;
+  lastName?: string;
+  avatar?: string;
+  bio?: string;
+  location?: string;
+  preferences?: IPreferences;
+  stats?: IStats;
+  socialMedia?: ISocialMedia;
+  verified?: boolean;
+  lastLogin?: Date;
+  ridingLevel?: string;
+}
+
 // User interface
 export interface IUser extends mongoose.Document {
   username: string;
-  firstName: string;
-  lastName: string;
   email: string;
-  password: string;
-  name?: string;
+  password?: string;
   role: string;
+  prifile?: IProfile;
+  stats?: IStats;
+  name?: string;
+  googleId?: string;
   createdAt: Date;
   updatedAt: Date;
+  resetPasswordToken?: string;
+  resetPasswordExpire?: number;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -25,22 +62,6 @@ const userSchema = new mongoose.Schema({
     minlength: 3,
     maxlength: 30
   },
-  firstName: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    minlength: 3,
-    maxlength: 30
-  },
-  lastName: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    minlength: 2,
-    maxlength: 30
-  },
   email: {
     type: String,
     required: true,
@@ -51,8 +72,15 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function(this: any): boolean {
+      return !this.googleId;
+    },
     minlength: 8
+  },
+  googleId: {
+    type: String,
+    sparse: true,
+    unique: true
   },
   role: {
     type: String,
@@ -149,7 +177,9 @@ const userSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  resetPasswordToken: String,
+  resetPasswordExpire: Date
 });
 
 // Add text index for search functionality
@@ -164,7 +194,7 @@ userSchema.index({
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
-  if (this.isModified('password')) {
+  if (this.isModified('password') && this.password) {
     this.password = await bcrypt.hash(this.password, 12);
   }
   this.updatedAt = new Date();
@@ -173,8 +203,9 @@ userSchema.pre('save', async function(next) {
 
 // Method to compare password
 userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+  if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Export User model
-export const UserModel = mongoose.model<IUser>('User', userSchema); 
+export const UserModel = mongoose.model<IUser>('User', userSchema);

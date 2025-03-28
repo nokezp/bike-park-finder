@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 mb-6">
               <i className="fa-solid fa-mountain-sun text-2xl text-emerald-400"></i>
-              <span className="text-xl font-bold">BikePark</span>
+              <span className="text-xl font-bold">Bike Park Finder</span>
             </div>
             <p className="text-gray-400">
               Find and explore the best mountain bike parks around the world.
@@ -93,7 +93,7 @@ const Footer: React.FC = () => {
 
         {/* Copyright */}
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} BikePark. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Bike Park Finder. All rights reserved.</p>
         </div>
       </div>
     </footer>

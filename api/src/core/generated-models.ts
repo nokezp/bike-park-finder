@@ -193,9 +193,12 @@ export type Mutation = {
   deleteBikePark: Scalars['Boolean']['output'];
   deleteEvent: Scalars['Boolean']['output'];
   deleteReview: Scalars['Boolean']['output'];
+  forgotPassword: Scalars['Boolean']['output'];
+  googleLogin: AuthPayload;
   login: AuthPayload;
   register: AuthPayload;
   registerForEvent: Event;
+  resetPassword: AuthPayload;
   updateBikePark: BikePark;
   updateEvent: Event;
   updateProfile: User;
@@ -256,9 +259,20 @@ export type MutationDeleteReviewArgs = {
 };
 
 
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type MutationGoogleLoginArgs = {
+  idToken: Scalars['String']['input'];
+};
+
+
 export type MutationLoginArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+  rememberMe?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 
@@ -274,6 +288,13 @@ export type MutationRegisterArgs = {
 
 export type MutationRegisterForEventArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationResetPasswordArgs = {
+  confirmPassword: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  token: Scalars['String']['input'];
 };
 
 
@@ -821,9 +842,12 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteBikePark?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBikeParkArgs, 'id'>>;
   deleteEvent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteEventArgs, 'id'>>;
   deleteReview?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteReviewArgs, 'id'>>;
+  forgotPassword?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'email'>>;
+  googleLogin?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationGoogleLoginArgs, 'idToken'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   register?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'confirmPassword' | 'email' | 'firstName' | 'lastName' | 'password' | 'username'>>;
   registerForEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationRegisterForEventArgs, 'id'>>;
+  resetPassword?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'confirmPassword' | 'password' | 'token'>>;
   updateBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationUpdateBikeParkArgs, 'id' | 'input'>>;
   updateEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationUpdateEventArgs, 'id' | 'input'>>;
   updateProfile?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateProfileArgs>>;
