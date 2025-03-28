@@ -31,35 +31,25 @@ const BikeParkDetailPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       <Header bikePark={bikePark} />
-
       <section id="park-content" className="py-12">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <BikeParkDescription bikePark={bikePark} />
-
               <TrailMap bikePark={bikePark} />
-
               <ReviewSection />
             </div>
-
             <div>
               <WeatherWidget bikePark={bikePark} />
-
               <TrailStatus bikePark={bikePark} />
-
               <VideoWidget bikePark={bikePark} />
-
               <AccommodationSection />
             </div>
           </div>
         </div>
       </section>
-
       <ImageGallery bikePark={bikePark} />
-
       <TrailDetails bikePark={bikePark} />
-
       <AdditionalFeaturesSection bikePark={bikePark} />
     </div>
   );
