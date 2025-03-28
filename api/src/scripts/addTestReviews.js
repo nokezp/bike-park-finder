@@ -7,7 +7,6 @@ import { BikePark } from '../models/BikePark.js';
 async function addTestReviews() {
   try {
     await connectDB();
-    console.log('Connected to database');
 
     // Get a bike park
     const bikePark = await BikePark.findOne();
@@ -25,7 +24,6 @@ async function addTestReviews() {
 
     // Delete existing reviews for this bike park
     await Review.deleteMany({ bikePark: bikePark._id });
-    console.log('Deleted existing reviews');
 
     // Create 10 test reviews
     const reviews = [];
@@ -44,7 +42,6 @@ async function addTestReviews() {
     }
 
     await Review.insertMany(reviews);
-    console.log('Added 10 test reviews');
 
     process.exit(0);
   } catch (error) {

@@ -1,0 +1,12 @@
+type Mutation {
+  register(
+    username: String!
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
+    confirmPassword: String!
+  ): AuthPayload!
+  login(email: String!, password: String!): AuthPayload!
+  updateProfile(name: String, email: String): User!
+}

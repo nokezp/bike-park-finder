@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'urql';
-import { BikePark, GetBikeParkDocument, GetBikeParkQuery } from '../lib/graphql/generated/graphql-operations';
+import { BikePark, BikeParkDocument, BikeParkQuery } from '../lib/graphql/generated/graphql-operations';
 import ReviewSection from '../components/Review/ReviewSection';
-import Header from '../components/BikeParkDetails/Header';
+import BikeParkHeader from '../components/BikeParkDetails/BikeParkHeader';
 import BikeParkDescription from '../components/BikeParkDetails/BikeParkDescription';
 import TrailMap from '../components/BikeParkDetails/TrailMap';
 import WeatherWidget from '../components/BikeParkDetails/WeatherWidget';
@@ -17,8 +17,8 @@ import AdditionalFeaturesSection from '../components/BikeParkDetails/AditionalFe
 const BikeParkDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
-  const [{ data, fetching, error }] = useQuery<GetBikeParkQuery>({
-    query: GetBikeParkDocument,
+  const [{ data, fetching, error }] = useQuery<BikeParkQuery>({
+    query: BikeParkDocument,
     variables: { id },
   });
 
@@ -26,11 +26,13 @@ const BikeParkDetailPage: React.FC = () => {
   if (error) return <div>Error: {error.message}</div>;
   if (!data?.bikePark) return <div>No bike park found</div>;
 
-  const bikePark = data.bikePark as BikePark;
+  // Using the bikePark data from the query result
+  // Adding type assertion to satisfy the BikePark type requirements
+  const bikePark = data.bikePark as unknown as BikePark;
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header bikePark={bikePark} />
+      <BikeParkHeader bikePark={bikePark} />
       <section id="park-content" className="py-12">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-8">

@@ -57,7 +57,7 @@ const CreateUserPage = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     // TODO: Add form validation and API call
-    console.log('Form submitted:', formData);
+    // console.log('Form submitted:', formData);
     register(formData);
   };
 

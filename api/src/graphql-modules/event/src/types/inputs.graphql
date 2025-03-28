@@ -1,0 +1,64 @@
+input EventFilter {
+  search: String
+  category: EventCategory
+  location: String
+  startDate: String
+  endDate: String
+  minPrice: Float
+  maxPrice: Float
+  featured: Boolean
+}
+
+input CreateEventInput {
+  title: String!
+  date: String!
+  startTime: String!
+  endTime: String!
+  location: String!
+  category: EventCategory!
+  price: Float!
+  imageUrl: String!
+  description: String!
+  capacity: Int!
+  registrationEndDate: String!
+  featured: Boolean
+  organizer: OrganizerInput!
+  schedule: [ScheduleItemInput!]!
+  venue: VenueInput!
+}
+
+input UpdateEventInput {
+  title: String
+  date: String
+  startTime: String
+  endTime: String
+  location: String
+  category: EventCategory
+  price: Float
+  imageUrl: String
+  description: String
+  capacity: Int
+  registrationEndDate: String
+  featured: Boolean
+  organizer: OrganizerInput
+  schedule: [ScheduleItemInput!]
+  venue: VenueInput
+}
+
+input OrganizerInput {
+  name: String!
+  description: String!
+  imageUrl: String!
+}
+
+input ScheduleItemInput {
+  time: String!
+  title: String!
+  description: String!
+}
+
+input VenueInput {
+  name: String!
+  address: String!
+  mapImageUrl: String!
+}

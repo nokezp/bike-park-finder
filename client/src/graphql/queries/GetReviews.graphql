@@ -1,4 +1,4 @@
-query GetReviews($bikeParkId: ID!, $page: Int, $limit: Int) {
+query Reviews($bikeParkId: ID!, $page: Int, $limit: Int) {
   reviews(bikeParkId: $bikeParkId, page: $page, limit: $limit) {
     reviews {
       id

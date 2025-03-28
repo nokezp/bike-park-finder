@@ -1,0 +1,13 @@
+type Review {
+  id: ID!
+  rating: Float!
+  comment: String!
+  title: String
+  bikePark: ID!
+  createdBy: User!
+  visitDate: String
+  trailDifficulty: String
+  photos: [String]
+  createdAt: String!
+  updatedAt: String
+}

@@ -1,0 +1,5 @@
+type Mutation {
+  createReview(bikeParkId: ID!, rating: Float!, comment: String!, title: String, visitDate: String, trailDifficulty: String, photos: [String]): Review!
+  updateReview(id: ID!, rating: Float, comment: String): Review!
+  deleteReview(id: ID!): Boolean!
+}

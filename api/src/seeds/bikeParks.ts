@@ -1,4 +1,4 @@
-import { BikePark } from "../models/BikePark.js";
+import { BikeParkModel } from "../graphql-modules/bike-park/src/models/BikeParkModel.js";
 
 export async function seedBikeParks(adminId: string) {
   const bikeParks = [
@@ -43,6 +43,6 @@ export async function seedBikeParks(adminId: string) {
     }
   ];
 
-  const createdBikeParks = await BikePark.create(bikeParks);
+  const createdBikeParks = await BikeParkModel.create(bikeParks);
   return createdBikeParks;
 } 

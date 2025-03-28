@@ -2,12 +2,12 @@ import React from 'react';
 
 
 const Footer: React.FC = () => {
-  const handleNavClick = (route: string) => {
-    console.log('Navigating to:', route);
+  const handleNavClick = () => {
+    // console.log('Navigating to:', route);
   };
 
-  const handleSocialClick = (platform: 'facebook' | 'instagram' | 'twitter' | 'youtube') => {
-    console.log('Opening social platform:', platform);
+  const handleSocialClick = () => {
+    // console.log('Opening social platform:', platform);
   };
 
   return (
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
               ].map(({ label, route }) => (
                 <li key={route}>
                   <span 
-                    onClick={() => handleNavClick(route)}
+                    onClick={() => handleNavClick()}
                     className="hover:text-white cursor-pointer transition-colors duration-200"
                   >
                     {label}
@@ -59,7 +59,7 @@ const Footer: React.FC = () => {
               ].map(({ label, route }) => (
                 <li key={route}>
                   <span 
-                    onClick={() => handleNavClick(route)}
+                    onClick={() => handleNavClick()}
                     className="hover:text-white cursor-pointer transition-colors duration-200"
                   >
                     {label}
@@ -81,7 +81,7 @@ const Footer: React.FC = () => {
               ].map(({ platform, icon }) => (
                 <span 
                   key={platform}
-                  onClick={() => handleSocialClick(platform as 'facebook' | 'instagram' | 'twitter' | 'youtube')}
+                  onClick={() => handleSocialClick()}
                   className="hover:text-white cursor-pointer transition-colors duration-200"
                 >
                   <i className={`${icon} text-xl`}></i>

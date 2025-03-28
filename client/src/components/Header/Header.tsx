@@ -11,16 +11,11 @@ const Header = () => {
     <header className="bg-white fixed shadow-sm z-50 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <Link to="/" className="flex items-center">
             <i className="fa-solid fa-mountain-sun text-2xl text-emerald-600"></i>
             <span className="ml-2 text-xl font-bold text-gray-900">Bike Park Finder</span>
           </Link>
-
-          {/* Navigation */}
           <Navigation />
-
-          {/* Mobile menu button */}
           <button
             type="button"
             className="md:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-emerald-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500"
@@ -31,8 +26,6 @@ const Header = () => {
           </button>
         </div>
       </div>
-
-      {/* Mobile menu */}
       {isMenuOpen && <MobileNavigation onClose={() => setIsMenuOpen(false)} />}
     </header>
   );

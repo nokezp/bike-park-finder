@@ -1,6 +1,6 @@
 import { Provider } from 'urql';
 import { ReactNode } from 'react';
-import urqlClient from '../lib/urqlClient';
+import urqlClient from '../lib/graphql/urqlClient';
 
 interface UrqlProviderProps {
   children: ReactNode;

@@ -1,4 +1,4 @@
-query GetBikePark($id: ID!) {
+query BikePark($id: ID!) {
   bikePark(id: $id) {
     # ...BikePark
     id

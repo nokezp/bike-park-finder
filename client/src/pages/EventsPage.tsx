@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from 'urql';
-import { GetEventsDocument } from '../lib/graphql/generated/graphql-operations';
+import { EventsDocument } from '../lib/graphql/generated/graphql-operations';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 
@@ -45,7 +45,7 @@ const EventsPage: React.FC = () => {
   const [email, setEmail] = useState('');
 
   const [{ data, fetching }] = useQuery<EventsResponse>({
-    query: GetEventsDocument,
+    query: EventsDocument,
     variables: { 
       filter: {
         ...searchParams,
@@ -63,7 +63,6 @@ const EventsPage: React.FC = () => {
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
-    console.log('Subscribe:', email);
   };
 
   const renderEventCard = (event: Event) => (

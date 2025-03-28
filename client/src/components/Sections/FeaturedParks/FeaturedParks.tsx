@@ -2,7 +2,7 @@ import React from 'react';
 import ParkCard, { ParkCardProps } from './ParkCard';
 import { getRandomColor } from '../../../utils/colors';
 import { useNavigate } from 'react-router-dom';
-import { BikePark, GetBikeParksDocument } from '../../../lib/graphql/generated/graphql-operations';
+import { BikePark, BikeParksDocument } from '../../../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 
 const FeaturedParks: React.FC = () => {
@@ -15,7 +15,7 @@ const FeaturedParks: React.FC = () => {
   };
 
   const [{ data }] = useQuery({
-    query: GetBikeParksDocument,
+    query: BikeParksDocument,
     variables: {
       filter: {
         location: '',

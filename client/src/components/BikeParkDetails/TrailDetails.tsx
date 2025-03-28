@@ -3,7 +3,7 @@ import { BikePark } from '../../lib/graphql/generated/graphql-operations';
 import { getTrailDifficultyColorClass } from '../../lib/helpers/common-helper';
 
 const TrailDetails: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
-  if (bikePark.trails?.length === 0) {
+  if (bikePark?.trails?.length === 0) {
     return <div />;
   }
 
@@ -12,7 +12,7 @@ const TrailDetails: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-bold mb-6">Trail Details</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bikePark.trails.map((trail) => (
+          {bikePark.trails?.map((trail) => (
             <div key={`trail_details_${trail.id}`} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-xl font-bold">{trail.name}</h3>

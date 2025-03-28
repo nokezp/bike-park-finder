@@ -37,10 +37,9 @@ async function createReview(title, comment, rating) {
     });
 
     const data = await response.json();
-    console.log(`Created review: ${title}`, data);
+    `Created review: ${title}`, data);
     return data;
   } catch (error) {
-    console.error('Error creating review:', error);
   }
 }
 

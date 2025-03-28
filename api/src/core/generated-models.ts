@@ -67,6 +67,13 @@ export type BikeParkFilter = {
   take?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type CategoryInfo = {
+  __typename?: 'CategoryInfo';
+  count: Scalars['Int']['output'];
+  imageUrl: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type Contact = {
   __typename?: 'Contact';
   email?: Maybe<Scalars['String']['output']>;
@@ -138,9 +145,25 @@ export type Event = {
 };
 
 export enum EventCategory {
+  BIKEPACKING_EVENT = 'BIKEPACKING_EVENT',
   CHAMPIONSHIP = 'CHAMPIONSHIP',
+  CHARITY_RIDE = 'CHARITY_RIDE',
+  CROSS_COUNTRY = 'CROSS_COUNTRY',
+  DEMO_DAY = 'DEMO_DAY',
+  DIRT_JUMP = 'DIRT_JUMP',
+  DOWNHILL = 'DOWNHILL',
+  ENDURO = 'ENDURO',
+  E_BIKE_EVENT = 'E_BIKE_EVENT',
+  FAMILY_RIDE = 'FAMILY_RIDE',
   FESTIVAL = 'FESTIVAL',
+  FUN_RIDE = 'FUN_RIDE',
+  GRAVEL_RACE = 'GRAVEL_RACE',
   GROUP_RIDE = 'GROUP_RIDE',
+  MAINTENANCE_CLINIC = 'MAINTENANCE_CLINIC',
+  NIGHT_RIDE = 'NIGHT_RIDE',
+  RACE = 'RACE',
+  STAGE_RACE = 'STAGE_RACE',
+  TRAINING_CAMP = 'TRAINING_CAMP',
   WORKSHOP = 'WORKSHOP'
 }
 
@@ -354,6 +377,7 @@ export type Query = {
   event?: Maybe<Event>;
   events: Array<Event>;
   me?: Maybe<User>;
+  popularEventCategories: Array<CategoryInfo>;
   reviews: PaginatedReviews;
   searchBikeParks: Array<BikePark>;
 };
@@ -616,6 +640,7 @@ export type ResolversTypes = {
   BikePark: ResolverTypeWrapper<BikePark>;
   BikeParkFilter: BikeParkFilter;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  CategoryInfo: ResolverTypeWrapper<CategoryInfo>;
   Contact: ResolverTypeWrapper<Contact>;
   ContactInput: ContactInput;
   Coordinates: ResolverTypeWrapper<Coordinates>;
@@ -664,6 +689,7 @@ export type ResolversParentTypes = {
   BikePark: BikePark;
   BikeParkFilter: BikeParkFilter;
   Boolean: Scalars['Boolean']['output'];
+  CategoryInfo: CategoryInfo;
   Contact: Contact;
   ContactInput: ContactInput;
   Coordinates: Coordinates;
@@ -738,6 +764,13 @@ export type BikeParkResolvers<ContextType = any, ParentType extends ResolversPar
   videos?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   weather?: Resolver<Maybe<ResolversTypes['Weather']>, ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CategoryInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['CategoryInfo'] = ResolversParentTypes['CategoryInfo']> = {
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -846,6 +879,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  popularEventCategories?: Resolver<Array<ResolversTypes['CategoryInfo']>, ParentType, ContextType>;
   reviews?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
   searchBikeParks?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QuerySearchBikeParksArgs, 'query'>>;
 };
@@ -935,6 +969,7 @@ export type WeatherDataResolvers<ContextType = any, ParentType extends Resolvers
 export type Resolvers<ContextType = any> = {
   AuthPayload?: AuthPayloadResolvers<ContextType>;
   BikePark?: BikeParkResolvers<ContextType>;
+  CategoryInfo?: CategoryInfoResolvers<ContextType>;
   Contact?: ContactResolvers<ContextType>;
   Coordinates?: CoordinatesResolvers<ContextType>;
   Event?: EventResolvers<ContextType>;

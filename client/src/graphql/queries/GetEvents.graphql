@@ -1,4 +1,4 @@
-query GetEvents($filter: EventFilter) {
+query Events($filter: EventFilter) {
   events(filter: $filter) {
     ...Event
   }

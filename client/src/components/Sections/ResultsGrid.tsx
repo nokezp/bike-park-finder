@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import BikeParkCard from './BikeParkCard';
 import { useQuery } from 'urql';
-import { BikeParkFilter, GetBikeParksDocument, GetBikeParksQuery } from '../../lib/graphql/generated/graphql-operations';
+import { BikeParkFilter, BikeParksDocument, BikeParksQuery } from '../../lib/graphql/generated/graphql-operations';
 import { useInView } from 'react-intersection-observer';
 import BikeParkListItem from './BikeParkListItem';
 
@@ -16,10 +16,11 @@ const ResultsGrid: React.FC<{ searchQuery: BikeParkFilter | undefined }> = ({ se
   const [view, setView] = useState(View.Grid);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [allBikeParks, setAllBikeParks] = useState<GetBikeParksQuery['bikeParks']['bikeParks']>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [allBikeParks, setAllBikeParks] = useState<any[]>([]);
 
-  const [{ data, fetching }] = useQuery<GetBikeParksQuery>({
-    query: GetBikeParksDocument,
+  const [{ data, fetching }] = useQuery<BikeParksQuery>({
+    query: BikeParksDocument,
     variables: {
       filter: {
         ...searchQuery,
@@ -35,7 +36,7 @@ const ResultsGrid: React.FC<{ searchQuery: BikeParkFilter | undefined }> = ({ se
         setHasMore(false);
       }
       if (skip === 0) {
-        setAllBikeParks(data.bikeParks.bikeParks);
+        setAllBikeParks(data.bikeParks.bikeParks ?? []);
       } else {
         setAllBikeParks((prev) => [...prev, ...data.bikeParks.bikeParks]);
       }

@@ -1,0 +1,17 @@
+type WeatherData {
+  date: String
+  temperature: Float
+  feelsLike: Float
+  humidity: Int
+  windSpeed: Float
+  description: String
+  icon: String
+  precipitation: Float
+  uvIndex: Float
+}
+
+type Weather {
+  current: WeatherData
+  forecast: [WeatherData]
+  lastUpdated: String
+}
