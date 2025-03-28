@@ -161,6 +161,22 @@ enum EventCategory {
   WORKSHOP
   FESTIVAL
   GROUP_RIDE
+  RACE
+  ENDURO
+  DOWNHILL
+  CROSS_COUNTRY
+  DIRT_JUMP
+  CHARITY_RIDE
+  DEMO_DAY
+  TRAINING_CAMP
+  MAINTENANCE_CLINIC
+  NIGHT_RIDE
+  GRAVEL_RACE
+  BIKEPACKING_EVENT
+  E_BIKE_EVENT
+  FUN_RIDE
+  FAMILY_RIDE
+  STAGE_RACE
 }
 
 enum EventStatus {
@@ -181,6 +197,12 @@ input EventFilter {
   featured: Boolean
 }
 
+type CategoryInfo {
+  name: String!
+  count: Int!
+  imageUrl: String!
+}
+
 type Query {
   me: User
   bikeParks(filter: BikeParkFilter): PaginatedBikeParks!
@@ -190,6 +212,7 @@ type Query {
   bikeParksByViewport(viewport: ViewportInput!, searchQuery: String): [BikePark!]!
   events(filter: EventFilter): [Event!]!
   event(id: ID!): Event
+  popularEventCategories: [CategoryInfo!]!
 }
 
 type Mutation {

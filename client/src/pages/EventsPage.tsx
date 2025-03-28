@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from 'urql';
-import { GetEventsDocument } from '../lib/graphql/generated/graphql-operations';
+import { GetEventsDocument, GetPopularEventCategoriesDocument } from '../lib/graphql/generated/graphql-operations';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +9,9 @@ interface Event {
   title: string;
   date: string;
   location: string;
-  category: 'CHAMPIONSHIP' | 'WORKSHOP' | 'FESTIVAL' | 'GROUP_RIDE';
+  category: 'CHAMPIONSHIP' | 'WORKSHOP' | 'FESTIVAL' | 'GROUP_RIDE' | 'RACE' | 'ENDURO' | 'DOWNHILL' | 
+    'CROSS_COUNTRY' | 'DIRT_JUMP' | 'CHARITY_RIDE' | 'DEMO_DAY' | 'TRAINING_CAMP' | 'MAINTENANCE_CLINIC' | 
+    'NIGHT_RIDE' | 'GRAVEL_RACE' | 'BIKEPACKING_EVENT' | 'E_BIKE_EVENT' | 'FUN_RIDE' | 'FAMILY_RIDE' | 'STAGE_RACE';
   price: number;
   imageUrl: string;
   attendeeCount: number;
@@ -18,6 +20,16 @@ interface Event {
 
 interface EventsResponse {
   events: Event[];
+}
+
+interface CategoryInfo {
+  name: string;
+  count: number;
+  imageUrl: string;
+}
+
+interface CategoriesResponse {
+  popularEventCategories: CategoryInfo[];
 }
 
 interface SearchParams {
@@ -44,6 +56,10 @@ const EventsPage: React.FC = () => {
 
   const [email, setEmail] = useState('');
 
+  const [{ data: categoriesData }] = useQuery<CategoriesResponse>({
+    query: GetPopularEventCategoriesDocument,
+  });
+
   const [{ data, fetching }] = useQuery<EventsResponse>({
     query: GetEventsDocument,
     variables: { 
@@ -63,7 +79,7 @@ const EventsPage: React.FC = () => {
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle newsletter subscription
-    console.log('Subscribe:', email);
+    // window.console.log('Subscribe:', email);
   };
 
   const renderEventCard = (event: Event) => (
@@ -157,11 +173,10 @@ const EventsPage: React.FC = () => {
                   value={searchParams.category}
                   onChange={(e) => setSearchParams({ ...searchParams, category: e.target.value })}
                 >
-                  <option value="">Event Type</option>
-                  <option value="CHAMPIONSHIP">Races</option>
-                  <option value="WORKSHOP">Workshops</option>
-                  <option value="FESTIVAL">Festivals</option>
-                  <option value="GROUP_RIDE">Group Rides</option>
+                  <option value="">All Categories</option>
+                  {data?.events?.map((event) => event.category).filter((value, index, self) => self.indexOf(value) === index).map((category, index) => (
+                    <option key={index} value={category}>{category.charAt(0) + category.slice(1).toLowerCase().replace('_', ' ')}</option>
+                  ))}
                 </select>
               </div>
               <div className="relative">
@@ -193,54 +208,20 @@ const EventsPage: React.FC = () => {
             <span className="text-emerald-600 hover:text-emerald-700 cursor-pointer">View All</span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="relative group cursor-pointer">
-              <img
-                className="w-full h-48 object-cover rounded-lg"
-                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/1c67488712-b96b92d9e02e37aa4b55.png"
-                alt="Races"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-lg"></div>
-              <div className="absolute bottom-4 left-4 text-white">
-                <h3 className="font-bold text-lg">Races</h3>
-                <p>24 Events</p>
+            {categoriesData?.popularEventCategories?.map((category, index) => (
+              <div key={index} className="relative group cursor-pointer" onClick={() => setSearchParams({ ...searchParams, category: category.name.toUpperCase().replace(' ', '_') })}>
+                <img
+                  className="w-full h-48 object-cover rounded-lg"
+                  src={category.imageUrl}
+                  alt={category.name}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-lg"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h3 className="font-bold text-lg">{category.name}</h3>
+                  <p>{category.count} Events</p>
+                </div>
               </div>
-            </div>
-            <div className="relative group cursor-pointer">
-              <img
-                className="w-full h-48 object-cover rounded-lg"
-                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/f1a3daef3b-9a5736df319c856fdac9.png"
-                alt="Workshops"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-lg"></div>
-              <div className="absolute bottom-4 left-4 text-white">
-                <h3 className="font-bold text-lg">Workshops</h3>
-                <p>16 Events</p>
-              </div>
-            </div>
-            <div className="relative group cursor-pointer">
-              <img
-                className="w-full h-48 object-cover rounded-lg"
-                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/5fb1a1b3d8-b126228684fdf6321e58.png"
-                alt="Festivals"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-lg"></div>
-              <div className="absolute bottom-4 left-4 text-white">
-                <h3 className="font-bold text-lg">Festivals</h3>
-                <p>8 Events</p>
-              </div>
-            </div>
-            <div className="relative group cursor-pointer">
-              <img
-                className="w-full h-48 object-cover rounded-lg"
-                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b914477774-20809743ba2b9bddaf9f.png"
-                alt="Group Rides"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-lg"></div>
-              <div className="absolute bottom-4 left-4 text-white">
-                <h3 className="font-bold text-lg">Group Rides</h3>
-                <p>32 Events</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>

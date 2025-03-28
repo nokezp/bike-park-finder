@@ -71,6 +71,13 @@ export type BikeParkFilter = {
   take?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type CategoryInfo = {
+  __typename?: 'CategoryInfo';
+  count: Scalars['Int']['output'];
+  imageUrl: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
 export type Contact = {
   __typename?: 'Contact';
   email?: Maybe<Scalars['String']['output']>;
@@ -142,9 +149,25 @@ export type Event = {
 };
 
 export enum EventCategory {
+  BikepackingEvent = 'BIKEPACKING_EVENT',
   Championship = 'CHAMPIONSHIP',
+  CharityRide = 'CHARITY_RIDE',
+  CrossCountry = 'CROSS_COUNTRY',
+  DemoDay = 'DEMO_DAY',
+  DirtJump = 'DIRT_JUMP',
+  Downhill = 'DOWNHILL',
+  Enduro = 'ENDURO',
+  EBikeEvent = 'E_BIKE_EVENT',
+  FamilyRide = 'FAMILY_RIDE',
   Festival = 'FESTIVAL',
+  FunRide = 'FUN_RIDE',
+  GravelRace = 'GRAVEL_RACE',
   GroupRide = 'GROUP_RIDE',
+  MaintenanceClinic = 'MAINTENANCE_CLINIC',
+  NightRide = 'NIGHT_RIDE',
+  Race = 'RACE',
+  StageRace = 'STAGE_RACE',
+  TrainingCamp = 'TRAINING_CAMP',
   Workshop = 'WORKSHOP'
 }
 
@@ -358,6 +381,7 @@ export type Query = {
   event?: Maybe<Event>;
   events: Array<Event>;
   me?: Maybe<User>;
+  popularEventCategories: Array<CategoryInfo>;
   reviews: PaginatedReviews;
   searchBikeParks: Array<BikePark>;
 };
@@ -618,6 +642,11 @@ export type GetEventsQueryVariables = Exact<{
 
 export type GetEventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, attendeeCount: number, capacity: number, category: EventCategory, date: string, description: string, featured: boolean, imageUrl: string, location: string, price: number, title: string, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string } }> };
 
+export type GetPopularEventCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPopularEventCategoriesQuery = { __typename?: 'Query', popularEventCategories: Array<{ __typename?: 'CategoryInfo', name: string, count: number, imageUrl: string }> };
+
 export type GetReviewsQueryVariables = Exact<{
   bikeParkId: Scalars['ID']['input'];
   page?: InputMaybe<Scalars['Int']['input']>;
@@ -637,6 +666,7 @@ export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __type
 export type GraphCacheKeysConfig = {
   AuthPayload?: (data: WithTypename<AuthPayload>) => null | string,
   BikePark?: (data: WithTypename<BikePark>) => null | string,
+  CategoryInfo?: (data: WithTypename<CategoryInfo>) => null | string,
   Contact?: (data: WithTypename<Contact>) => null | string,
   Coordinates?: (data: WithTypename<Coordinates>) => null | string,
   Event?: (data: WithTypename<Event>) => null | string,
@@ -663,6 +693,7 @@ export type GraphCacheResolvers = {
     event?: GraphCacheResolver<WithTypename<Query>, QueryEventArgs, WithTypename<Event> | string>,
     events?: GraphCacheResolver<WithTypename<Query>, QueryEventsArgs, Array<WithTypename<Event> | string>>,
     me?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
+    popularEventCategories?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<CategoryInfo> | string>>,
     reviews?: GraphCacheResolver<WithTypename<Query>, QueryReviewsArgs, WithTypename<PaginatedReviews> | string>,
     searchBikeParks?: GraphCacheResolver<WithTypename<Query>, QuerySearchBikeParksArgs, Array<WithTypename<BikePark> | string>>
   },
@@ -698,6 +729,11 @@ export type GraphCacheResolvers = {
     videos?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
     weather?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Weather> | string>,
     website?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>
+  },
+  CategoryInfo?: {
+    count?: GraphCacheResolver<WithTypename<CategoryInfo>, Record<string, never>, Scalars['Int'] | string>,
+    imageUrl?: GraphCacheResolver<WithTypename<CategoryInfo>, Record<string, never>, Scalars['String'] | string>,
+    name?: GraphCacheResolver<WithTypename<CategoryInfo>, Record<string, never>, Scalars['String'] | string>
   },
   Contact?: {
     email?: GraphCacheResolver<WithTypename<Contact>, Record<string, never>, Scalars['String'] | string>,
@@ -853,6 +889,7 @@ export type GraphCacheUpdaters = {
     event?: GraphCacheUpdateResolver<{ event: Maybe<WithTypename<Event>> }, QueryEventArgs>,
     events?: GraphCacheUpdateResolver<{ events: Array<WithTypename<Event>> }, QueryEventsArgs>,
     me?: GraphCacheUpdateResolver<{ me: Maybe<WithTypename<User>> }, Record<string, never>>,
+    popularEventCategories?: GraphCacheUpdateResolver<{ popularEventCategories: Array<WithTypename<CategoryInfo>> }, Record<string, never>>,
     reviews?: GraphCacheUpdateResolver<{ reviews: WithTypename<PaginatedReviews> }, QueryReviewsArgs>,
     searchBikeParks?: GraphCacheUpdateResolver<{ searchBikeParks: Array<WithTypename<BikePark>> }, QuerySearchBikeParksArgs>
   },
@@ -904,6 +941,11 @@ export type GraphCacheUpdaters = {
     videos?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     weather?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     website?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>
+  },
+  CategoryInfo?: {
+    count?: GraphCacheUpdateResolver<Maybe<WithTypename<CategoryInfo>>, Record<string, never>>,
+    imageUrl?: GraphCacheUpdateResolver<Maybe<WithTypename<CategoryInfo>>, Record<string, never>>,
+    name?: GraphCacheUpdateResolver<Maybe<WithTypename<CategoryInfo>>, Record<string, never>>
   },
   Contact?: {
     email?: GraphCacheUpdateResolver<Maybe<WithTypename<Contact>>, Record<string, never>>,
@@ -1308,6 +1350,19 @@ export const GetEventsDocument = gql`
 export function useGetEventsQuery(options?: Omit<Urql.UseQueryArgs<GetEventsQueryVariables>, 'query'>) {
   return Urql.useQuery<GetEventsQuery, GetEventsQueryVariables>({ query: GetEventsDocument, ...options });
 };
+export const GetPopularEventCategoriesDocument = gql`
+    query GetPopularEventCategories {
+  popularEventCategories {
+    name
+    count
+    imageUrl
+  }
+}
+    `;
+
+export function useGetPopularEventCategoriesQuery(options?: Omit<Urql.UseQueryArgs<GetPopularEventCategoriesQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetPopularEventCategoriesQuery, GetPopularEventCategoriesQueryVariables>({ query: GetPopularEventCategoriesDocument, ...options });
+};
 export const GetReviewsDocument = gql`
     query GetReviews($bikeParkId: ID!, $page: Int, $limit: Int) {
   reviews(bikeParkId: $bikeParkId, page: $page, limit: $limit) {
@@ -1360,6 +1415,7 @@ export const namedOperations = {
     GetBikeParksByViewport: 'GetBikeParksByViewport',
     GetEvent: 'GetEvent',
     GetEvents: 'GetEvents',
+    GetPopularEventCategories: 'GetPopularEventCategories',
     GetReviews: 'GetReviews',
     Me: 'Me'
   },
