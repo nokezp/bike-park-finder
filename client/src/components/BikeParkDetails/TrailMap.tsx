@@ -1,7 +1,7 @@
 import React from 'react';
 import { BikePark } from '../../lib/graphql/generated/graphql-operations';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
-import { defaultMapIcon } from '../../pages/Map';
+import { defaultMapIcon } from '../Map/Map';
 
 function InvalidateMapSize() {
   const map = useMap();

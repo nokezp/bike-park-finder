@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Difficulty, Feature } from '../../pages/MapLeftMenu';
+import { Difficulty, Feature } from '../Map/MapLeftMenu';
 import { BikeParkFilter } from '../../lib/graphql/generated/graphql-operations';
 
 const BikeParkSearchSection: React.FC<{ setSearchQuery: (searchQuery: BikeParkFilter) => void }> = ({ setSearchQuery }) => {

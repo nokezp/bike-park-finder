@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
 import { useMutation } from 'urql';
-import { LoginDocument, LoginMutation, LoginMutationVariables } from '../lib/graphql/generated/graphql-operations';
+import { LoginDocument, LoginMutation, LoginMutationVariables } from '../../lib/graphql/generated/graphql-operations';
 
 const LoginPage = () => {
   const navigator = useNavigate();
@@ -114,7 +114,7 @@ const LoginPage = () => {
                 </div>
               </div>
               <p className="text-center mt-8 text-gray-600">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link to="/register" className="text-emerald-600 hover:text-emerald-700">
                   Sign up
                 </Link>

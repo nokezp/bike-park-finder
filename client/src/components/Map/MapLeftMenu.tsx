@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { BikePark, BikeParkFilter, BikeParksDocument } from '../lib/graphql/generated/graphql-operations';
+import { BikePark, BikeParkFilter, BikeParksDocument } from '../../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 
 export enum Difficulty {

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import Map from './Map';
-import { BikePark } from '../lib/graphql/generated/graphql-operations';
-import MapLeftMenu from './MapLeftMenu';
+import Map from '../../components/Map/Map';
+import { BikePark } from '../../lib/graphql/generated/graphql-operations';
+import MapLeftMenu from '../../components/Map/MapLeftMenu';
 
 export enum Amenity {
   LIFT = 'Lift Access',

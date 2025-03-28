@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'urql';
 import moment from 'moment';
-import { EventDocument } from '../lib/graphql/generated/graphql-operations';
+import { EventDocument } from '../../lib/graphql/generated/graphql-operations';
 
 const EventDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

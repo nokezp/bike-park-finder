@@ -1,5 +1,5 @@
 import React from "react";
-import FallbackImage from "../FallbackImage";
+import FallbackImage from "../common/FallbackImage";
 import { BikePark } from "../../lib/graphql/generated/graphql-operations";
 import { getCurrentWorkingStatus, getWeatherIcon } from "../../lib/helpers/common-helper";
 

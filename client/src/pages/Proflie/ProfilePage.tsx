@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaBicycle, FaLocationDot, FaPenToSquare } from 'react-icons/fa6';
 import { FaRegHeart, FaRegComment, FaStar } from 'react-icons/fa';
-import { MeDocument, MeQuery } from '../lib/graphql/generated/graphql-operations';
+import { MeDocument, MeQuery } from '../../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 
 interface ActivityCardProps {

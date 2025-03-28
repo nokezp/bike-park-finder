@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import { Icon, latLngBounds, LatLngExpression } from 'leaflet';
-import { BikePark, BikeParksByViewportDocument } from '../lib/graphql/generated/graphql-operations';
+import { BikePark, BikeParksByViewportDocument } from '../../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'react-leaflet-cluster/lib/assets/MarkerCluster.css';

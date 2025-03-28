@@ -1,18 +1,18 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'urql';
-import { BikePark, BikeParkDocument, BikeParkQuery } from '../lib/graphql/generated/graphql-operations';
-import ReviewSection from '../components/Review/ReviewSection';
-import BikeParkHeader from '../components/BikeParkDetails/BikeParkHeader';
-import BikeParkDescription from '../components/BikeParkDetails/BikeParkDescription';
-import TrailMap from '../components/BikeParkDetails/TrailMap';
-import WeatherWidget from '../components/BikeParkDetails/WeatherWidget';
-import TrailStatus from '../components/BikeParkDetails/TrailStatus';
-import VideoWidget from '../components/BikeParkDetails/VideoWidget';
-import AccommodationSection from '../components/BikeParkDetails/AccommodationSection';
-import ImageGallery from '../components/BikeParkDetails/ImageGallery';
-import TrailDetails from '../components/BikeParkDetails/TrailDetails';
-import AdditionalFeaturesSection from '../components/BikeParkDetails/AditionalFeaturesSection';
+import { BikePark, BikeParkDocument, BikeParkQuery } from '../../lib/graphql/generated/graphql-operations';
+import ReviewSection from '../../components/Review/ReviewSection';
+import BikeParkHeader from '../../components/BikeParkDetails/BikeParkHeader';
+import BikeParkDescription from '../../components/BikeParkDetails/BikeParkDescription';
+import TrailMap from '../../components/BikeParkDetails/TrailMap';
+import WeatherWidget from '../../components/BikeParkDetails/WeatherWidget';
+import TrailStatus from '../../components/BikeParkDetails/TrailStatus';
+import VideoWidget from '../../components/BikeParkDetails/VideoWidget';
+import AccommodationSection from '../../components/BikeParkDetails/AccommodationSection';
+import ImageGallery from '../../components/BikeParkDetails/ImageGallery';
+import TrailDetails from '../../components/BikeParkDetails/TrailDetails';
+import AdditionalFeaturesSection from '../../components/BikeParkDetails/AditionalFeaturesSection';
 
 const BikeParkDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

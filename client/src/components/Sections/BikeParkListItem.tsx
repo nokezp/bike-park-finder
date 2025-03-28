@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import FallbackImage from '../FallbackImage';
+import FallbackImage from '../common/FallbackImage';
 import { getColorByIndex } from '../../utils/colors';
 import { BikePark } from '../../lib/graphql/generated/graphql-operations';
 
