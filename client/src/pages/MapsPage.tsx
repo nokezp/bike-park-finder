@@ -28,7 +28,7 @@ export function MapsPage() {
 
 
   const selectedLocation = useMemo(
-    () => filteredLocations?.find(({ id }: any) => id === selectedLocationId),
+    () => filteredLocations?.find(({ id }) => id === selectedLocationId),
     [filteredLocations, selectedLocationId],
   );
 

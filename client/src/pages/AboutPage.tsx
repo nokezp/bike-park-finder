@@ -32,7 +32,7 @@ const AboutPage = () => {
           />
           <div className="absolute inset-0 bg-black bg-opacity-50"></div>
           <div className="relative container mx-auto px-4 h-full flex flex-col items-center justify-center text-center text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">About BikePark</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">About Bike Park Finder</h1>
             <p className="text-xl max-w-2xl">Connecting riders with the world's best mountain bike destinations</p>
           </div>
         </section>

@@ -79,7 +79,7 @@ Make sure your `.env` file is properly configured:
 
 ```
 PORT=4000
-MONGODB_URI=mongodb://localhost:27017/bike-park-finder
+MONGODB_URI=mongodb://localhost:27017/bike-park-finder-mac
 JWT_SECRET=your_secret_key
 ```
 

@@ -1,0 +1,24 @@
+mutation CreateReview(
+  $bikeParkId: ID!, 
+  $title: String, 
+  $rating: Float!, 
+  $comment: String!, 
+  $visitDate: String, 
+  $trailDifficulty: String, 
+  $photos: [String]
+  ) {
+  createReview(bikeParkId: $bikeParkId, title: $title, rating: $rating, comment: $comment, visitDate: $visitDate, trailDifficulty: $trailDifficulty, photos: $photos) {
+    id
+    title
+    comment
+    rating
+    bikePark
+    createdAt
+    createdBy {
+      id
+      username
+      email
+    }
+    updatedAt
+  }
+}

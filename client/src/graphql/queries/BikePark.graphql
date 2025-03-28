@@ -9,9 +9,6 @@ query GetBikePark($id: ID!) {
     difficulty
     status
     features
-    createdAt
-    updatedAt
-    createdBy
     coordinates {
       latitude
       longitude
@@ -80,6 +77,19 @@ query GetBikePark($id: ID!) {
       features
       difficulty
       description
+    }
+    reviews {
+      id
+      title
+      comment
+      rating
+      createdAt
+      createdBy {
+        id
+        username
+        email
+      }
+      updatedAt
     }
   }
 }

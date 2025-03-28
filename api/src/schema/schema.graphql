@@ -1,8 +1,9 @@
 type User {
   id: ID!
   username: String!
+  firstName: String!
+  lastName: String!
   email: String!
-  name: String
   role: String!
   createdAt: String!
   updatedAt: String!
@@ -73,7 +74,7 @@ type Trail {
 type BikePark {
   id: ID!
   name: String!
-  createdBy: ID!
+  createdBy: User!
   createdAt: String!
   description: String
   location: String
@@ -104,8 +105,12 @@ type Review {
   id: ID!
   rating: Float!
   comment: String!
-  createdBy: ID!
+  title: String
   bikePark: ID!
+  createdBy: User!
+  visitDate: String
+  trailDifficulty: String
+  photos: [String]
   createdAt: String!
   updatedAt: String
 }
@@ -180,7 +185,7 @@ type Query {
   me: User
   bikeParks(filter: BikeParkFilter): PaginatedBikeParks!
   bikePark(id: ID!): BikePark
-  reviews(bikeParkId: ID!): [Review!]!
+  reviews(bikeParkId: ID!, page: Int, limit: Int): PaginatedReviews!
   searchBikeParks(query: String!): [BikePark!]!
   bikeParksByViewport(viewport: ViewportInput!, searchQuery: String): [BikePark!]!
   events(filter: EventFilter): [Event!]!
@@ -188,7 +193,14 @@ type Query {
 }
 
 type Mutation {
-  register(username: String!, email: String!, password: String!, name: String): AuthPayload!
+  register(
+    username: String!
+    firstName: String!
+    lastName: String!
+    email: String!
+    password: String!
+    confirmPassword: String!
+  ): AuthPayload!
   login(email: String!, password: String!): AuthPayload!
   updateProfile(name: String, email: String): User!
   createBikePark(
@@ -213,7 +225,7 @@ type Mutation {
   ): BikePark!
   updateBikePark(id: ID!, input: UpdateBikeParkInput!): BikePark!
   deleteBikePark(id: ID!): Boolean!
-  createReview(bikeParkId: ID!, rating: Float!, comment: String!): Review!
+  createReview(bikeParkId: ID!, rating: Float!, comment: String!, title: String, visitDate: String, trailDifficulty: String, photos: [String]): Review!
   updateReview(id: ID!, rating: Float, comment: String): Review!
   deleteReview(id: ID!): Boolean!
   createEvent(input: CreateEventInput!): Event!
@@ -316,6 +328,14 @@ type PaginatedBikeParks {
   hasNextPage: Boolean!
 }
 
+type PaginatedReviews {
+  reviews: [Review!]!
+  totalCount: Int!
+  currentPage: Int!
+  totalPages: Int!
+  hasNextPage: Boolean!
+}
+
 input CreateEventInput {
   title: String!
   date: String!
@@ -370,4 +390,4 @@ input VenueInput {
   mapImageUrl: String!
 }
 
-scalar JSON 
+scalar JSON

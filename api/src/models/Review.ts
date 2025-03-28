@@ -2,23 +2,13 @@ import mongoose from 'mongoose';
 
 export interface IReview extends mongoose.Document {
   title: string;
-  content: string;
+  comment: string;
   rating: number;
-  difficulty: string;
-  technicalRating: number;
-  scenicRating: number;
-  maintenanceRating: number;
-  bikeUsed: string;
-  rideDate: Date;
-  conditions: {
-    weather: string;
-    trailCondition: string;
-  };
-  photos?: string[];
-  videos?: string[];
-  likes?: number;
   bikePark: mongoose.Types.ObjectId;
   createdBy: mongoose.Types.ObjectId;
+  visitDate?: Date;
+  trailDifficulty?: string;
+  photos?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,10 +16,9 @@ export interface IReview extends mongoose.Document {
 const reviewSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
     trim: true
   },
-  content: {
+  comment: {
     type: String,
     required: true
   },
@@ -38,59 +27,6 @@ const reviewSchema = new mongoose.Schema({
     required: true,
     min: 1,
     max: 5
-  },
-  difficulty: {
-    type: String,
-    required: true,
-    enum: ['beginner', 'intermediate', 'expert']
-  },
-  technicalRating: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 5
-  },
-  scenicRating: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 5
-  },
-  maintenanceRating: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 5
-  },
-  bikeUsed: {
-    type: String,
-    required: true
-  },
-  rideDate: {
-    type: Date,
-    required: true
-  },
-  conditions: {
-    weather: {
-      type: String,
-      required: true,
-      enum: ['sunny', 'cloudy', 'rainy', 'snowy']
-    },
-    trailCondition: {
-      type: String,
-      required: true,
-      enum: ['dry', 'wet', 'muddy', 'icy']
-    }
-  },
-  photos: [{
-    type: String
-  }],
-  videos: [{
-    type: String
-  }],
-  likes: {
-    type: Number,
-    default: 0
   },
   bikePark: {
     type: mongoose.Schema.Types.ObjectId,
@@ -101,6 +37,15 @@ const reviewSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  visitDate: {
+    type: Date
+  },
+  trailDifficulty: {
+    type: String
+  },
+  photos: {
+    type: [String]
   },
   createdAt: {
     type: Date,
@@ -118,4 +63,4 @@ reviewSchema.pre('save', function(next) {
   next();
 });
 
-export const Review = mongoose.model<IReview>('Review', reviewSchema); 
+export const Review = mongoose.model<IReview>('Review', reviewSchema);

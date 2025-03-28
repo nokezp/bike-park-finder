@@ -4,6 +4,8 @@ import { AuthContext } from '../utils/auth.js';
 import { BikeParkFilter } from '../core/generated-models.js';
 import { BikePark as BikeParkModel } from '../models/BikePark.js';
 import { Trail } from '../models/Trail.js';
+import { Review } from '../models/Review.js';
+import { User } from '../models/User.js';
 
 interface Context {
   user?: {
@@ -328,12 +330,12 @@ export const bikeParkResolvers = {
           return 0;
         }
 
-        const totalRating = bikePark.reviews.reduce((sum: number, review: any) => {
-          return sum + (review.rating || 0);
-        }, 0);
-
-        const averageRating = totalRating / bikePark.reviews.length;
-        return Number(averageRating.toFixed(1)); // Round to 1 decimal place
+        const reviews = await Review.find({ bikePark: Object(bikePark.id) });
+        const reviewRatings = reviews?.map((review) => review.rating);
+        const totalRating = reviewRatings.reduce((sum: number, rating: number) => sum + rating, 0);
+        const averageRating = totalRating / reviewRatings.length;
+        
+        return Number(averageRating.toFixed(1));
       } catch (error: any) {
         console.error(`Error calculating rating for bike park ${bikePark._id}:`, error);
         return 0;
@@ -353,6 +355,15 @@ export const bikeParkResolvers = {
           description: trail.description,
           imageUrl: trail.photos[0] // Using first photo as main image
         }));
+      } catch (error) {
+        console.error('Error fetching trails:', error);
+        return [];
+      }
+    },
+    reviews: async (bikePark: any) => {
+      try {
+        const reviews = await Review.find({ bikePark: Object(bikePark.id) });
+        return reviews
       } catch (error) {
         console.error('Error fetching trails:', error);
         return [];

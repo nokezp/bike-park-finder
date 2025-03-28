@@ -7,9 +7,6 @@ fragment BikePark on BikePark {
   difficulty
   status
   features
-  createdAt
-  updatedAt
-  createdBy
   coordinates {
     latitude
     longitude

@@ -4,6 +4,8 @@ import { authExchange } from '@urql/exchange-auth';
 import { CombinedError } from '@urql/core';
 import { makeOperation } from '@urql/core';
 import schema from '../lib/graphql/generated/urql-introspection';
+import { create } from 'lodash';
+import { GetReviewsDocument } from './graphql/generated/graphql-operations';
 
 const API_URL = 'http://localhost:4000/graphql';
 
@@ -95,6 +97,18 @@ const urqlClient = createClient({
             removeToken();
             cache.invalidate('Query', 'me');
           },
+          createReview: (_result, _args, cache) => {
+            cache.updateQuery({ query: GetReviewsDocument, variables: { bikeParkId: _args.bikeParkId, page: 1, limit: 5 } }, (data) => {
+              if (!data?.reviews?.reviews) {
+                return null;
+              }
+
+              const newReview = create({ ..._args, id: 'temp-id' });
+              data.reviews.reviews.unshift(newReview);
+              return data;
+            }
+            );
+          }
         },
       },
     }),

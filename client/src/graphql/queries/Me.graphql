@@ -1,9 +1,11 @@
 query Me {
   me {
     id
-    name
     username
+    firstName
+    lastName
     email
+    role
     createdAt
     updatedAt
   }

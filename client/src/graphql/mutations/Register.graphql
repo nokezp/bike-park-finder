@@ -1,5 +1,12 @@
- mutation Register($email: String!, $password: String!, $username: String!, $name: String!) {
-  register(email: $email, password: $password, username: $username, name: $name) {
+ mutation Register(
+    $username: String!
+    $firstName: String!
+    $lastName: String!
+    $email: String!
+    $password: String!
+    $confirmPassword: String!
+  ) {
+  register(username: $username, firstName: $firstName, lastName: $lastName, email: $email, password: $password, confirmPassword: $confirmPassword) {
     token
   }
 }
