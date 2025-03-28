@@ -1,8 +1,8 @@
-import { User } from '../models/index.js';
+import { UserModel } from "../graphql-modules/auth/src";
 
 export async function seedUsers() {
   // Create admin user
-  const adminUser = new User({
+  const adminUser = new UserModel({
     username: 'admin',
     email: 'admin@bikepark.com',
     password: 'Admin123!',
@@ -11,7 +11,7 @@ export async function seedUsers() {
   });
 
   // Create regular user
-  const regularUser = new User({
+  const regularUser = new UserModel({
     username: 'user',
     email: 'user@example.com',
     password: 'User123!',

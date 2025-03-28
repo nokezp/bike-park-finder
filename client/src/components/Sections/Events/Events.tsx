@@ -30,8 +30,8 @@ const mockEvents: (EventCardProps & { id: string })[] = [
 
 const Events: React.FC = () => {
   const title = 'Upcoming Events';
-  const handleEventDetails = (eventId: string) => {
-    console.log('Viewing event details:', eventId);
+  const handleEventDetails = () => {
+    // console.log('Viewing event details:', eventId);
     // Add event details logic here
   };
   return (
@@ -43,7 +43,7 @@ const Events: React.FC = () => {
             <EventCard
               key={event.id}
               {...event}
-              onViewDetails={() => handleEventDetails?.(event.id)}
+              onViewDetails={() => handleEventDetails?.()}
             />
           ))}
         </div>

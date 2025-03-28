@@ -1,0 +1,11 @@
+type Trail {
+  id: ID!
+  name: String!
+  difficulty: String!
+  length: Float!
+  verticalDrop: Float!
+  status: String!
+  features: [String!]
+  description: String
+  imageUrl: String
+}

@@ -13,8 +13,6 @@ const LoginPage = () => {
 
   const [{ data }, login] = useMutation<LoginMutation>(LoginDocument);
 
-  console.log('loginData: ', data);
-
   useEffect(() => {
     if (data?.login?.token) {
       navigator('/user-account');

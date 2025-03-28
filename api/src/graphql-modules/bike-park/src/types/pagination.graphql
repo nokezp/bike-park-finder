@@ -1,0 +1,15 @@
+type PaginatedBikeParks {
+  bikeParks: [BikePark!]!
+  totalCount: Int!
+  currentPage: Int!
+  totalPages: Int!
+  hasNextPage: Boolean!
+}
+
+type PaginatedReviews {
+  reviews: [Review!]!
+  totalCount: Int!
+  currentPage: Int!
+  totalPages: Int!
+  hasNextPage: Boolean!
+}

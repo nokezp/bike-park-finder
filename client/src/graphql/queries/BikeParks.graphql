@@ -1,4 +1,4 @@
-query GetBikeParks($filter: BikeParkFilter) {
+query BikeParks($filter: BikeParkFilter) {
   bikeParks(filter: $filter) {
     bikeParks {
       # ...BikePark

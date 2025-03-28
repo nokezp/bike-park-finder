@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Provider } from 'urql';
-import urqlClient from '../lib/urqlClient';
+import urqlClient from '../lib/graphql/urqlClient';
 import Header from './Header/Header';
 import Footer from './Footer/Footer';
 

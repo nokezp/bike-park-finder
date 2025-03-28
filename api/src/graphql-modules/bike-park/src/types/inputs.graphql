@@ -1,0 +1,80 @@
+input CoordinatesInput {
+  latitude: Float!
+  longitude: Float!
+}
+
+input OpeningHoursInput {
+  monday: String
+  tuesday: String
+  wednesday: String
+  thursday: String
+  friday: String
+  saturday: String
+  sunday: String
+}
+
+input ContactInput {
+  phone: String
+  email: String
+}
+
+input PriceInput {
+  amount: Float!
+  currency: String!
+}
+
+input SocialMediaInput {
+  facebook: String
+  instagram: String
+  twitter: String
+  youtube: String
+}
+
+input UpdateBikeParkInput {
+  name: String
+  description: String
+  location: String
+  features: [String!]
+  difficulty: String
+  address: String
+  coordinates: CoordinatesInput
+  imageUrl: String
+  openingHours: OpeningHoursInput
+  contact: ContactInput
+  price: PriceInput
+  facilities: [String!]
+  rules: [String!]
+  photos: [String!]
+  videos: [String!]
+  website: String
+  socialMedia: SocialMediaInput
+  status: String
+}
+
+input BikeParkFilter {
+  location: String
+  name: String
+  difficulty: String
+  features: [String!]
+  facilities: [String!]
+  coordinates: CoordinatesSearchInput
+  sortBy: String
+  skip: Int
+  take: Int
+}
+
+input CoordinatesSearchInput {
+  latitude: Float!
+  longitude: Float!
+  radius: Float
+}
+
+input PaginationInput {
+  page: Int!
+  limit: Int!
+}
+
+input ViewportInput {
+  northEast: CoordinatesInput!
+  southWest: CoordinatesInput!
+}

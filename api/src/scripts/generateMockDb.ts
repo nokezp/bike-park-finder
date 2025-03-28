@@ -1,30 +1,19 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
-import { BikePark, User } from '../models/index.js';
+import { UserModel } from '../graphql-modules/auth/src';
+import { BikeParkModel } from '../graphql-modules/bike-park/src';
 // import faker from 'faker';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder';
 
 async function generateMockDb() {
   try {
-    console.log('🌱 Starting database seeding...');
-
-    // Connect to MongoDB
-    console.log('🔄 Connecting to MongoDB...');
     await mongoose.connect(MONGODB_URI);
-    console.log('✅ Connected to MongoDB');
-
-    // Clear existing data
-    console.log('🧹 Clearing existing data...');
     await Promise.all([
-      User.deleteMany({}),
-      BikePark.deleteMany({}),
+      UserModel.deleteMany({}),
+      BikeParkModel.deleteMany({}),
     ]);
-    console.log('✅ Database cleared');
-
-    // Generate users
-    console.log('👥 Generating users...');
-    const adminUser = new User({
+    const adminUser = new UserModel({
       username: 'admin',
       email: 'admin@bikepark.com',
       password: 'Admin123!',
@@ -32,7 +21,7 @@ async function generateMockDb() {
       role: 'admin'
     });
 
-    const regularUser = new User({
+    const regularUser = new UserModel({
       username: 'user',
       email: 'user@example.com',
       password: 'User123!',
@@ -44,10 +33,6 @@ async function generateMockDb() {
       adminUser.save(),
       regularUser.save()
     ]);
-    console.log('✅ Users generated');
-
-    // Generate bike parks
-    console.log('🏔️ Generating bike parks...');
     // const bikeParks = [
     //   // {
     //   //   name: faker.company.name() + ' Bike Park',
@@ -97,10 +82,8 @@ async function generateMockDb() {
     // ];
 
     // const createdBikeParks = await BikePark.create(bikeParks);
-    // console.log('✅ Bike parks generated');
 
     // Generate trails
-    // console.log('🚲 Generating trails...');
     // const trails = createdBikeParks.flatMap(bikePark => {
     //   if (bikePark.name === 'Whistler Mountain Bike Park') {
     //     return [
@@ -176,8 +159,6 @@ async function generateMockDb() {
     //   }
     //   return [];
     // });
-
-    console.log('✨ Database seeded successfully!');
     process.exit(0);
   } catch (error) {
     console.error('❌ Error seeding database:', error);
@@ -185,4 +166,4 @@ async function generateMockDb() {
   }
 }
 
-generateMockDb(); 
+generateMockDb();

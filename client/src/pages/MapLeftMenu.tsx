@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { BikePark, BikeParkFilter, GetBikeParksDocument } from '../lib/graphql/generated/graphql-operations';
+import { BikePark, BikeParkFilter, BikeParksDocument } from '../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 
 export enum Difficulty {
@@ -48,7 +48,7 @@ const MapLeftMenu: React.FC<{
   });
 
   const [{ data, fetching }] = useQuery({
-    query: GetBikeParksDocument,
+    query: BikeParksDocument,
     variables: {
       filter: {
         ...filter,

@@ -2,13 +2,13 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from 'urql';
 import moment from 'moment';
-import { GetEventDocument } from '../lib/graphql/generated/graphql-operations';
+import { EventDocument } from '../lib/graphql/generated/graphql-operations';
 
 const EventDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const [{ data, fetching }] = useQuery({
-    query: GetEventDocument,
+    query: EventDocument,
     variables: { id },
   });
 
@@ -177,7 +177,7 @@ const EventDetailPage: React.FC = () => {
 
               {/* Attendees */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="font-bold text-lg mb-4">Who's Going?</h3>
+                <h3 className="font-bold text-lg mb-4">Who&apos;s Going?</h3>
                 <div className="flex flex-wrap gap-2 mb-4">
                   <img
                     src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-1.jpg"

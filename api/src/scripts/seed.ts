@@ -11,15 +11,10 @@ async function seed() {
   try {
     // Connect to MongoDB
     await mongoose.connect(MONGODB_URI);
-    console.log('Connected to MongoDB');
-
     // Run seed function
     await seedDatabase();
-    console.log('Database seeding completed successfully');
-
     // Close connection
     await mongoose.connection.close();
-    console.log('MongoDB connection closed');
     process.exit(0);
   } catch (error) {
     console.error('Error seeding database:', error);

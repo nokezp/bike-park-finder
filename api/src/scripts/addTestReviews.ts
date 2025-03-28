@@ -1,31 +1,29 @@
 import mongoose from 'mongoose';
 import { connectDB } from '../utils/db';
-import { Review } from '../models/Review';
-import { User } from '../models/User';
-import { BikePark } from '../models/BikePark';
+import { ReviewModel } from '../graphql-modules/review/src/models/ReviewModel';
+import { UserModel } from '../graphql-modules/auth/src/models/UserModel';
+import { BikeParkModel } from '../graphql-modules/bike-park/src/models/BikeParkModel';
 
 async function addTestReviews() {
   try {
     await connectDB();
-    console.log('Connected to database');
 
     // Get a bike park
-    const bikePark = await BikePark.findOne();
+    const bikePark = await BikeParkModel.findOne();
     if (!bikePark) {
       console.error('No bike park found');
       process.exit(1);
     }
 
     // Get a user
-    const user = await User.findOne();
+    const user = await UserModel.findOne();
     if (!user) {
       console.error('No user found');
       process.exit(1);
     }
 
     // Delete existing reviews for this bike park
-    await Review.deleteMany({ bikePark: bikePark._id });
-    console.log('Deleted existing reviews');
+    await ReviewModel.deleteMany({ bikePark: bikePark._id });
 
     // Create 10 test reviews
     const reviews = [];
@@ -43,9 +41,7 @@ async function addTestReviews() {
       });
     }
 
-    await Review.insertMany(reviews);
-    console.log('Added 10 test reviews');
-
+    await ReviewModel.insertMany(reviews);
     process.exit(0);
   } catch (error) {
     console.error('Error:', error);

@@ -1,0 +1,76 @@
+type Event {
+  id: ID!
+  title: String!
+  date: String!
+  startTime: String!
+  endTime: String!
+  location: String!
+  category: EventCategory!
+  price: Float!
+  imageUrl: String!
+  description: String!
+  capacity: Int!
+  registrationEndDate: String!
+  availableTickets: Int!
+  attendeeCount: Int!
+  featured: Boolean!
+  organizer: Organizer!
+  schedule: [ScheduleItem!]!
+  venue: Venue!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Organizer {
+  name: String!
+  description: String!
+  imageUrl: String!
+}
+
+type ScheduleItem {
+  time: String!
+  title: String!
+  description: String!
+}
+
+type Venue {
+  name: String!
+  address: String!
+  mapImageUrl: String!
+}
+
+enum EventCategory {
+  CHAMPIONSHIP
+  WORKSHOP
+  FESTIVAL
+  GROUP_RIDE
+  RACE
+  ENDURO
+  DOWNHILL
+  CROSS_COUNTRY
+  DIRT_JUMP
+  CHARITY_RIDE
+  DEMO_DAY
+  TRAINING_CAMP
+  MAINTENANCE_CLINIC
+  NIGHT_RIDE
+  GRAVEL_RACE
+  BIKEPACKING_EVENT
+  E_BIKE_EVENT
+  FUN_RIDE
+  FAMILY_RIDE
+  STAGE_RACE
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+type CategoryInfo {
+  name: String!
+  count: Int!
+  imageUrl: String!
+}

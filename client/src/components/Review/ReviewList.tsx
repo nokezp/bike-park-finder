@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "urql";
-import { GetReviewsDocument, GetReviewsQuery } from "../../lib/graphql/generated/graphql-operations";
+import { ReviewsDocument, ReviewsQuery } from "../../lib/graphql/generated/graphql-operations";
 import moment from "moment";
 import StarRating from "./StarRating";
+import Loading from "../Loading";
 
 const LIMIT = 3; // Show 3 reviews per page
 
@@ -11,14 +12,14 @@ const ReviewList: React.FC = () => {
 	const { id: bikeParkId } = useParams<{ id: string }>();
 	const [page, setPage] = useState(1);
 
-	const [result] = useQuery<GetReviewsQuery>({
-		query: GetReviewsDocument,
+	const [result] = useQuery<ReviewsQuery>({
+		query: ReviewsDocument,
 		variables: { bikeParkId, page, limit: LIMIT },
 	});
 
 	const { data, fetching, error } = result;
 
-	if (fetching) return <div className="text-center py-4">Loading reviews...</div>;
+	// if (fetching) return <div className="text-center py-4">Loading reviews...</div>;
 	if (error) return <div className="text-center py-4 text-red-500">Error loading reviews: {error.message}</div>;
 	if (!data?.reviews?.reviews?.length) return <div className="text-center py-4">No reviews yet. Be the first to write one!</div>;
 
@@ -33,6 +34,7 @@ const ReviewList: React.FC = () => {
 
 	return (
 		<div id="reviews" className="bg-white rounded-lg shadow-md p-6">
+			{fetching && <Loading />}
 			<div className="space-y-6">
 				{reviews.map((review) => (
 					<div key={review.id} className="border-b border-gray-200 pb-6">

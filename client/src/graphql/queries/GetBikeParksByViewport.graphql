@@ -1,4 +1,4 @@
-query GetBikeParksByViewport($viewport: ViewportInput!, $searchQuery: String) {
+query BikeParksByViewport($viewport: ViewportInput!, $searchQuery: String) {
   bikeParksByViewport(viewport: $viewport, searchQuery: $searchQuery) {
     ...BikePark
   }

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { User } from '../models/index.js';
+import { UserModel } from '../graphql-modules/auth/src/index.js';
 
 // JWT configuration
 export const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -28,7 +28,7 @@ export async function createContext({ auth }: { auth: string | null }): Promise<
     const decoded = jwt.verify(token, JWT_SECRET) as { id: string; role: string };
 
     // Find user
-    const userDoc = await User.findById(decoded.id);
+    const userDoc = await UserModel.findById(decoded.id);
     if (!userDoc) {
       return { user: null };
     }

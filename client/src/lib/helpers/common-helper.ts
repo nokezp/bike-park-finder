@@ -1,8 +1,8 @@
 import moment from "moment";
 import { OpeningHours } from "../../utils/types";
-import { GetBikeParkQuery } from "../graphql/generated/graphql-operations";
+import { BikeParkQuery } from "../graphql/generated/graphql-operations";
 
-type BikeParkOpeningHours = NonNullable<NonNullable<GetBikeParkQuery['bikePark']>['openingHours']>;
+type BikeParkOpeningHours = NonNullable<NonNullable<BikeParkQuery['bikePark']>['openingHours']>;
 
 export function getTrailStatusColorClass(status: string) {
   switch (status) {
@@ -36,7 +36,7 @@ export function getWeatherIcon(icon: string): string {
 
 export function getYouTubeEmbedUrl(url: string): string {
   const regex =
-    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
   const match = url.match(regex);
   if (match && match[1]) {
     return `https://www.youtube.com/embed/${match[1]}`;
