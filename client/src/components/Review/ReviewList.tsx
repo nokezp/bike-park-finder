@@ -8,6 +8,13 @@ import Loading from "../common/Loading";
 
 const LIMIT = 3; // Show 3 reviews per page
 
+export const formatDate = (dateString: string) => {
+	const date = moment(Number(dateString));
+	return moment().diff(date, 'days') <= 7 
+		? date.fromNow() 
+		: date.format('MMMM D, YYYY');
+};
+
 const ReviewList: React.FC = () => {
 	const { id: bikeParkId } = useParams<{ id: string }>();
 	const [page, setPage] = useState(1);
@@ -24,13 +31,6 @@ const ReviewList: React.FC = () => {
 	if (!data?.reviews?.reviews?.length) return <div className="text-center py-4">No reviews yet. Be the first to write one!</div>;
 
 	const { reviews, hasNextPage, currentPage, totalPages } = data.reviews;
-
-	const formatDate = (dateString: string) => {
-		const date = moment(Number(dateString));
-		return moment().diff(date, 'days') <= 7 
-			? date.fromNow() 
-			: date.format('MMMM D, YYYY');
-	};
 
 	return (
 		<div id="reviews" className="bg-white rounded-lg shadow-md p-6">

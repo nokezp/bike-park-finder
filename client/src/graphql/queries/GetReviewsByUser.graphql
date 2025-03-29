@@ -1,0 +1,15 @@
+query ReviewsByUser($userId: ID!, $page: Int, $limit: Int) {
+  reviewsByUser(userId: $userId, page: $page, limit: $limit) {
+    reviews {
+      id
+      createdBy {
+        id
+        username
+      }
+      createdAt
+      comment
+      rating
+      title
+    }
+  }
+}

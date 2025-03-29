@@ -1,3 +1,4 @@
 type Query {
   me: User
+  reviewsByUser(userId: ID!, page: Int, limit: Int): PaginatedReviews!
 }

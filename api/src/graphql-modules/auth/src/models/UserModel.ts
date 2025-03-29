@@ -5,7 +5,12 @@ interface IStats {
   totalRides?: number;
   totalReviews?: number;
   favoriteParks?: mongoose.Types.ObjectId[];
-  favoriteTrails?: mongoose.Types.ObjectId[]; 
+  favoriteTrails?: mongoose.Types.ObjectId[];
+}
+
+interface INotifications {
+  email: boolean
+  push: boolean
 }
 
 interface ISocialMedia {
@@ -22,17 +27,13 @@ interface IPreferences {
 }
 
 interface IProfile {
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   avatar?: string;
-  bio?: string;
   location?: string;
   preferences?: IPreferences;
-  stats?: IStats;
   socialMedia?: ISocialMedia;
-  verified?: boolean;
-  lastLogin?: Date;
-  ridingLevel?: string;
+  notifications: boolean
 }
 
 // User interface
@@ -41,12 +42,14 @@ export interface IUser extends mongoose.Document {
   email: string;
   password?: string;
   role: string;
-  prifile?: IProfile;
-  stats?: IStats;
-  name?: string;
-  googleId?: string;
   createdAt: Date;
   updatedAt: Date;
+  prifile?: IProfile;
+  stats?: IStats;
+  notifications: INotifications
+  lastLogin: string
+  googleId?: string;
+  isVerified: boolean
   resetPasswordToken?: string;
   resetPasswordExpire?: number;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -72,7 +75,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function(this: any): boolean {
+    required: function (this: any): boolean {
       return !this.googleId;
     },
     minlength: 8
@@ -100,15 +103,11 @@ const userSchema = new mongoose.Schema({
     avatar: {
       type: String,
       validate: {
-        validator: function(v: string) {
+        validator: function (v: string) {
           return !v || /^https?:\/\/.+/.test(v);
         },
         message: 'Avatar URL must be a valid URL'
       }
-    },
-    bio: {
-      type: String,
-      maxlength: 500
     },
     location: {
       type: String,
@@ -183,7 +182,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Add text index for search functionality
-userSchema.index({ 
+userSchema.index({
   username: 'text',
   firstName: 'text',
   lastName: 'text',
@@ -193,7 +192,7 @@ userSchema.index({
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (this.isModified('password') && this.password) {
     this.password = await bcrypt.hash(this.password, 12);
   }
@@ -202,7 +201,7 @@ userSchema.pre('save', async function(next) {
 });
 
 // Method to compare password
-userSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
   if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };

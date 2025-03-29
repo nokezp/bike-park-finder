@@ -326,6 +326,12 @@ export type MutationUpdateReviewArgs = {
   rating?: InputMaybe<Scalars['Float']['input']>;
 };
 
+export type Notifications = {
+  __typename?: 'Notifications';
+  email?: Maybe<Scalars['Boolean']['output']>;
+  push?: Maybe<Scalars['Boolean']['output']>;
+};
+
 export type OpeningHours = {
   __typename?: 'OpeningHours';
   friday?: Maybe<Scalars['String']['output']>;
@@ -383,6 +389,14 @@ export type PaginationInput = {
   page: Scalars['Int']['input'];
 };
 
+export type Preferences = {
+  __typename?: 'Preferences';
+  preferredBikeType?: Maybe<Scalars['String']['output']>;
+  preferredBikes?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  ridingStyles?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  skillLevel?: Maybe<Scalars['String']['output']>;
+};
+
 export type Price = {
   __typename?: 'Price';
   amount: Scalars['Float']['output'];
@@ -392,6 +406,17 @@ export type Price = {
 export type PriceInput = {
   amount: Scalars['Float']['input'];
   currency: Scalars['String']['input'];
+};
+
+export type Profile = {
+  __typename?: 'Profile';
+  avatar?: Maybe<Scalars['String']['output']>;
+  firstName: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
+  location?: Maybe<Scalars['String']['output']>;
+  notifications?: Maybe<Scalars['Boolean']['output']>;
+  preferences?: Maybe<Preferences>;
+  socialMedia?: Maybe<SocialMedia>;
 };
 
 export type Query = {
@@ -404,6 +429,7 @@ export type Query = {
   me?: Maybe<User>;
   popularEventCategories: Array<CategoryInfo>;
   reviews: PaginatedReviews;
+  reviewsByUser: PaginatedReviews;
   searchBikeParks: Array<BikePark>;
 };
 
@@ -438,6 +464,13 @@ export type QueryReviewsArgs = {
   bikeParkId: Scalars['ID']['input'];
   limit?: InputMaybe<Scalars['Int']['input']>;
   page?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryReviewsByUserArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  userId: Scalars['ID']['input'];
 };
 
 
@@ -477,6 +510,7 @@ export type SocialMedia = {
   __typename?: 'SocialMedia';
   facebook?: Maybe<Scalars['String']['output']>;
   instagram?: Maybe<Scalars['String']['output']>;
+  strava?: Maybe<Scalars['String']['output']>;
   twitter?: Maybe<Scalars['String']['output']>;
   youtube?: Maybe<Scalars['String']['output']>;
 };
@@ -486,6 +520,14 @@ export type SocialMediaInput = {
   instagram?: InputMaybe<Scalars['String']['input']>;
   twitter?: InputMaybe<Scalars['String']['input']>;
   youtube?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type Stats = {
+  __typename?: 'Stats';
+  favoriteParks?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
+  favoriteTrails?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
+  totalReviews?: Maybe<Scalars['Int']['output']>;
+  totalRides?: Maybe<Scalars['Int']['output']>;
 };
 
 export type Trail = {
@@ -544,10 +586,14 @@ export type User = {
   __typename?: 'User';
   createdAt: Scalars['String']['output'];
   email: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
+  googleId?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
-  lastName: Scalars['String']['output'];
+  isVerified?: Maybe<Scalars['Boolean']['output']>;
+  lastLogin?: Maybe<Scalars['String']['output']>;
+  notifications?: Maybe<Notifications>;
+  profile?: Maybe<Profile>;
   role: Scalars['String']['output'];
+  stats?: Maybe<Stats>;
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
 };
@@ -687,6 +733,11 @@ export type EventsQueryVariables = Exact<{
 
 export type EventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, attendeeCount: number, capacity: number, category: EventCategory, date: string, description: string, featured: boolean, imageUrl: string, location: string, price: number, title: string, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string } }> };
 
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email: string, username: string, role: string, profile?: { __typename?: 'Profile', firstName: string, lastName: string, location?: string | null, preferences?: { __typename?: 'Preferences', ridingStyles?: Array<string | null> | null, skillLevel?: string | null, preferredBikes?: Array<string | null> | null } | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null, strava?: string | null } | null } | null, stats?: { __typename?: 'Stats', favoriteParks?: Array<string | null> | null, favoriteTrails?: Array<string | null> | null, totalReviews?: number | null, totalRides?: number | null } | null } | null };
+
 export type ReviewsQueryVariables = Exact<{
   bikeParkId: Scalars['ID']['input'];
   page?: InputMaybe<Scalars['Int']['input']>;
@@ -696,10 +747,14 @@ export type ReviewsQueryVariables = Exact<{
 
 export type ReviewsQuery = { __typename?: 'Query', reviews: { __typename?: 'PaginatedReviews', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, reviews: Array<{ __typename?: 'Review', id: string, comment: string, createdAt: string, rating: number, title?: string | null, trailDifficulty?: string | null, visitDate?: string | null, createdBy: { __typename?: 'User', id: string, username: string } }> } };
 
-export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+export type ReviewsByUserQueryVariables = Exact<{
+  userId: Scalars['ID']['input'];
+  page?: InputMaybe<Scalars['Int']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+}>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username: string, firstName: string, lastName: string, email: string, role: string, createdAt: string, updatedAt: string } | null };
+export type ReviewsByUserQuery = { __typename?: 'Query', reviewsByUser: { __typename?: 'PaginatedReviews', reviews: Array<{ __typename?: 'Review', id: string, createdAt: string, comment: string, rating: number, title?: string | null, createdBy: { __typename?: 'User', id: string, username: string } }> } };
 
 export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __typename: NonNullable<T['__typename']> };
 
@@ -710,14 +765,18 @@ export type GraphCacheKeysConfig = {
   Contact?: (data: WithTypename<Contact>) => null | string,
   Coordinates?: (data: WithTypename<Coordinates>) => null | string,
   Event?: (data: WithTypename<Event>) => null | string,
+  Notifications?: (data: WithTypename<Notifications>) => null | string,
   OpeningHours?: (data: WithTypename<OpeningHours>) => null | string,
   Organizer?: (data: WithTypename<Organizer>) => null | string,
   PaginatedBikeParks?: (data: WithTypename<PaginatedBikeParks>) => null | string,
   PaginatedReviews?: (data: WithTypename<PaginatedReviews>) => null | string,
+  Preferences?: (data: WithTypename<Preferences>) => null | string,
   Price?: (data: WithTypename<Price>) => null | string,
+  Profile?: (data: WithTypename<Profile>) => null | string,
   Review?: (data: WithTypename<Review>) => null | string,
   ScheduleItem?: (data: WithTypename<ScheduleItem>) => null | string,
   SocialMedia?: (data: WithTypename<SocialMedia>) => null | string,
+  Stats?: (data: WithTypename<Stats>) => null | string,
   Trail?: (data: WithTypename<Trail>) => null | string,
   User?: (data: WithTypename<User>) => null | string,
   Venue?: (data: WithTypename<Venue>) => null | string,
@@ -735,6 +794,7 @@ export type GraphCacheResolvers = {
     me?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     popularEventCategories?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<CategoryInfo> | string>>,
     reviews?: GraphCacheResolver<WithTypename<Query>, QueryReviewsArgs, WithTypename<PaginatedReviews> | string>,
+    reviewsByUser?: GraphCacheResolver<WithTypename<Query>, QueryReviewsByUserArgs, WithTypename<PaginatedReviews> | string>,
     searchBikeParks?: GraphCacheResolver<WithTypename<Query>, QuerySearchBikeParksArgs, Array<WithTypename<BikePark> | string>>
   },
   AuthPayload?: {
@@ -805,6 +865,10 @@ export type GraphCacheResolvers = {
     updatedAt?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, Scalars['String'] | string>,
     venue?: GraphCacheResolver<WithTypename<Event>, Record<string, never>, WithTypename<Venue> | string>
   },
+  Notifications?: {
+    email?: GraphCacheResolver<WithTypename<Notifications>, Record<string, never>, Scalars['Boolean'] | string>,
+    push?: GraphCacheResolver<WithTypename<Notifications>, Record<string, never>, Scalars['Boolean'] | string>
+  },
   OpeningHours?: {
     friday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
     monday?: GraphCacheResolver<WithTypename<OpeningHours>, Record<string, never>, Scalars['String'] | string>,
@@ -833,9 +897,24 @@ export type GraphCacheResolvers = {
     totalCount?: GraphCacheResolver<WithTypename<PaginatedReviews>, Record<string, never>, Scalars['Int'] | string>,
     totalPages?: GraphCacheResolver<WithTypename<PaginatedReviews>, Record<string, never>, Scalars['Int'] | string>
   },
+  Preferences?: {
+    preferredBikeType?: GraphCacheResolver<WithTypename<Preferences>, Record<string, never>, Scalars['String'] | string>,
+    preferredBikes?: GraphCacheResolver<WithTypename<Preferences>, Record<string, never>, Array<Scalars['String'] | string>>,
+    ridingStyles?: GraphCacheResolver<WithTypename<Preferences>, Record<string, never>, Array<Scalars['String'] | string>>,
+    skillLevel?: GraphCacheResolver<WithTypename<Preferences>, Record<string, never>, Scalars['String'] | string>
+  },
   Price?: {
     amount?: GraphCacheResolver<WithTypename<Price>, Record<string, never>, Scalars['Float'] | string>,
     currency?: GraphCacheResolver<WithTypename<Price>, Record<string, never>, Scalars['String'] | string>
+  },
+  Profile?: {
+    avatar?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, Scalars['String'] | string>,
+    firstName?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, Scalars['String'] | string>,
+    lastName?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, Scalars['String'] | string>,
+    location?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, Scalars['String'] | string>,
+    notifications?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, Scalars['Boolean'] | string>,
+    preferences?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, WithTypename<Preferences> | string>,
+    socialMedia?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, WithTypename<SocialMedia> | string>
   },
   Review?: {
     bikePark?: GraphCacheResolver<WithTypename<Review>, Record<string, never>, Scalars['ID'] | string>,
@@ -858,8 +937,15 @@ export type GraphCacheResolvers = {
   SocialMedia?: {
     facebook?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
     instagram?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
+    strava?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
     twitter?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>,
     youtube?: GraphCacheResolver<WithTypename<SocialMedia>, Record<string, never>, Scalars['String'] | string>
+  },
+  Stats?: {
+    favoriteParks?: GraphCacheResolver<WithTypename<Stats>, Record<string, never>, Array<Scalars['ID'] | string>>,
+    favoriteTrails?: GraphCacheResolver<WithTypename<Stats>, Record<string, never>, Array<Scalars['ID'] | string>>,
+    totalReviews?: GraphCacheResolver<WithTypename<Stats>, Record<string, never>, Scalars['Int'] | string>,
+    totalRides?: GraphCacheResolver<WithTypename<Stats>, Record<string, never>, Scalars['Int'] | string>
   },
   Trail?: {
     description?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['String'] | string>,
@@ -875,10 +961,14 @@ export type GraphCacheResolvers = {
   User?: {
     createdAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     email?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
-    firstName?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    googleId?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     id?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['ID'] | string>,
-    lastName?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    isVerified?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['Boolean'] | string>,
+    lastLogin?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    notifications?: GraphCacheResolver<WithTypename<User>, Record<string, never>, WithTypename<Notifications> | string>,
+    profile?: GraphCacheResolver<WithTypename<User>, Record<string, never>, WithTypename<Profile> | string>,
     role?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
+    stats?: GraphCacheResolver<WithTypename<User>, Record<string, never>, WithTypename<Stats> | string>,
     updatedAt?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     username?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
   },
@@ -934,6 +1024,7 @@ export type GraphCacheUpdaters = {
     me?: GraphCacheUpdateResolver<{ me: Maybe<WithTypename<User>> }, Record<string, never>>,
     popularEventCategories?: GraphCacheUpdateResolver<{ popularEventCategories: Array<WithTypename<CategoryInfo>> }, Record<string, never>>,
     reviews?: GraphCacheUpdateResolver<{ reviews: WithTypename<PaginatedReviews> }, QueryReviewsArgs>,
+    reviewsByUser?: GraphCacheUpdateResolver<{ reviewsByUser: WithTypename<PaginatedReviews> }, QueryReviewsByUserArgs>,
     searchBikeParks?: GraphCacheUpdateResolver<{ searchBikeParks: Array<WithTypename<BikePark>> }, QuerySearchBikeParksArgs>
   },
   Mutation?: {
@@ -1023,6 +1114,10 @@ export type GraphCacheUpdaters = {
     updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>,
     venue?: GraphCacheUpdateResolver<Maybe<WithTypename<Event>>, Record<string, never>>
   },
+  Notifications?: {
+    email?: GraphCacheUpdateResolver<Maybe<WithTypename<Notifications>>, Record<string, never>>,
+    push?: GraphCacheUpdateResolver<Maybe<WithTypename<Notifications>>, Record<string, never>>
+  },
   OpeningHours?: {
     friday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
     monday?: GraphCacheUpdateResolver<Maybe<WithTypename<OpeningHours>>, Record<string, never>>,
@@ -1051,9 +1146,24 @@ export type GraphCacheUpdaters = {
     totalCount?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedReviews>>, Record<string, never>>,
     totalPages?: GraphCacheUpdateResolver<Maybe<WithTypename<PaginatedReviews>>, Record<string, never>>
   },
+  Preferences?: {
+    preferredBikeType?: GraphCacheUpdateResolver<Maybe<WithTypename<Preferences>>, Record<string, never>>,
+    preferredBikes?: GraphCacheUpdateResolver<Maybe<WithTypename<Preferences>>, Record<string, never>>,
+    ridingStyles?: GraphCacheUpdateResolver<Maybe<WithTypename<Preferences>>, Record<string, never>>,
+    skillLevel?: GraphCacheUpdateResolver<Maybe<WithTypename<Preferences>>, Record<string, never>>
+  },
   Price?: {
     amount?: GraphCacheUpdateResolver<Maybe<WithTypename<Price>>, Record<string, never>>,
     currency?: GraphCacheUpdateResolver<Maybe<WithTypename<Price>>, Record<string, never>>
+  },
+  Profile?: {
+    avatar?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>,
+    firstName?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>,
+    lastName?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>,
+    location?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>,
+    notifications?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>,
+    preferences?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>,
+    socialMedia?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>
   },
   Review?: {
     bikePark?: GraphCacheUpdateResolver<Maybe<WithTypename<Review>>, Record<string, never>>,
@@ -1076,8 +1186,15 @@ export type GraphCacheUpdaters = {
   SocialMedia?: {
     facebook?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
     instagram?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
+    strava?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
     twitter?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>,
     youtube?: GraphCacheUpdateResolver<Maybe<WithTypename<SocialMedia>>, Record<string, never>>
+  },
+  Stats?: {
+    favoriteParks?: GraphCacheUpdateResolver<Maybe<WithTypename<Stats>>, Record<string, never>>,
+    favoriteTrails?: GraphCacheUpdateResolver<Maybe<WithTypename<Stats>>, Record<string, never>>,
+    totalReviews?: GraphCacheUpdateResolver<Maybe<WithTypename<Stats>>, Record<string, never>>,
+    totalRides?: GraphCacheUpdateResolver<Maybe<WithTypename<Stats>>, Record<string, never>>
   },
   Trail?: {
     description?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
@@ -1093,10 +1210,14 @@ export type GraphCacheUpdaters = {
   User?: {
     createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     email?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
-    firstName?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    googleId?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     id?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
-    lastName?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    isVerified?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    lastLogin?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    notifications?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    profile?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     role?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
+    stats?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
     username?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>
   },
@@ -1441,6 +1562,43 @@ export const EventsDocument = gql`
 export function useEventsQuery(options?: Omit<Urql.UseQueryArgs<EventsQueryVariables>, 'query'>) {
   return Urql.useQuery<EventsQuery, EventsQueryVariables>({ query: EventsDocument, ...options });
 };
+export const MeDocument = gql`
+    query Me {
+  me {
+    id
+    email
+    username
+    role
+    profile {
+      firstName
+      lastName
+      location
+      preferences {
+        ridingStyles
+        skillLevel
+        preferredBikes
+      }
+      socialMedia {
+        facebook
+        instagram
+        twitter
+        youtube
+        strava
+      }
+    }
+    stats {
+      favoriteParks
+      favoriteTrails
+      totalReviews
+      totalRides
+    }
+  }
+}
+    `;
+
+export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
+  return Urql.useQuery<MeQuery, MeQueryVariables>({ query: MeDocument, ...options });
+};
 export const ReviewsDocument = gql`
     query Reviews($bikeParkId: ID!, $page: Int, $limit: Int) {
   reviews(bikeParkId: $bikeParkId, page: $page, limit: $limit) {
@@ -1468,23 +1626,26 @@ export const ReviewsDocument = gql`
 export function useReviewsQuery(options: Omit<Urql.UseQueryArgs<ReviewsQueryVariables>, 'query'>) {
   return Urql.useQuery<ReviewsQuery, ReviewsQueryVariables>({ query: ReviewsDocument, ...options });
 };
-export const MeDocument = gql`
-    query Me {
-  me {
-    id
-    username
-    firstName
-    lastName
-    email
-    role
-    createdAt
-    updatedAt
+export const ReviewsByUserDocument = gql`
+    query ReviewsByUser($userId: ID!, $page: Int, $limit: Int) {
+  reviewsByUser(userId: $userId, page: $page, limit: $limit) {
+    reviews {
+      id
+      createdBy {
+        id
+        username
+      }
+      createdAt
+      comment
+      rating
+      title
+    }
   }
 }
     `;
 
-export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
-  return Urql.useQuery<MeQuery, MeQueryVariables>({ query: MeDocument, ...options });
+export function useReviewsByUserQuery(options: Omit<Urql.UseQueryArgs<ReviewsByUserQueryVariables>, 'query'>) {
+  return Urql.useQuery<ReviewsByUserQuery, ReviewsByUserQueryVariables>({ query: ReviewsByUserDocument, ...options });
 };
 export const namedOperations = {
   Query: {
@@ -1493,8 +1654,9 @@ export const namedOperations = {
     BikeParksByViewport: 'BikeParksByViewport',
     Event: 'Event',
     Events: 'Events',
+    Me: 'Me',
     Reviews: 'Reviews',
-    Me: 'Me'
+    ReviewsByUser: 'ReviewsByUser'
   },
   Mutation: {
     CreateReview: 'CreateReview',
