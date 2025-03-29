@@ -13,6 +13,7 @@ const Navigation = () => {
 
   const [{ data }] = useQuery<MeQuery>({
     query: MeDocument,
+    requestPolicy: "network-only"
   });
 
   const isSelected = (path: string) => {
@@ -76,7 +77,7 @@ const Navigation = () => {
                   Saved Parks
                 </Link>
                 <div className="border-t border-gray-100 my-1"></div>
-                <Link to="/logout" className="block px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={removeToken}>
+                <Link to="/" className="block px-4 py-2 text-red-700 hover:bg-gray-100" onClick={removeToken}>
                   <i className="fa-solid fa-right-from-bracket mr-2"></i>
                   Logout
                 </Link>

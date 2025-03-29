@@ -39,6 +39,40 @@ export class ReviewProvider {
   }
 
   /**
+   * Get reviews for a bike park with pagination
+   */
+  async getReviewsByUser(userId: string, page: number = 1, limit: number = 5) {
+    try {
+      const skip = (page - 1) * limit;
+      
+      // Get total count for pagination
+      const totalCount = await ReviewModel.countDocuments({ createdBy: Object(userId) });
+
+      // Get paginated reviews
+      const reviews = await ReviewModel.find({ createdBy: Object(userId) })
+        .sort({ createdAt: -1 }) // Sort by newest first
+        .skip(skip)
+        .limit(limit)
+        .populate('createdBy')
+        .populate('bikePark');
+      
+      // Calculate pagination metadata
+      const totalPages = Math.ceil(totalCount / limit);
+      const hasNextPage = page < totalPages;
+      
+      return {
+        reviews,
+        totalCount,
+        currentPage: page,
+        totalPages,
+        hasNextPage
+      };
+    } catch (error: any) {
+      throw new GraphQLError(`Error fetching reviews: ${error.message}`);
+    }
+  }
+
+  /**
    * Create a new review
    */
   async createReview(

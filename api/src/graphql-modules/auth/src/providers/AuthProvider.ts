@@ -89,12 +89,15 @@ export class AuthProvider {
         confirmPassword,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
         role: 'user',
         agreeToTerms: false,
         profile: {
           firstName,
           lastName,
-          ridingLevel: 'Beginner',
+          preferences: {
+            skillLevel: 'Beginner'
+          }
         },
       });
 
@@ -143,6 +146,9 @@ export class AuthProvider {
       const userObj = user.toObject() as UserObject;
       delete userObj.password;
 
+      user.lastLogin = new Date().toISOString();
+      await user.save();
+
       return {
         token,
         user: userObj,
@@ -181,15 +187,18 @@ export class AuthProvider {
           username,
           email,
           googleId: sub,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toDateString(),
           role: 'user',
           firstName: given_name,
           lastName: family_name,
+          lastLogin: new Date().toISOString(),
           profile: {
             firstName: given_name,
             lastName: family_name,
-            ridingLevel: 'Beginner',
+            preferences: {
+              skillLevel: 'Beginner'
+            }
           },
         });
 
@@ -326,7 +335,7 @@ export class AuthProvider {
       }
 
       // Update fields
-      if (args.name) user.name = args.name;
+      // if (args.name) user.name = args.name;
       if (args.email) user.email = args.email;
 
       await user.save();

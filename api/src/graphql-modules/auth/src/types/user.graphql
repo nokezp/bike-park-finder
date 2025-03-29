@@ -1,15 +1,55 @@
 type User {
   id: ID!
   username: String!
-  firstName: String!
-  lastName: String!
   email: String!
   role: String!
   createdAt: String!
   updatedAt: String!
+  profile: Profile
+  stats: Stats
+  notifications: Notifications
+  isVerified: Boolean
+  lastLogin: String
+  googleId: String
 }
 
 type AuthPayload {
   token: String!
   user: User!
+}
+
+type Profile {
+  firstName: String!
+  lastName: String!
+  avatar: String
+  location: String
+  preferences: Preferences
+  socialMedia: SocialMedia
+  notifications: Boolean
+}
+
+type Preferences {
+  ridingStyles: [String]
+  skillLevel: String
+  preferredBikeType: String
+  preferredBikes: [String]
+}
+
+type Stats {
+  totalRides: Int
+  totalReviews: Int
+  favoriteParks: [ID]
+  favoriteTrails: [ID]
+}
+
+type SocialMedia {
+  facebook: String
+  instagram: String
+  youtube: String
+  strava: String
+}
+
+type Notifications {
+  email: Boolean
+  push:  Boolean
 }
