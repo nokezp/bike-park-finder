@@ -130,13 +130,13 @@ const Map: React.FC<{
   };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full z-10">
       {fetching && <div className="absolute top-4 right-4 z-[1000] bg-white px-4 py-2 rounded-md shadow">Loading...</div>}
       <MapContainer
         ref={mapRef}
         center={[49.5, 10]} // Center of Germany
         zoom={6}
-        className="w-full h-full"
+        className="w-full h-full z-10"
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

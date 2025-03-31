@@ -31,7 +31,7 @@ npm install
 
 ```
 PORT=4000
-MONGODB_URI=mongodb://localhost:27017/bike-park-finder
+MONGODB_URI=mongodb://localhost:27017/bike-park-finder-mac
 JWT_SECRET=your-secret-key-change-in-production
 NODE_ENV=development
 ```

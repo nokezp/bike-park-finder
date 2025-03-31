@@ -18,11 +18,11 @@ const TrailMap: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
           <i className="fa-solid fa-expand mr-1"></i>View Full Map
         </button> */}
       </div>
-      <div className="relative h-[400px] bg-gray-100 rounded-lg">
+      <div className="relative h-[400px] bg-gray-100 rounded-lg z-10">
         <MapContainer
           center={[bikePark.coordinates?.latitude ?? 0, bikePark.coordinates?.longitude ?? 0]} // Center of Germany
           zoom={6}
-          className="w-full h-full"
+          className="w-full h-full z-10"
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

@@ -1,4 +1,6 @@
-import { CreateEventInput, EventFilter, UpdateEventInput } from '../../../../core/generated-models.js';
+import moment from 'moment';
+import axios from 'axios';
+import { CategoryInfo, CreateEventInput, EventCategory, EventFilter, EventPeriod, UpdateEventInput } from '../../../../core/generated-models.js';
 import { EventModel } from '../models/EventModel.js';
 
 export class EventProvider {
@@ -12,7 +14,7 @@ export class EventProvider {
         { $group: { _id: "$category", count: { $sum: 1 } } },
         { $sort: { count: -1 } }
       ]);
-      
+
       // Map category enum values to display names and image URLs
       const categoryImages = {
         CHAMPIONSHIP: "https://storage.googleapis.com/uxpilot-auth.appspot.com/1c67488712-b96b92d9e02e37aa4b55.png",
@@ -36,7 +38,7 @@ export class EventProvider {
         FAMILY_RIDE: "https://storage.googleapis.com/uxpilot-auth.appspot.com/family-ride-category.jpg",
         STAGE_RACE: "https://storage.googleapis.com/uxpilot-auth.appspot.com/stage-race-category.jpg"
       };
-      
+
       const categoryNames = {
         CHAMPIONSHIP: "Races",
         WORKSHOP: "Workshops",
@@ -59,49 +61,59 @@ export class EventProvider {
         FAMILY_RIDE: "Family Rides",
         STAGE_RACE: "Stage Races"
       };
-      
-      return categoryAggregation.map(category => ({
-        name: categoryNames[category._id as keyof typeof categoryNames] || category._id,
+
+      const categories: CategoryInfo[] = categoryAggregation.map(category => ({
+        name: EventCategory[category._id as keyof typeof categoryNames] || category._id,
         count: category.count,
         imageUrl: categoryImages[category._id as keyof typeof categoryImages] || ""
       }));
+
+      return categories;
     } catch (error: any) {
       console.error('Error fetching popular event categories:', error);
       throw new Error('Failed to fetch popular event categories');
     }
   }
-  
+
   /**
    * Get events with filtering
    */
   async getEvents(filter?: EventFilter) {
     try {
+      let startDate, endDate;
+      const now = moment().startOf("day"); // Current day at midnight
       const query: any = {};
 
       if (filter) {
-        if (filter.search) {
-          query.$text = { $search: filter.search };
+        if (filter.title) {
+          query.title = { $search: filter.title };
         }
+
         if (filter.category) {
           query.category = filter.category;
         }
+
         if (filter.location) {
           query.location = { $regex: filter.location, $options: 'i' };
         }
-        if (filter.startDate) {
-          query.date = { $gte: filter.startDate };
-        }
-        if (filter.endDate) {
-          query.date = { ...query.date, $lte: filter.endDate };
-        }
-        if (filter.minPrice !== undefined) {
-          query.price = { $gte: filter.minPrice };
-        }
-        if (filter.maxPrice !== undefined) {
-          query.price = { ...query.price, $lte: filter.maxPrice };
-        }
-        if (filter.featured !== undefined) {
-          query.featured = filter.featured;
+
+        if (filter.period !== EventPeriod.ALL) {
+          switch (filter.period) {
+            case EventPeriod.THIS_WEEK:
+              startDate = now.clone().startOf("isoWeek");
+              endDate = now.clone().endOf("isoWeek");
+              break;
+            case EventPeriod.THIS_MONTH:
+              startDate = now.clone().startOf("month");
+              endDate = now.clone().endOf("month");
+              break;
+            case EventPeriod.NEXT_MONTH:
+              startDate = now.clone().add(1, "month").startOf("month");
+              endDate = now.clone().add(1, "month").endOf("month");
+              break;
+          }
+
+          query.date = { $gte: startDate?.toDate(), $lte: endDate?.toDate() };
         }
       }
 
@@ -200,7 +212,7 @@ export class EventProvider {
         throw new Error('No tickets available');
       }
 
-      if (new Date(event.registrationEndDate) < new Date()) {
+      if (event.registrationEndDate < new Date()) {
         throw new Error('Registration has ended');
       }
 
@@ -213,6 +225,30 @@ export class EventProvider {
     } catch (error: any) {
       console.error('Error registering for event:', error);
       throw new Error('Failed to register for event');
+    }
+  }
+
+  /**
+   * Get coordinates by location
+   */
+  async getCoordinatesByLocation(location: string) {
+    try {
+      // Use Mapbox Geocoding API to convert location string to coordinates
+      const response = await axios.get(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+          location
+        )}.json?access_token=pk.eyJ1Ijoibm9rZXpwbmV3IiwiYSI6ImNtOGQya3BnZzFiZnkya3M1bWEzMzVuYXkifQ.rOk1OezputSSawqlWIMycQ`
+      );
+      
+      if (response.data.features && response.data.features.length > 0) {
+        const [longitude, latitude] = response.data.features[0].center;
+        return { latitude, longitude };
+      }
+      
+      return null;
+    } catch (error: any) {
+      console.error('Error geocoding location:', error);
+      throw new Error('Failed to geocode location');
     }
   }
 }

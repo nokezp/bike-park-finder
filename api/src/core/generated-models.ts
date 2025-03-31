@@ -15,6 +15,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  Date: { input: any; output: any; }
   JSON: { input: any; output: any; }
 };
 
@@ -71,7 +72,7 @@ export type CategoryInfo = {
   __typename?: 'CategoryInfo';
   count: Scalars['Int']['output'];
   imageUrl: Scalars['String']['output'];
-  name: Scalars['String']['output'];
+  name: EventCategory;
 };
 
 export type Contact = {
@@ -105,7 +106,7 @@ export type CoordinatesSearchInput = {
 export type CreateEventInput = {
   capacity: Scalars['Int']['input'];
   category: EventCategory;
-  date: Scalars['String']['input'];
+  date: Scalars['Date']['input'];
   description: Scalars['String']['input'];
   endTime: Scalars['String']['input'];
   featured?: InputMaybe<Scalars['Boolean']['input']>;
@@ -113,7 +114,7 @@ export type CreateEventInput = {
   location: Scalars['String']['input'];
   organizer: OrganizerInput;
   price: Scalars['Float']['input'];
-  registrationEndDate: Scalars['String']['input'];
+  registrationEndDate: Scalars['Date']['input'];
   schedule: Array<ScheduleItemInput>;
   startTime: Scalars['String']['input'];
   title: Scalars['String']['input'];
@@ -126,8 +127,9 @@ export type Event = {
   availableTickets: Scalars['Int']['output'];
   capacity: Scalars['Int']['output'];
   category: EventCategory;
-  createdAt: Scalars['String']['output'];
-  date: Scalars['String']['output'];
+  coordinates?: Maybe<Coordinates>;
+  createdAt: Scalars['Date']['output'];
+  date: Scalars['Date']['output'];
   description: Scalars['String']['output'];
   endTime: Scalars['String']['output'];
   featured: Scalars['Boolean']['output'];
@@ -136,11 +138,11 @@ export type Event = {
   location: Scalars['String']['output'];
   organizer: Organizer;
   price: Scalars['Float']['output'];
-  registrationEndDate: Scalars['String']['output'];
+  registrationEndDate: Scalars['Date']['output'];
   schedule: Array<ScheduleItem>;
   startTime: Scalars['String']['output'];
   title: Scalars['String']['output'];
-  updatedAt: Scalars['String']['output'];
+  updatedAt: Scalars['Date']['output'];
   venue: Venue;
 };
 
@@ -169,14 +171,17 @@ export enum EventCategory {
 
 export type EventFilter = {
   category?: InputMaybe<EventCategory>;
-  endDate?: InputMaybe<Scalars['String']['input']>;
-  featured?: InputMaybe<Scalars['Boolean']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
-  maxPrice?: InputMaybe<Scalars['Float']['input']>;
-  minPrice?: InputMaybe<Scalars['Float']['input']>;
-  search?: InputMaybe<Scalars['String']['input']>;
-  startDate?: InputMaybe<Scalars['String']['input']>;
+  period?: InputMaybe<EventPeriod>;
+  title?: InputMaybe<Scalars['String']['input']>;
 };
+
+export enum EventPeriod {
+  ALL = 'ALL',
+  NEXT_MONTH = 'NEXT_MONTH',
+  THIS_MONTH = 'THIS_MONTH',
+  THIS_WEEK = 'THIS_WEEK'
+}
 
 export enum EventStatus {
   CANCELLED = 'CANCELLED',
@@ -408,7 +413,6 @@ export type Profile = {
   __typename?: 'Profile';
   avatar?: Maybe<Scalars['String']['output']>;
   firstName: Scalars['String']['output'];
-  isVerified?: Maybe<Scalars['Boolean']['output']>;
   lastName: Scalars['String']['output'];
   location?: Maybe<Scalars['String']['output']>;
   notifications?: Maybe<Scalars['Boolean']['output']>;
@@ -564,7 +568,7 @@ export type UpdateBikeParkInput = {
 export type UpdateEventInput = {
   capacity?: InputMaybe<Scalars['Int']['input']>;
   category?: InputMaybe<EventCategory>;
-  date?: InputMaybe<Scalars['String']['input']>;
+  date?: InputMaybe<Scalars['Date']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   endTime?: InputMaybe<Scalars['String']['input']>;
   featured?: InputMaybe<Scalars['Boolean']['input']>;
@@ -572,7 +576,7 @@ export type UpdateEventInput = {
   location?: InputMaybe<Scalars['String']['input']>;
   organizer?: InputMaybe<OrganizerInput>;
   price?: InputMaybe<Scalars['Float']['input']>;
-  registrationEndDate?: InputMaybe<Scalars['String']['input']>;
+  registrationEndDate?: InputMaybe<Scalars['Date']['input']>;
   schedule?: InputMaybe<Array<ScheduleItemInput>>;
   startTime?: InputMaybe<Scalars['String']['input']>;
   title?: InputMaybe<Scalars['String']['input']>;
@@ -585,6 +589,7 @@ export type User = {
   email: Scalars['String']['output'];
   googleId?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  isVerified?: Maybe<Scalars['Boolean']['output']>;
   lastLogin?: Maybe<Scalars['String']['output']>;
   notifications?: Maybe<Notifications>;
   profile?: Maybe<Profile>;
@@ -592,7 +597,6 @@ export type User = {
   stats?: Maybe<Stats>;
   updatedAt: Scalars['String']['output'];
   username: Scalars['String']['output'];
-  verified?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type Venue = {
@@ -715,9 +719,11 @@ export type ResolversTypes = {
   CoordinatesInput: CoordinatesInput;
   CoordinatesSearchInput: CoordinatesSearchInput;
   CreateEventInput: CreateEventInput;
+  Date: ResolverTypeWrapper<Scalars['Date']['output']>;
   Event: ResolverTypeWrapper<Event>;
   EventCategory: EventCategory;
   EventFilter: EventFilter;
+  EventPeriod: EventPeriod;
   EventStatus: EventStatus;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
@@ -768,6 +774,7 @@ export type ResolversParentTypes = {
   CoordinatesInput: CoordinatesInput;
   CoordinatesSearchInput: CoordinatesSearchInput;
   CreateEventInput: CreateEventInput;
+  Date: Scalars['Date']['output'];
   Event: Event;
   EventFilter: EventFilter;
   Float: Scalars['Float']['output'];
@@ -846,7 +853,7 @@ export type BikeParkResolvers<ContextType = any, ParentType extends ResolversPar
 export type CategoryInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['CategoryInfo'] = ResolversParentTypes['CategoryInfo']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   imageUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['EventCategory'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -862,13 +869,18 @@ export type CoordinatesResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
+
 export type EventResolvers<ContextType = any, ParentType extends ResolversParentTypes['Event'] = ResolversParentTypes['Event']> = {
   attendeeCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   availableTickets?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   capacity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   category?: Resolver<ResolversTypes['EventCategory'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  coordinates?: Resolver<Maybe<ResolversTypes['Coordinates']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   endTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   featured?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -877,11 +889,11 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   location?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   organizer?: Resolver<ResolversTypes['Organizer'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  registrationEndDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  registrationEndDate?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   schedule?: Resolver<Array<ResolversTypes['ScheduleItem']>, ParentType, ContextType>;
   startTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   venue?: Resolver<ResolversTypes['Venue'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -968,7 +980,6 @@ export type PriceResolvers<ContextType = any, ParentType extends ResolversParent
 export type ProfileResolvers<ContextType = any, ParentType extends ResolversParentTypes['Profile'] = ResolversParentTypes['Profile']> = {
   avatar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  isVerified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   notifications?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
@@ -1047,6 +1058,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   googleId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isVerified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   lastLogin?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   notifications?: Resolver<Maybe<ResolversTypes['Notifications']>, ParentType, ContextType>;
   profile?: Resolver<Maybe<ResolversTypes['Profile']>, ParentType, ContextType>;
@@ -1054,7 +1066,6 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   stats?: Resolver<Maybe<ResolversTypes['Stats']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  verified?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1091,6 +1102,7 @@ export type Resolvers<ContextType = any> = {
   CategoryInfo?: CategoryInfoResolvers<ContextType>;
   Contact?: ContactResolvers<ContextType>;
   Coordinates?: CoordinatesResolvers<ContextType>;
+  Date?: GraphQLScalarType;
   Event?: EventResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;

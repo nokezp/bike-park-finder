@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import { seedUsers } from './users.js';
 import { seedBikeParks } from './bikeParks.js';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder-mac';
 
 async function seed() {
   try {

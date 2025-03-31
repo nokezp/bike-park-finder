@@ -469,6 +469,15 @@ export default {
             "args": []
           },
           {
+            "name": "coordinates",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Coordinates",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
             "name": "createdAt",
             "type": {
               "kind": "NON_NULL",

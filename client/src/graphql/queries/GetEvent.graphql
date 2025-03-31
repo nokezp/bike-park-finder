@@ -1,5 +1,41 @@
 query Event($id: ID!) {
   event(id: $id) {
-    ...Event
+    # ...Event
+    id
+    title
+    date
+    startTime
+    endTime
+    location
+    category
+    price
+    imageUrl
+    description
+    capacity
+    registrationEndDate
+    availableTickets
+    attendeeCount
+    featured
+    organizer {
+      name
+      description
+      imageUrl
+    }
+    schedule {
+      title
+      time
+      description
+    }
+    venue {
+      name
+      address
+      mapImageUrl
+    }
+    coordinates {
+      latitude
+      longitude
+    }
+    createdAt
+    updatedAt
   }
 }

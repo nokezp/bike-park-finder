@@ -7,8 +7,8 @@ import { BikeParkModel } from '../graphql-modules/bike-park/src/index.js';
 import { bikeParksData } from './bikeParkSeedData.js';
 import { eventsSeedData } from './eventSeedData.js';
 import { usersSeedData } from './userSeedData.js';
-import { review } from '../graphql-modules/review/src/resolvers/review.js';
 import { reviewsSeedData } from './reviewSeedData.js';
+import { trailsSeedData } from './trailSeedData.js';
 
 export const seedDatabase = async (): Promise<void> => {
   try {
@@ -94,7 +94,10 @@ export const seedDatabase = async (): Promise<void> => {
     );
 
     // Insert event with admin user as creator
-    await EventModel.insertMany(eventsSeedData);
+    console.log('Inserting events data...');
+    console.log('Events data sample:', JSON.stringify(eventsSeedData[0], null, 2));
+    const events = await EventModel.insertMany(eventsSeedData);
+    console.log(`Successfully inserted ${events.length} events`);
   } catch (error) {
     console.error('Error seeding database:', error);
     throw error;

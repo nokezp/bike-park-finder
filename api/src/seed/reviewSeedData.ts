@@ -1,7 +1,7 @@
 export const reviewsSeedData = [
   {
     title: 'Epic Downhill Paradise',
-    content: 'Amazing bike park with world-class trails!',
+    comment: 'Amazing bike park with world-class trails!',
     rating: 5,
     difficulty: 'expert',
     technicalRating: 5,
@@ -18,7 +18,7 @@ export const reviewsSeedData = [
   },
   {
     title: 'Great Trail Variety',
-    content: 'Great variety of trails for all skill levels.',
+    comment: 'Great variety of trails for all skill levels.',
     rating: 4,
     difficulty: 'intermediate',
     technicalRating: 4,
