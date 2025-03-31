@@ -1,5 +1,5 @@
 // Trail data
-const trailsSeedData = [
+export const trailsSeedData = [
   {
     name: 'Black Lightning',
     description: 'Signature downhill track at Winterberg featuring technical rock gardens and big drops',

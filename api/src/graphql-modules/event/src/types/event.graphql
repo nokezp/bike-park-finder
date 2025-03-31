@@ -1,7 +1,9 @@
+scalar Date
+
 type Event {
   id: ID!
   title: String!
-  date: String!
+  date: Date!
   startTime: String!
   endTime: String!
   location: String!
@@ -10,15 +12,16 @@ type Event {
   imageUrl: String!
   description: String!
   capacity: Int!
-  registrationEndDate: String!
+  registrationEndDate: Date!
   availableTickets: Int!
   attendeeCount: Int!
   featured: Boolean!
   organizer: Organizer!
   schedule: [ScheduleItem!]!
   venue: Venue!
-  createdAt: String!
-  updatedAt: String!
+  createdAt: Date!
+  updatedAt: Date!
+  coordinates: Coordinates
 }
 
 type Organizer {
@@ -70,7 +73,14 @@ enum EventStatus {
 }
 
 type CategoryInfo {
-  name: String!
+  name: EventCategory!
   count: Int!
   imageUrl: String!
+}
+
+enum EventPeriod {
+  ALL
+  THIS_WEEK
+  THIS_MONTH
+  NEXT_MONTH
 }

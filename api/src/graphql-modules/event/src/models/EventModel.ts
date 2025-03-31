@@ -20,7 +20,7 @@ export interface IVenue {
 
 export interface IEvent extends mongoose.Document {
   title: string;
-  date: string;
+  date: Date;
   startTime: string;
   endTime: string;
   location: string;
@@ -29,7 +29,7 @@ export interface IEvent extends mongoose.Document {
   imageUrl: string;
   description: string;
   capacity: number;
-  registrationEndDate: string;
+  registrationEndDate: Date;
   availableTickets: number;
   attendeeCount: number;
   featured: boolean;
@@ -61,7 +61,7 @@ const venueSchema = new mongoose.Schema<IVenue>({
 const eventSchema = new mongoose.Schema<IEvent>(
   {
     title: { type: String, required: true },
-    date: { type: String, required: true },
+    date: { type: Date, required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: true },
     location: { type: String, required: true },
@@ -74,7 +74,7 @@ const eventSchema = new mongoose.Schema<IEvent>(
     imageUrl: { type: String, required: true },
     description: { type: String, required: true },
     capacity: { type: Number, required: true },
-    registrationEndDate: { type: String, required: true },
+    registrationEndDate: { type: Date, required: true },
     availableTickets: { type: Number, required: true },
     attendeeCount: { type: Number, default: 0 },
     featured: { type: Boolean, default: false },
@@ -104,4 +104,4 @@ eventSchema.index({ registrationEndDate: 1 });
 eventSchema.index({ price: 1 });
 
 // export const Event = model<IEvent>('Event', eventSchema); 
-export const EventModel = mongoose.model('Event', eventSchema); 
+export const EventModel = mongoose.model('Event', eventSchema);

@@ -1,5 +1,6 @@
 import { mutation } from './resolvers/mutation.js';
 import { query } from './resolvers/query.js';
+import { event } from './resolvers/event.js';
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 export { EventModel } from './models/EventModel.js';
@@ -21,6 +22,9 @@ export const eventModule = {
     },
     Mutation: {
       ...mutation.Mutation,
+    },
+    Event: {
+      ...event.Event,
     },
   }
 }

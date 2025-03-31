@@ -4,7 +4,7 @@ import { UserModel } from '../graphql-modules/auth/src';
 import { BikeParkModel } from '../graphql-modules/bike-park/src';
 // import faker from 'faker';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder-mac';
 
 async function generateMockDb() {
   try {

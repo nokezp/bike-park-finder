@@ -17,7 +17,7 @@ import { trailModule } from './graphql-modules/trail/src/index.js';
 
 // Environment variables
 const PORT = process.env.PORT || 4000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bike-park-finder-mac';
 
 // Log environment information for debugging
 Logger.debug('Starting server with environment:', {

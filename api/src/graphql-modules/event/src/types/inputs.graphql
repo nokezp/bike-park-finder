@@ -1,17 +1,13 @@
 input EventFilter {
-  search: String
+  title: String
   category: EventCategory
   location: String
-  startDate: String
-  endDate: String
-  minPrice: Float
-  maxPrice: Float
-  featured: Boolean
+  period: EventPeriod
 }
 
 input CreateEventInput {
   title: String!
-  date: String!
+  date: Date!
   startTime: String!
   endTime: String!
   location: String!
@@ -20,7 +16,7 @@ input CreateEventInput {
   imageUrl: String!
   description: String!
   capacity: Int!
-  registrationEndDate: String!
+  registrationEndDate: Date!
   featured: Boolean
   organizer: OrganizerInput!
   schedule: [ScheduleItemInput!]!
@@ -29,7 +25,7 @@ input CreateEventInput {
 
 input UpdateEventInput {
   title: String
-  date: String
+  date: Date
   startTime: String
   endTime: String
   location: String
@@ -38,7 +34,7 @@ input UpdateEventInput {
   imageUrl: String
   description: String
   capacity: Int
-  registrationEndDate: String
+  registrationEndDate: Date
   featured: Boolean
   organizer: OrganizerInput
   schedule: [ScheduleItemInput!]
