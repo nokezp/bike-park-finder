@@ -41,9 +41,10 @@ const EventHeader: React.FC<{
                 <select
                   className="w-full px-4 py-2 rounded-md border border-gray-200"
                   value={searchParams?.category ?? ""}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onChange={(e: any) => setSearchParams({ ...searchParams, category: e.target.value })}
                 >
-                  <option value="">Event Type</option>
+                  <option value="">All</option>
                   <option value="CHAMPIONSHIP">Races</option>
                   <option value="WORKSHOP">Workshops</option>
                   <option value="FESTIVAL">Festivals</option>

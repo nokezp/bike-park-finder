@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaExclamationCircle, FaCheckCircle } from 'react-icons/fa';
 import { useMutation } from 'urql';
 import {
@@ -13,7 +13,6 @@ interface FormErrors {
 }
 
 const ForgotPasswordPage = () => {
-  const navigator = useNavigate();
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
