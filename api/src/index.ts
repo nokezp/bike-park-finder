@@ -53,7 +53,7 @@ const yoga = createYoga({
   },
   graphiql: true,
   cors: {
-    origin: ['http://localhost:3000', 'http://localhost:5173'],
+    origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
     methods: ['POST', 'OPTIONS', 'GET', 'HEAD'],

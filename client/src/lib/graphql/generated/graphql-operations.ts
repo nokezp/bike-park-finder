@@ -432,6 +432,7 @@ export type Query = {
   event?: Maybe<Event>;
   events: Array<Event>;
   me?: Maybe<User>;
+  mostCommonFeatures?: Maybe<Array<Scalars['String']['output']>>;
   popularEventCategories: Array<CategoryInfo>;
   reviews: PaginatedReviews;
   reviewsByUser: PaginatedReviews;
@@ -462,6 +463,11 @@ export type QueryEventArgs = {
 
 export type QueryEventsArgs = {
   filter?: InputMaybe<EventFilter>;
+};
+
+
+export type QueryMostCommonFeaturesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -714,7 +720,7 @@ export type BikeParksQueryVariables = Exact<{
 }>;
 
 
-export type BikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, weather?: { __typename?: 'Weather', current?: { __typename?: 'WeatherData', description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null } | null }> } };
+export type BikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, rating?: number | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> } };
 
 export type BikeParksByViewportQueryVariables = Exact<{
   viewport: ViewportInput;
@@ -722,7 +728,7 @@ export type BikeParksByViewportQueryVariables = Exact<{
 }>;
 
 
-export type BikeParksByViewportQuery = { __typename?: 'Query', bikeParksByViewport: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> };
+export type BikeParksByViewportQuery = { __typename?: 'Query', bikeParksByViewport: Array<{ __typename?: 'BikePark', id: string, name: string, imageUrl?: string | null, location?: string | null, rating?: number | null, features?: Array<string> | null, difficulty?: string | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> };
 
 export type EventQueryVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -766,6 +772,13 @@ export type ReviewsByUserQueryVariables = Exact<{
 
 export type ReviewsByUserQuery = { __typename?: 'Query', reviewsByUser: { __typename?: 'PaginatedReviews', reviews: Array<{ __typename?: 'Review', id: string, createdAt: string, comment: string, rating: number, title?: string | null, createdBy: { __typename?: 'User', id: string, username: string } }> } };
 
+export type MostCommonFeaturesQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type MostCommonFeaturesQuery = { __typename?: 'Query', mostCommonFeatures?: Array<string> | null };
+
 export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __typename: NonNullable<T['__typename']> };
 
 export type GraphCacheKeysConfig = {
@@ -802,6 +815,7 @@ export type GraphCacheResolvers = {
     event?: GraphCacheResolver<WithTypename<Query>, QueryEventArgs, WithTypename<Event> | string>,
     events?: GraphCacheResolver<WithTypename<Query>, QueryEventsArgs, Array<WithTypename<Event> | string>>,
     me?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
+    mostCommonFeatures?: GraphCacheResolver<WithTypename<Query>, QueryMostCommonFeaturesArgs, Array<Scalars['String'] | string>>,
     popularEventCategories?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<CategoryInfo> | string>>,
     reviews?: GraphCacheResolver<WithTypename<Query>, QueryReviewsArgs, WithTypename<PaginatedReviews> | string>,
     reviewsByUser?: GraphCacheResolver<WithTypename<Query>, QueryReviewsByUserArgs, WithTypename<PaginatedReviews> | string>,
@@ -1033,6 +1047,7 @@ export type GraphCacheUpdaters = {
     event?: GraphCacheUpdateResolver<{ event: Maybe<WithTypename<Event>> }, QueryEventArgs>,
     events?: GraphCacheUpdateResolver<{ events: Array<WithTypename<Event>> }, QueryEventsArgs>,
     me?: GraphCacheUpdateResolver<{ me: Maybe<WithTypename<User>> }, Record<string, never>>,
+    mostCommonFeatures?: GraphCacheUpdateResolver<{ mostCommonFeatures: Maybe<Array<Scalars['String']>> }, QueryMostCommonFeaturesArgs>,
     popularEventCategories?: GraphCacheUpdateResolver<{ popularEventCategories: Array<WithTypename<CategoryInfo>> }, Record<string, never>>,
     reviews?: GraphCacheUpdateResolver<{ reviews: WithTypename<PaginatedReviews> }, QueryReviewsArgs>,
     reviewsByUser?: GraphCacheUpdateResolver<{ reviewsByUser: WithTypename<PaginatedReviews> }, QueryReviewsByUserArgs>,
@@ -1513,21 +1528,10 @@ export const BikeParksDocument = gql`
       difficulty
       status
       features
+      rating
       coordinates {
         latitude
         longitude
-      }
-      weather {
-        current {
-          description
-          feelsLike
-          humidity
-          icon
-          precipitation
-          temperature
-          uvIndex
-          windSpeed
-        }
       }
     }
     totalCount
@@ -1544,10 +1548,20 @@ export function useBikeParksQuery(options?: Omit<Urql.UseQueryArgs<BikeParksQuer
 export const BikeParksByViewportDocument = gql`
     query BikeParksByViewport($viewport: ViewportInput!, $searchQuery: String) {
   bikeParksByViewport(viewport: $viewport, searchQuery: $searchQuery) {
-    ...BikePark
+    id
+    name
+    imageUrl
+    location
+    coordinates {
+      latitude
+      longitude
+    }
+    rating
+    features
+    difficulty
   }
 }
-    ${BikeParkFragmentDoc}`;
+    `;
 
 export function useBikeParksByViewportQuery(options: Omit<Urql.UseQueryArgs<BikeParksByViewportQueryVariables>, 'query'>) {
   return Urql.useQuery<BikeParksByViewportQuery, BikeParksByViewportQueryVariables>({ query: BikeParksByViewportDocument, ...options });
@@ -1707,6 +1721,15 @@ export const ReviewsByUserDocument = gql`
 export function useReviewsByUserQuery(options: Omit<Urql.UseQueryArgs<ReviewsByUserQueryVariables>, 'query'>) {
   return Urql.useQuery<ReviewsByUserQuery, ReviewsByUserQueryVariables>({ query: ReviewsByUserDocument, ...options });
 };
+export const MostCommonFeaturesDocument = gql`
+    query MostCommonFeatures($limit: Int) {
+  mostCommonFeatures(limit: $limit)
+}
+    `;
+
+export function useMostCommonFeaturesQuery(options?: Omit<Urql.UseQueryArgs<MostCommonFeaturesQueryVariables>, 'query'>) {
+  return Urql.useQuery<MostCommonFeaturesQuery, MostCommonFeaturesQueryVariables>({ query: MostCommonFeaturesDocument, ...options });
+};
 export const namedOperations = {
   Query: {
     BikePark: 'BikePark',
@@ -1717,7 +1740,8 @@ export const namedOperations = {
     Me: 'Me',
     PopularEventCategories: 'PopularEventCategories',
     Reviews: 'Reviews',
-    ReviewsByUser: 'ReviewsByUser'
+    ReviewsByUser: 'ReviewsByUser',
+    MostCommonFeatures: 'MostCommonFeatures'
   },
   Mutation: {
     CreateReview: 'CreateReview',

@@ -2,14 +2,9 @@ import React from "react";
 import { Event } from "../../lib/graphql/generated/graphql-operations";
 import { formatTime } from "./EventDetailsHeroSection";
 import moment from "moment";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
-import { defaultMapIcon } from "../Map/Map";
-
-function InvalidateMapSize() {
-  const map = useMap();
-  map.invalidateSize();
-  return null;
-}
+import { DEFAULT_ZOOM, defaultMapIcon } from "../Map/Map";
+import Mapbox from "../Map/Mapbox";
+import { Marker } from "react-leaflet";
 
 const EventDetailsSection: React.FC<{
   event: Event
@@ -67,19 +62,19 @@ const EventDetailsSection: React.FC<{
               <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
                 <h2 className="text-2xl font-bold mb-4">Location</h2>
                 <div className="rounded-lg overflow-hidden h-[300px] mb-4 z-10">
-                  {/* <img className="w-full h-full object-cover" src={event?.venue?.mapImageUrl} alt={event.venue?.name} /> */}
-                  <MapContainer
-                    center={[event?.coordinates?.latitude ?? 0, event?.coordinates?.longitude ?? 0]} // Center of Germany
-                    zoom={6}
-                    className="w-full h-full z-10"
+                  <Mapbox
+                    showControls={true}
+                    viewport={
+                      {
+                        latitude: event?.coordinates?.latitude ?? 0,
+                        longitude: event?.coordinates?.longitude ?? 0,
+                        zoom: DEFAULT_ZOOM
+                      }
+                    }
+                    height="calc(100vh - 150px)"
                   >
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <InvalidateMapSize />
                     <Marker position={[event?.coordinates?.latitude ?? 0, event?.coordinates?.longitude ?? 0]} icon={defaultMapIcon} />
-                  </MapContainer>
+                  </Mapbox>
                 </div>
                 <div className="flex items-start gap-4">
                   <i className="fa-solid fa-location-dot text-emerald-600 mt-1"></i>
@@ -96,7 +91,7 @@ const EventDetailsSection: React.FC<{
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-2xl font-bold mb-4">Event Organizer</h2>
                 <div className="flex items-center gap-4">
-                <img src={event.organizer.imageUrl} className="w-16 h-16 rounded-full" />
+                  <img src={event.organizer.imageUrl} className="w-16 h-16 rounded-full" />
                   <div>
                     <h3 className="font-bold text-lg">{event.organizer.name}</h3>
                     <p className="text-gray-600">{event.organizer.description}</p>
@@ -185,7 +180,7 @@ const EventDetailsSection: React.FC<{
           </div>
         </div>
       </div>
-    </section>
+    </section >
   );
 };
 

@@ -18,7 +18,11 @@ const FallbackImage: React.FC<FallbackImageProps> = ({ src, alt, className = '' 
 
   return error ? (
     <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-      <i className="fa-solid fa-mountain text-6xl text-gray-400"></i>
+      <img
+        className="inset-0 w-full h-full object-cover rounded-l-lg"
+        src="src/assets/images/hero-image.png"
+        alt="aerial view of mountain bike park"
+      />
     </div>
   ) : (
     <img src={src} alt={alt} className={className} onError={handleError} />

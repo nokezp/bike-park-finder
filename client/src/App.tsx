@@ -6,7 +6,6 @@ import { UrqlProvider } from './provider/UrqlProvider';
 import HomePage from './pages/Home/HomePage';
 import BikeParksPage from './pages/BikePark/BikeParksPage';
 import BikeParkDetailPage from './pages/BikePark/BikeParkDetailPage';
-import { MapsPage } from './pages/Map/MapsPage';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
 import AboutPage from './pages/About/AboutPage';
@@ -16,6 +15,11 @@ import ProfilePage from './pages/Proflie/ProfilePage';
 import ForgotPasswordPage from './pages/Proflie/ForgotPasswordPage';
 import ResetPasswordPage from './pages/Proflie/ResetPasswordPage';
 import CommunityPage from './pages/Community/CommunityPage';
+import { MapsPage } from './pages/Map/MapsPage';
+import 'react-leaflet-cluster/lib/assets/MarkerCluster.css';
+import 'react-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
+import 'leaflet/dist/leaflet.css';
+
 
 const App: React.FC = () => {
   return (

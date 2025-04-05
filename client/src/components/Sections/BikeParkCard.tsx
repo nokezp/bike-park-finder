@@ -12,7 +12,9 @@ const BikeParkCard: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div
+      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-shadow hover:shadow-lg"
+      onClick={handleViewDetails}>
       <div className="relative h-48">
         <FallbackImage src={bikePark?.imageUrl ?? undefined} alt={bikePark?.name} className="w-full h-full object-cover" />
         <div className="absolute top-4 right-4 bg-white rounded-full px-3 py-1 text-sm">
@@ -35,7 +37,7 @@ const BikeParkCard: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
             );
           })}
         </div>
-        <div className="flex justify-between items-center">
+        {/* <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <i className={`fa-solid fa-sun text-gray-600`}></i>
             <span className="text-gray-600">{bikePark?.weather?.current?.temperature}°C</span>
@@ -43,7 +45,7 @@ const BikeParkCard: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
           <button onClick={handleViewDetails} className="text-emerald-600 hover:text-emerald-700">
             View Details <i className="fa-solid fa-arrow-right ml-1"></i>
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

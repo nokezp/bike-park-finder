@@ -428,6 +428,7 @@ export type Query = {
   event?: Maybe<Event>;
   events: Array<Event>;
   me?: Maybe<User>;
+  mostCommonFeatures?: Maybe<Array<Scalars['String']['output']>>;
   popularEventCategories: Array<CategoryInfo>;
   reviews: PaginatedReviews;
   reviewsByUser: PaginatedReviews;
@@ -458,6 +459,11 @@ export type QueryEventArgs = {
 
 export type QueryEventsArgs = {
   filter?: InputMaybe<EventFilter>;
+};
+
+
+export type QueryMostCommonFeaturesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -995,6 +1001,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  mostCommonFeatures?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType, Partial<QueryMostCommonFeaturesArgs>>;
   popularEventCategories?: Resolver<Array<ResolversTypes['CategoryInfo']>, ParentType, ContextType>;
   reviews?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
   reviewsByUser?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsByUserArgs, 'userId'>>;

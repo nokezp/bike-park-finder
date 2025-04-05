@@ -45,13 +45,13 @@ export class BikeParkProvider {
         }
 
         // Exact match for difficulty
-        if (filter.difficulty && filter.difficulty !== 'All') {
+        if (filter.difficulty && filter.difficulty !== 'all') {
           query.difficulty = filter.difficulty;
         }
 
         // Features filter - match any of the provided features
         if (filter.features && filter.features.length > 0 && !filter.features.includes('All')) {
-          query.features = { $in: filter.features };
+          query.features = { $all: filter.features };
         }
 
         // Amenities filter - match all provided facilities
@@ -88,9 +88,9 @@ export class BikeParkProvider {
           }
 
           const distance = this.calculateDistance(
-            latitude, 
-            longitude, 
-            park.coordinates.latitude, 
+            latitude,
+            longitude,
+            park.coordinates.latitude,
             park.coordinates.longitude
           );
 
@@ -325,7 +325,7 @@ export class BikeParkProvider {
       const reviewRatings = reviews?.map((review) => review.rating);
       const totalRating = reviewRatings.reduce((sum: number, rating: number) => sum + rating, 0);
       const averageRating = totalRating / reviewRatings.length;
-      
+
       return Number(averageRating.toFixed(1));
     } catch (error: any) {
       console.error(`Error calculating rating for bike park ${bikePark._id}:`, error);
@@ -344,6 +344,23 @@ export class BikeParkProvider {
       console.error('Error fetching reviews:', error);
       return [];
     }
+  }
+
+  async getMostCommonFeatures(limit?: number) {
+    const aggregation: any[] = [
+      { $unwind: '$features' },
+      { $group: { _id: '$features', docs: { $addToSet: '$_id' } } },
+      { $project: { feature: '$_id', count: { $size: '$docs' } } },
+      { $sort: { count: -1 } },
+    ];
+
+    if (limit) {
+      aggregation.push({ $limit: limit });
+    }
+
+    const result = await BikeParkModel.aggregate(aggregation);
+
+    return result?.map(({ _id }) => (_id))
   }
 }
 

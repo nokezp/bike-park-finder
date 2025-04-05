@@ -210,8 +210,83 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      <section id="gear-recommendations" className="py-12">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold mb-8">Essential Gear Guide</h2>
+          <div className="grid md:grid-cols-4 gap-6">
+            <div id="gear-card-1" className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="h-48 relative">
+                <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/9eeeabafdb-332ed31b7001108b8fc1.png" alt="downhill mountain bike helmet and protective gear arranged professionally, product photography" />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                    <h3 className="text-white font-bold">Protection</h3>
+                  </div>
+              </div>
+              <div className="p-4">
+                <p className="text-gray-600 mb-4">Essential protective gear for safe riding</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Full Face Helmets</li>
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Body Armor</li>
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Knee & Elbow Pads</li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="gear-card-2" className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="h-48 relative">
+                <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/4a1fc659b9-27080713c091f5de0078.png" alt="mountain bike shoes and pedals on wooden surface, product photography" />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                    <h3 className="text-white font-bold">Footwear</h3>
+                  </div>
+              </div>
+              <div className="p-4">
+                <p className="text-gray-600 mb-4">Proper footwear for optimal control</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>MTB Shoes</li>
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Clipless Pedals</li>
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Flat Pedals</li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="gear-card-3" className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="h-48 relative">
+                <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b8b3909dbb-4d5857e93347c8e1f0ba.png" alt="mountain bike tools and repair kit neatly arranged, product photography" />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                    <h3 className="text-white font-bold">Tools</h3>
+                  </div>
+              </div>
+              <div className="p-4">
+                <p className="text-gray-600 mb-4">Must-have tools for trail repairs</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Multi-tools</li>
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Tire Repair Kit</li>
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Pump & CO2</li>
+                </ul>
+              </div>
+            </div>
+
+            <div id="gear-card-4" className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="h-48 relative">
+                <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/6bc454aace-b174810927334bf91ffb.png" alt="hydration pack and water bottles for mountain biking, product photography" />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                    <h3 className="text-white font-bold">Hydration</h3>
+                  </div>
+              </div>
+              <div className="p-4">
+                <p className="text-gray-600 mb-4">Stay hydrated on the trails</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Hydration Packs</li>
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Water Bottles</li>
+                  <li className="flex items-center"><i className="fa-solid fa-check text-emerald-600 mr-2"></i>Electrolytes</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Events Section */}
-      <section id="events-section" className="py-12">
+      <section id="events-section" className="bg-gray-100 py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-8">Upcoming Events</h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -243,7 +318,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Accommodation Section */}
-      <section id="accommodation-section" className="py-12 bg-gray-100">
+      <section id="accommodation-section" className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-8">Book Your Stay</h2>
           <div className="grid md:grid-cols-3 gap-6">

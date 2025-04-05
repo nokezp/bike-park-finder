@@ -10,22 +10,23 @@ query BikeParks($filter: BikeParkFilter) {
       difficulty
       status
       features
+      rating
       coordinates {
         latitude
         longitude
       }
-      weather {
-        current {
-          description
-          feelsLike
-          humidity
-          icon
-          precipitation
-          temperature
-          uvIndex
-          windSpeed
-        }
-      }
+      # weather {
+      #   current {
+      #     description
+      #     feelsLike
+      #     humidity
+      #     icon
+      #     precipitation
+      #     temperature
+      #     uvIndex
+      #     windSpeed
+      #   }
+      # }
     }
     totalCount
     currentPage

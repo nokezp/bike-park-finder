@@ -1,0 +1,3 @@
+query MostCommonFeatures($limit: Int) {
+  mostCommonFeatures(limit: $limit)
+}

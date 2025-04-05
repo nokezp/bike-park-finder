@@ -7,7 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 const BikeParksPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [location] = useState(searchParams.get('location') ?? '');
-  const [difficulty] = useState(searchParams.get('difficulty') ?? 'All');
+  const [difficulty] = useState(searchParams.get('difficulty') ?? 'all');
 
   const [searchQuery, setSearchQuery] = useState<BikeParkFilter>({
     location,

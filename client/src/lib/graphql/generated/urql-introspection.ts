@@ -1906,6 +1906,28 @@ export default {
             "args": []
           },
           {
+            "name": "mostCommonFeatures",
+            "type": {
+              "kind": "LIST",
+              "ofType": {
+                "kind": "NON_NULL",
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "limit",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
             "name": "popularEventCategories",
             "type": {
               "kind": "NON_NULL",

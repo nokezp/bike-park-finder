@@ -16,7 +16,7 @@ export const query = {
     },
 
     bikeParksByViewport: async (
-      _: any,
+      _: unknown,
       {
         viewport,
         searchQuery,
@@ -30,5 +30,9 @@ export const query = {
     ) => {
       return bikeParkProvider.getBikeParksByViewport(viewport, searchQuery);
     },
+
+    mostCommonFeatures: async (_: unknown, { limit }: { limit?: number }) => {
+      return bikeParkProvider.getMostCommonFeatures(limit);
+    }
   },
 };

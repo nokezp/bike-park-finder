@@ -3,4 +3,5 @@ type Query {
   bikePark(id: ID!): BikePark
   searchBikeParks(query: String!): [BikePark!]!
   bikeParksByViewport(viewport: ViewportInput!, searchQuery: String): [BikePark!]!
+  mostCommonFeatures(limit: Int): [String!]
 }

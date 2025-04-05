@@ -1,5 +1,15 @@
 query BikeParksByViewport($viewport: ViewportInput!, $searchQuery: String) {
   bikeParksByViewport(viewport: $viewport, searchQuery: $searchQuery) {
-    ...BikePark
+    id
+    name
+    imageUrl
+    location
+    coordinates {
+      latitude
+      longitude
+    }
+    rating
+    features
+    difficulty
   }
 }

@@ -92,7 +92,9 @@ const urqlClient = createClient({
         Coordinates: () => null,
         PaginatedBikeParks: () => null,
         Weather: () => null,
-        WeatherCurrent: () => null,
+        Profile: () => null,
+        Preferences: () => null,
+        Stats: () => null,
       },
       fetchExchange
     }),

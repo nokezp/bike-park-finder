@@ -1,13 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
-import { Icon, latLngBounds, LatLngExpression } from 'leaflet';
-import { BikePark, BikeParksByViewportDocument } from '../../lib/graphql/generated/graphql-operations';
-import { useQuery } from 'urql';
-import MarkerClusterGroup from 'react-leaflet-cluster';
-import 'react-leaflet-cluster/lib/assets/MarkerCluster.css';
-import 'react-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
-import 'leaflet/dist/leaflet.css';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useRef, useState } from "react";
+import { BikePark, Coordinates } from "../../lib/graphql/generated/graphql-operations";
+import { Icon, Map as LeafletMap, LeafletMouseEvent } from "leaflet";
+import { Marker, Popup } from "react-leaflet";
+import { geocoderDefaultOverrides, Viewport } from "./Mapbox";
+import Mapbox from "./Mapbox";
+import { ViewportView } from "../../pages/Map/MapsPage";
+import FallbackImage from "../common/FallbackImage";
+import { useNavigate } from "react-router-dom";
 import './Map.scss';
+
+export const DEFAULT_ZOOM = 10;
+
+type Coordinate = {
+  latitude: number;
+  longitude: number;
+};
 
 // Simple marker icon without image imports
 export const defaultMapIcon = new Icon({
@@ -17,7 +25,7 @@ export const defaultMapIcon = new Icon({
   iconAnchor: [12, 41],
 });
 
-const selectedIcon = new Icon({
+export const selectedIcon = new Icon({
   iconUrl: 'https://www.wanderfinder.com/wp-content/uploads/leaflet-maps-marker-icons/bicycle_shop.png',
   iconSize: [32, 37],
   iconAnchor: [16, 37],
@@ -25,201 +33,260 @@ const selectedIcon = new Icon({
   shadowSize: [37, 37],
 });
 
-interface Viewport {
-  northEast: { latitude: number; longitude: number };
-  southWest: { latitude: number; longitude: number };
+export type PointInput = {
+  lat: number,
+  lon: number
 }
-
-function InvalidateMapSize() {
-  const map = useMap();
-  map.invalidateSize();
-  return null;
-}
-
-const useBikeParks = (viewport: Viewport, pause: boolean) => {
-  const [bikeParks, setBikeParks] = useState<BikePark[]>([]);
-  const [error] = useState<Error | null>(null);
-
-  const [{ data, fetching }] = useQuery({
-    query: BikeParksByViewportDocument,
-    variables: { viewport },
-    pause,
-  });
-
-  useEffect(() => {
-    if (data?.bikeParksByViewport) {
-      setBikeParks(data?.bikeParksByViewport);
-    }
-  }, [data?.bikeParksByViewport]);
-
-  return { bikeParks, fetching, error };
-};
 
 const Map: React.FC<{
   selectedLocation?: BikePark;
   filteredLocations: BikePark[];
-  setSelectedLocationId: (id: string) => void;
-  setFilteredLocations: (bikeParks: BikePark[]) => void;
-  pause?: boolean;
-  setPause: (pause: boolean) => void;
-}> = ({ selectedLocation, filteredLocations, setSelectedLocationId, setFilteredLocations, pause, setPause }) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mapRef = useRef<any>(null);
-  const [viewport, setViewport] = useState({} as Viewport);
+  setSelectedLocationId?: (id: string) => void;
+  setFilteredLocations: (bikeparks: BikePark[]) => void;
+  onViewportChangeView: (viewport: ViewportView) => void;
+}> = ({
+  selectedLocation,
+  filteredLocations,
+  setSelectedLocationId,
+  onViewportChangeView
+}) => {
+    const navigate = useNavigate();
+    const mapRef = useRef<LeafletMap | null>(null);
+    const bikeparkId = selectedLocation?.id;
+    const [viewport, setViewport] = useState<Viewport>({
+      latitude: selectedLocation?.coordinates?.latitude ?? 0,
+      longitude: selectedLocation?.coordinates?.longitude ?? 0,
+      zoom: DEFAULT_ZOOM,
+      ...geocoderDefaultOverrides
+    } as Viewport);
 
-  const { bikeParks, fetching } = useBikeParks(viewport, pause ?? false);
-  useEffect(() => setFilteredLocations(bikeParks), [bikeParks]);
-
-  const handleMarkerClick = (location: BikePark) => {
-    setSelectedLocationId(location.id);
-  };
-
-  const setView = () => {
-    const map = mapRef.current;
-    if (map) {
-      map.flyTo(
-        {
-          lat: selectedLocation?.coordinates?.latitude,
-          lng: selectedLocation?.coordinates?.longitude,
-        },
-        15,
-        { animate: true, duration: 1.5 },
-      );
+    const updateViewport = (newViewport?: Viewport) => {
+      if (newViewport) {
+        setViewport({ ...geocoderDefaultOverrides, ...newViewport });
+      }
     }
-  };
 
-  const fitBounds = (markers: LatLngExpression[]) => {
-    const map = mapRef.current;
-    if (map) {
-      map.flyToBounds(latLngBounds(markers), {
-        padding: [50, 50],
-        animate: true,
-        duration: 1.5,
-      });
-    }
-  };
+    useEffect(() => {
+      if (filteredLocations?.length && mapRef?.current) {
+        const map = mapRef.current;
+        let bikepark = selectedLocation;
+        if (bikeparkId) {
+          bikepark = filteredLocations?.find(({ id }) => id === bikeparkId);
+        }
 
-  useEffect(() => {
-    if (selectedLocation) {
-      setView();
-    }
-  }, [selectedLocation]);
+        if (bikepark && map) {
+          const currentZoom = 10; // map.getZoom() || DEFAULT_ZOOM;
+          updateViewport({
+            latitude: bikepark.coordinates?.latitude ?? 0,
+            longitude: bikepark.coordinates?.longitude ?? 0,
+            zoom: currentZoom >= DEFAULT_ZOOM ? DEFAULT_ZOOM + 1 : DEFAULT_ZOOM
+          });
 
-  useEffect(() => {
-    if (filteredLocations.length > 0 && filteredLocations.length < 10 && pause) {
-      fitBounds(filteredLocations.map(({ coordinates }) => [coordinates?.latitude, coordinates?.longitude]) as LatLngExpression[]);
-    }
-  }, [filteredLocations, selectedLocation]);
+          map.flyTo(
+            {
+              lat: bikepark.coordinates?.latitude ?? 0,
+              lng: bikepark.coordinates?.longitude ?? 0,
+            },
+            currentZoom >= DEFAULT_ZOOM ? 10 : DEFAULT_ZOOM, // DEFAULT_ZOOM + 1 : DEFAULT_ZOOM,
+            { animate: true, duration: 1.5 }
+          );
+        } else {
+          // eslint-disable-next-line no-undef
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const userLocation: Coordinate = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+              };
 
-  const MapEvents = () => {
-    useMapEvents({
-      moveend: (event) => {
-        const map = event.target;
-        const bounds = map.getBounds();
-        const northEast = bounds.getNorthEast();
-        const southWest = bounds.getSouthWest();
-        setViewport({
-          northEast: { latitude: northEast.lat, longitude: northEast.lng },
-          southWest: { latitude: southWest.lat, longitude: southWest.lng },
+              const locationList: Coordinate[] = filteredLocations?.map(({ coordinates }) => ({
+                latitude: coordinates?.latitude ?? 0,
+                longitude: coordinates?.longitude ?? 0
+              }));
+
+              const closestLocation = findClosestLocation(userLocation, locationList);
+
+              updateViewport({
+                latitude: closestLocation?.latitude ?? userLocation.latitude,
+                longitude: closestLocation?.longitude ?? userLocation.longitude,
+                zoom: DEFAULT_ZOOM
+              });
+              map.flyTo(
+                {
+                  lat: closestLocation?.latitude ?? userLocation.latitude,
+                  lng: closestLocation?.longitude ?? userLocation.longitude,
+                },
+                DEFAULT_ZOOM,
+                { animate: true, duration: 1.5 }
+              );
+            },
+            (error) => {
+              // eslint-disable-next-line no-undef
+              console.error("Error getting user location:", error);
+            }
+          );
+        }
+      }
+    }, [filteredLocations, mapRef, bikeparkId, selectedLocation]);
+
+    // Updated to use Leaflet event types
+    const handleClick = (e: LeafletMouseEvent) => {
+      if (e && e.latlng) {
+        updateViewport({
+          latitude: e.latlng.lat ?? 0,
+          longitude: e.latlng.lng ?? 0,
+          zoom: DEFAULT_ZOOM + 1
         });
-        setPause(false);
-      },
-      zoomend: () => setPause(false),
-    });
-    return null;
-  };
+      }
+    }
 
-  return (
-    <div className="relative w-full h-full z-10">
-      {fetching && <div className="absolute top-4 right-4 z-[1000] bg-white px-4 py-2 rounded-md shadow">Loading...</div>}
-      <MapContainer
-        ref={mapRef}
-        center={[49.5, 10]} // Center of Germany
-        zoom={6}
-        className="w-full h-full z-10"
+    function onChooseLocation(location: BikePark) {
+      if (setSelectedLocationId) {
+        setSelectedLocationId(location.id);
+      }
+
+      if (viewport) {
+        updateViewport({
+          ...viewport,
+          latitude: location.coordinates?.latitude ?? 0,
+          longitude: location.coordinates?.longitude ?? 0,
+          zoom: DEFAULT_ZOOM + 1
+        });
+      }
+    }
+
+    const handleViewDetails = (id: string) => {
+      navigate(`/bike-parks/${id}`);
+    };
+
+    return <div style={{ position: "relative", width: "100%" }}>
+      <Mapbox
+        mapRef={mapRef}
+        showControls={true}
+        viewport={viewport}
+        onViewportChange={updateViewport}
+        onViewportChangeView={onViewportChangeView}
+        onClick={handleClick}
+        height="calc(100vh - 150px)"
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <InvalidateMapSize />
-        <MarkerClusterGroup
-          chunkedLoading
-          maxClusterRadius={60}
-          spiderfyOnMaxZoom={true}
-          polygonOptions={{
-            fillColor: '#3388ff',
-            color: '#3388ff',
-            weight: 2,
-            opacity: 0.5,
-            fillOpacity: 0.2,
-          }}
-        >
-          {filteredLocations.map((location: BikePark) => (
-            <Marker
-              key={location.id}
-              position={[location?.coordinates?.latitude ?? 0, location?.coordinates?.longitude ?? 0]}
-              icon={selectedLocation?.id === location.id ? selectedIcon : defaultMapIcon}
-              eventHandlers={{ click: () => handleMarkerClick(location) }}
-            >
-              <Popup closeButton={false} closeOnEscapeKey={true} autoClose={true} autoPan={false}>
-                <div key={location.id} className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md cursor-pointer">
-                  <div className="flex gap-4">
-                    {location.imageUrl ? (
-                      <img src={location.imageUrl} className="w-20 h-20 rounded-lg object-cover" alt={location.name} />
-                    ) : (
-                      <div className="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center">
-                        <i className="fa-solid fa-mountain text-gray-400 text-2x1"></i>
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <div className="flex justify-between">
-                        <h3 className="font-bold text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]">{location.name}</h3>
-                        <span className="text-sm">
-                          <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i>{' '}
-                          {location.rating}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-2">{location.location}</p>
-                      <div className="flex gap-2">
-                        {location.features?.slice(0, 1)?.map((feature, index) => (
-                          <span
-                            key={index}
-                            className={`px-2 py-1 rounded-full text-xs ${
-                              feature === 'Flow'
-                                ? 'bg-emerald-100 text-emerald-600'
-                                : feature === 'Skills'
-                                ? 'bg-purple-100 text-purple-600'
-                                : 'bg-orange-100 text-orange-600'
-                            }`}
-                          >
-                            {feature}
-                          </span>
-                        ))}
+        {filteredLocations.map((location: BikePark) => (
+          <Marker
+            key={location.id}
+            position={[location?.coordinates?.latitude ?? 0, location?.coordinates?.longitude ?? 0]}
+            icon={selectedLocation?.id === location.id ? selectedIcon : defaultMapIcon}
+            eventHandlers={{ click: () => onChooseLocation(location) }}
+          >
+            <Popup closeButton={false} closeOnEscapeKey={true} autoClose={true} autoPan={false}>
+              <div key={location.id} className="bg-white rounded-lg shadow-sm hover:shadow-md cursor-pointer w-[320px]">
+                <div className="flex">
+                  <div className='flex-[30%]'>
+                    <FallbackImage
+                      src={location.imageUrl || "https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png"}
+                      alt={location.name || "Bike Park"}
+                      className="rounded-lg object-cover"
+                    />
+                  </div>
+                  <div className="flex-[70%] m-2">
+                    <div className="flex justify-between">
+                      <h3 className="font-bold text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]">{location.name}</h3>
+                      <span className="text-sm">
+                        <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i>{' '}
+                        {location.rating}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">{location.location}</p>
+                    <div className="flex gap-2">
+                      {location.features?.slice(0, 1)?.map((feature, index) => (
                         <span
-                          className={`px-2 py-1 rounded-full text-xs ${
-                            location.difficulty === 'beginner'
-                              ? 'bg-yellow-100 text-yellow-600'
-                              : location.difficulty === 'intermediate'
-                              ? 'bg-blue-100 text-blue-600'
-                              : 'bg-red-100 text-red-600'
-                          }`}
+                          key={index}
+                          className={`px-2 py-1 rounded-full text-xs ${feature === 'Flow'
+                            ? 'bg-emerald-100 text-emerald-600'
+                            : feature === 'Skills'
+                              ? 'bg-purple-100 text-purple-600'
+                              : 'bg-orange-100 text-orange-600'
+                            }`}
                         >
-                          {location.difficulty?.[0]?.toUpperCase()}
+                          {feature}
                         </span>
-                      </div>
+                      ))}
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${location.difficulty === 'beginner'
+                          ? 'bg-yellow-100 text-yellow-600'
+                          : location.difficulty === 'intermediate'
+                            ? 'bg-blue-100 text-blue-600'
+                            : 'bg-red-100 text-red-600'
+                          }`}
+                      >
+                        {location.difficulty?.[0]?.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex justify-end">
+                      <button onClick={() => handleViewDetails(location.id)} className="text-emerald-500 hover:text-emerald-700">
+                        <i className="fa-solid fa-arrow-right ml-1"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
-              </Popup>
-            </Marker>
-          ))}
-
-          <MapEvents />
-        </MarkerClusterGroup>
-      </MapContainer>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </Mapbox>
     </div>
-  );
-};
+  }
 
 export default Map;
+
+function getDistance(coord1: Coordinate, coord2: Coordinate): number {
+
+  const toRad = (val: number) => (val * Math.PI) / 180;
+
+  const R = 6371; // Earth radius in km
+  const dLat = toRad(coord2.latitude - coord1.latitude);
+  const dLon = toRad(coord2.longitude - coord1.longitude);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(coord1.latitude)) *
+    Math.cos(toRad(coord2.latitude)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function findClosestLocation(userLocation: Coordinate, locations: Coordinate[]): Coordinate | null {
+  let minDistance = Infinity;
+  let closestLocation: Coordinate | null = null;
+
+  for (const location of locations) {
+    const distance = getDistance(userLocation, location);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestLocation = location;
+    }
+  }
+
+  return closestLocation;
+}
+
+export function getFilterLocationsPoints(coordinates: Coordinates | null | undefined, sw: Coordinates, ne: Coordinates) {
+  if (coordinates) {
+    sw = sw || ({} as PointInput);
+    ne = ne || ({} as PointInput);
+    if (!sw.longitude || coordinates.longitude > sw.longitude) {
+      sw.longitude = coordinates.longitude;
+    }
+    if (!ne.longitude || coordinates.longitude < ne.longitude) {
+      ne.longitude = coordinates.longitude;
+    }
+    if (!sw.latitude || coordinates.latitude < sw.latitude) {
+      sw.latitude = coordinates.latitude;
+    }
+    if (!ne.latitude || coordinates.latitude > ne.latitude) {
+      ne.latitude = coordinates.latitude;
+    }
+  }
+  return { sw, ne };
+}
