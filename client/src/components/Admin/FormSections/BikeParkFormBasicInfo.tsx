@@ -148,7 +148,7 @@ const BikeParkFormBasicInfo: React.FC<BikeParkFormProp> = ({ form }) => {
       if (searchQuery.trim()) {
         fetchSuggestions(searchQuery);
       }
-    }, 300); // 300ms debounce delay
+    }, 300);
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);

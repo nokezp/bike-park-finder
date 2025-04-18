@@ -17,11 +17,11 @@ const VideoWidget: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         ></iframe>
 
-        <div className="absolute inset-0 flex items-center justify-center">
-          <button className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+        {/* <div className="absolute inset-0 flex items-center justify-center">
+          <button className="w-20 h-20 bg-white rounded-full flex items-center justify-center">
             <i className="fa-solid fa-play text-2xl text-emerald-600"></i>
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

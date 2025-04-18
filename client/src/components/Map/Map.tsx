@@ -180,11 +180,16 @@ const Map: React.FC<{
               <div key={location.id} className="bg-white rounded-lg shadow-sm hover:shadow-md cursor-pointer w-[320px]">
                 <div className="flex">
                   <div className='flex-[30%]'>
-                    <FallbackImage
+                    {location.imageUrl ? (
+                      <div className={`w-full h-full bg-center bg-no-repeat bg-cover bg-[url(${location.imageUrl})]`}></div>
+                    ) : (
+                      <div className="w-full h-full bg-center bg-no-repeat bg-cover bg-[url('https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png')]"></div>
+                    )}
+                    {/* <FallbackImage
                       src={location.imageUrl || "https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png"}
                       alt={location.name || "Bike Park"}
                       className="rounded-lg object-cover"
-                    />
+                    /> */}
                   </div>
                   <div className="flex-[70%] m-2">
                     <div className="flex justify-between">

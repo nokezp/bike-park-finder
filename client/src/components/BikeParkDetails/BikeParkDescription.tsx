@@ -17,19 +17,19 @@ const BikeParkDescription: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => 
             {bikePark.contact?.phone && (
               <div className="flex items-center space-x-2">
                 <i className="fa-solid fa-phone text-emerald-600"></i>
-                <span>{bikePark.contact?.phone}</span>
+                <span className="wrap-break-word overflow-auto">{bikePark.contact?.phone}</span>
               </div>
             )}
             {bikePark.contact?.email && (
               <div className="flex items-center space-x-2">
                 <i className="fa-solid fa-envelope text-emerald-600"></i>
-                <span>{bikePark.contact?.email}</span>
+                <span className="wrap-break-word overflow-auto">{bikePark.contact?.email}</span>
               </div>
             )}
             {bikePark.contact?.website && (
               <div className="flex items-center space-x-2">
                 <i className="fa-solid fa-globe text-emerald-600"></i>
-                <span>{bikePark.contact?.website}</span>
+                <span className="wrap-break-word overflow-auto">{bikePark.contact?.website}</span>
               </div>
             )}
           </div>
@@ -37,19 +37,19 @@ const BikeParkDescription: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => 
             {bikePark.socialMedia?.facebook && (
               <div className="flex items-center space-x-2">
                 <i className="fa-brands fa-facebook text-emerald-600"></i>
-                <span>{bikePark.socialMedia?.facebook}</span>
+                <span className="wrap-break-word overflow-auto">{bikePark.socialMedia?.facebook}</span>
               </div>
             )}
             {bikePark.socialMedia?.instagram && (
               <div className="flex items-center space-x-2">
                 <i className="fa-brands fa-instagram text-emerald-600"></i>
-                <span>{bikePark.socialMedia?.instagram}</span>
+                <span className="wrap-break-word overflow-auto">{bikePark.socialMedia?.instagram}</span>
               </div>
             )}
             {bikePark.socialMedia?.youtube && (
               <div className="flex items-center space-x-2">
                 <i className="fa-brands fa-youtube text-emerald-600"></i>
-                <span>{bikePark.socialMedia?.youtube}</span>
+                <span className="wrap-break-word overflow-auto">{bikePark.socialMedia?.youtube}</span>
               </div>
             )}
           </div>

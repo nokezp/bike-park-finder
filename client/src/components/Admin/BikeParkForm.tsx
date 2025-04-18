@@ -286,14 +286,14 @@ const BikeParkForm: React.FC = () => {
                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                     onClick={handleDelete}
                   >
-                    Delete Park
+                    Delete
                   </button>
                 )}
                 <button
-                  type="button"
+                  type="submit"
                   className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700"
                 >
-                  {id ? "Edit Park" : "Create Park"}
+                  {id ? "Save" : "Create Park"}
                 </button>
               </>
             )}

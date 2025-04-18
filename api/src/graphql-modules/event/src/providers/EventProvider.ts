@@ -117,7 +117,7 @@ export class EventProvider {
         }
       }
 
-      const events = await EventModel.find(query).sort({ date: 1 });
+      const events = await EventModel.find(query).sort({ date: -1 });
       return events;
     } catch (error: any) {
       console.error('Error fetching events:', error);
@@ -239,12 +239,12 @@ export class EventProvider {
           location
         )}.json?access_token=pk.eyJ1Ijoibm9rZXpwbmV3IiwiYSI6ImNtOGQya3BnZzFiZnkya3M1bWEzMzVuYXkifQ.rOk1OezputSSawqlWIMycQ`
       );
-      
+
       if (response.data.features && response.data.features.length > 0) {
         const [longitude, latitude] = response.data.features[0].center;
         return { latitude, longitude };
       }
-      
+
       return null;
     } catch (error: any) {
       console.error('Error geocoding location:', error);
