@@ -1,19 +1,15 @@
+import { authProvider } from '../../../auth/src/providers/AuthProvider.js';
 import { trailProvider } from '../../../trail/src/providers/TrailProvider.js';
 import { bikeParkProvider } from '../providers/BikeParkProvider.js';
 
 export const bikePark = {
   BikePark: {
-    weather: async (bikePark: any) => {
-      return bikeParkProvider.getBikeParkWeather(bikePark);
-    },
-    rating: async (bikePark: any) => {
-      return bikeParkProvider.calculateBikeParkRating(bikePark);
-    },
-    trails: async (bikePark: any) => {
-      return trailProvider.getBikeParkTrails(bikePark);
-    },
-    reviews: async (bikePark: any) => {
-      return bikeParkProvider.getBikeParkReviews(bikePark);
-    },
+    createdBy: async (bikePark: any) =>
+      authProvider.getUserById(bikePark.createdBy),
+    weather: async (bikePark: any) =>
+      bikeParkProvider.getBikeParkWeather(bikePark),
+    rating: async (bikePark: any) => bikeParkProvider.calculateBikeParkRating(bikePark),
+    trails: async (bikePark: any) => trailProvider.getBikeParkTrails(bikePark),
+    reviews: async (bikePark: any) => bikeParkProvider.getBikeParkReviews(bikePark),
   },
 };

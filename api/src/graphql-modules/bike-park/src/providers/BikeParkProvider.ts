@@ -1,8 +1,16 @@
 import { GraphQLError } from 'graphql';
 import { WeatherService } from '../../../../services/weatherService.js';
-import { BikeParkFilter } from '../../../../core/generated-models.js';
+import { ApprovedStatus, BikeParkFilter, CreateBikeParkInput } from '../../../../core/generated-models.js';
 import { ReviewModel } from '../../../review/src/models/ReviewModel.js';
 import { BikeParkModel } from '../models/BikeParkModel.js';
+import AWS from 'aws-sdk';
+import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
+import path from 'path';
+import { finished } from 'stream/promises';
+import { createWriteStream } from 'fs';
+import { Readable } from 'stream';
+import { AuthContext } from '../../../../utils/auth.js';
 
 const DEFAULT_RESULTS_PER_PAGE = 15;
 const WEATHER_UPDATE_INTERVAL = 30 * 60 * 1000; // 30 minutes
@@ -33,7 +41,7 @@ export class BikeParkProvider {
       const take = filter?.take ?? DEFAULT_RESULTS_PER_PAGE;
 
       // Build filter query
-      const query: any = {};
+      const query: any = { approvedStatus: { $nin: [ApprovedStatus.REJECTED, ApprovedStatus.WAITING_FOR_APPROVAL] } };
       let sort: any = { createdAt: -1 }; // Default sort
       if (filter) {
         // Text search for location or name
@@ -205,15 +213,49 @@ export class BikeParkProvider {
   /**
    * Create a new bike park
    */
-  async createBikePark(data: any, userId: string) {
+  async createBikePark(data: CreateBikeParkInput, currentUser: AuthContext) {
     try {
+      if (!currentUser?.user) {
+        throw new GraphQLError('User is not authenticated!');
+      }
+
+      if (!data.name) {
+        throw new GraphQLError('Name is required');
+      }
+
+      if (!data.location) {
+        throw new GraphQLError('Location is required');
+      }
+
+      if (!data.coordinates || !data.coordinates.latitude || !data.coordinates.longitude) {
+        throw new GraphQLError('Coordinates (latitude and longitude) are required');
+      }
+
+      // Create the bike park with proper timestamps
       const bikePark = new BikeParkModel({
         ...data,
-        createdBy: userId,
+        createdBy: currentUser.user?.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        ...(currentUser.user.role === "admin" ? { approvedStatus: ApprovedStatus.APPROVED } : { approvedStatus: ApprovedStatus.WAITING_FOR_APPROVAL })
       });
+
+      // Log the bike park data before saving for debugging
+      console.log("Creating bike park with data:", JSON.stringify(bikePark, null, 2));
+
       await bikePark.save();
       return bikePark;
     } catch (error: any) {
+      console.error("Error creating bike park:", error);
+
+      // Provide more specific error messages for validation errors
+      if (error.name === 'ValidationError') {
+        const validationErrors = Object.values(error.errors)
+          .map((err: any) => err.message)
+          .join(', ');
+        throw new GraphQLError(`Validation error: ${validationErrors}`);
+      }
+
       throw new GraphQLError(`Error creating bike park: ${error.message}`);
     }
   }
@@ -221,7 +263,7 @@ export class BikeParkProvider {
   /**
    * Update an existing bike park
    */
-  async updateBikePark(id: string, input: any, userId: string, userRole: string) {
+  async updateBikePark(id: string, input: any, currentUser: AuthContext) {
     try {
       const bikePark = await BikeParkModel.findById(id);
       if (!bikePark) {
@@ -229,7 +271,7 @@ export class BikeParkProvider {
       }
 
       // Check if user is admin or creator
-      if (userRole !== 'admin' && bikePark.createdBy && bikePark.createdBy.toString() !== userId) {
+      if (currentUser.user?.role !== 'admin' || bikePark.createdBy && bikePark.createdBy.toString() !== currentUser.user?.id) {
         throw new GraphQLError('Not authorized to update this bike park');
       }
 
@@ -244,7 +286,7 @@ export class BikeParkProvider {
   /**
    * Delete a bike park
    */
-  async deleteBikePark(id: string, userId: string, userRole: string) {
+  async deleteBikePark(id: string, currentUser: AuthContext) {
     try {
       const bikePark = await BikeParkModel.findById(id);
       if (!bikePark) {
@@ -252,7 +294,7 @@ export class BikeParkProvider {
       }
 
       // Check if user is admin or creator
-      if (userRole !== 'admin' && bikePark.createdBy && bikePark.createdBy.toString() !== userId) {
+      if (currentUser.user?.role !== 'admin' || bikePark.createdBy && bikePark.createdBy.toString() !== currentUser.user?.id) {
         throw new GraphQLError('Not authorized to delete this bike park');
       }
 
@@ -361,6 +403,117 @@ export class BikeParkProvider {
     const result = await BikeParkModel.aggregate(aggregation);
 
     return result?.map(({ _id }) => (_id))
+  }
+
+  async getMostCommonFacilities(limit?: number) {
+    const aggregation: any[] = [
+      { $unwind: '$facilities' },
+      { $group: { _id: '$facilities', docs: { $addToSet: '$_id' } } },
+      { $project: { feature: '$_id', count: { $size: '$docs' } } },
+      { $sort: { count: -1 } },
+    ];
+
+    if (limit) {
+      aggregation.push({ $limit: limit });
+    }
+
+    const result = await BikeParkModel.aggregate(aggregation);
+
+    return result?.map(({ _id }) => (_id))
+  }
+
+  async getMostCommonRules(limit?: number) {
+    const aggregation: any[] = [
+      { $unwind: '$rules' },
+      { $group: { _id: '$rules', docs: { $addToSet: '$_id' } } },
+      { $project: { feature: '$_id', count: { $size: '$docs' } } },
+      { $sort: { count: -1 } },
+    ];
+
+    if (limit) {
+      aggregation.push({ $limit: limit });
+    }
+
+    const result = await BikeParkModel.aggregate(aggregation);
+
+    return result?.map(({ _id }) => (_id))
+  }
+
+  /**
+   * Upload an image to AWS S3 or local storage
+   */
+  async uploadImage(file: any) {
+    try {
+      // Check if AWS S3 credentials are configured
+      const useS3 = process.env.AWS_ACCESS_KEY_ID &&
+        process.env.AWS_SECRET_ACCESS_KEY &&
+        process.env.S3_BUCKET;
+
+      if (useS3) {
+        // Configure AWS SDK
+        AWS.config.update({
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          region: process.env.AWS_REGION || 'us-east-1'
+        });
+
+        const s3 = new AWS.S3();
+
+        // Generate a unique key for the file
+        const fileExtension = path.extname(file.name);
+        const key = `uploads/${uuidv4()}${fileExtension}`;
+        const blob = new Blob(file.blobParts, { type: file.type });
+        const buffer = await blob.arrayBuffer();
+        const stream = Readable.from(Buffer.from(buffer));
+
+        // Upload to S3
+        const uploadParams = {
+          Bucket: process.env.S3_BUCKET as string,
+          Key: key,
+          Body: stream,
+          ContentType: file.type
+        };
+
+        const result = await s3.upload(uploadParams).promise();
+
+        return {
+          url: result.Location,
+          key: result.Key
+        };
+      } else {
+        // Fallback to local storage if S3 is not configured
+        const { createReadStream, filename, mimetype } = await file;
+        const stream = createReadStream();
+
+        // Create uploads directory if it doesn't exist
+        const uploadsDir = path.join(process.cwd(), 'uploads');
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+
+        // Generate a unique filename
+        const fileExtension = path.extname(filename);
+        const uniqueFilename = `${uuidv4()}${fileExtension}`;
+        const filePath = path.join(uploadsDir, uniqueFilename);
+
+        // Save file to local storage
+        const writeStream = createWriteStream(filePath);
+        stream.pipe(writeStream);
+        await finished(writeStream);
+
+        // Generate URL for local file
+        const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 4000}`;
+        const fileUrl = `${baseUrl}/uploads/${uniqueFilename}`;
+
+        return {
+          url: fileUrl,
+          key: uniqueFilename
+        };
+      }
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      throw new GraphQLError(`Error uploading image: ${error.message}`);
+    }
   }
 }
 

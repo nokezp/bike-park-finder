@@ -13,36 +13,57 @@ query BikePark($id: ID!) {
       latitude
       longitude
     }
-    
     contact {
       email
       phone
+      website
     }
     facilities
     openingHours {
-      friday
-      monday
-      saturday
-      sunday
-      thursday
-      tuesday
-      wednesday
+      monday {
+        from
+        to
+      }
+      tuesday {
+        from
+        to
+      }
+      wednesday {
+        from
+        to
+      }
+      thursday {
+        from
+        to
+      }
+      friday {
+        from
+        to
+      }
+      saturday {
+        from
+        to
+      }
+      sunday {
+        from
+        to
+      }
     }
     photos
-    price {
-      amount
+    prices {
+      name
+      price
       currency
     }
     rating
     rules
     status
     videos
-    website
     socialMedia {
       facebook
       instagram
-      twitter
       youtube
+      strava
     }
     weather {
       current {
@@ -90,6 +111,13 @@ query BikePark($id: ID!) {
         email
       }
       updatedAt
+    }
+    createdBy {
+      id
+      role
+      username
+      email
+      isVerified
     }
   }
 }

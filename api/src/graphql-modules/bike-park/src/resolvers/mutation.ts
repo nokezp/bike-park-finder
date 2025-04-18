@@ -1,14 +1,15 @@
 import { AuthContext } from '../../../../utils/auth.js';
 import { bikeParkProvider } from '../providers/BikeParkProvider.js';
+import { GraphQLError } from 'graphql';
 
 export const mutation = {
   Mutation: {
-    createBikePark: async (_: unknown, args: any, context: AuthContext) => {
+    createBikePark: async (_: unknown, { input }: { input: any }, context: AuthContext) => {
       if (!context.user) {
         throw new Error('Not authenticated');
       }
 
-      return bikeParkProvider.createBikePark(args, context.user.id);
+      return bikeParkProvider.createBikePark(input, context);
     },
 
     updateBikePark: async (_: unknown, { id, input }: { id: string; input: any }, context: AuthContext) => {
@@ -16,7 +17,7 @@ export const mutation = {
         throw new Error('Not authenticated');
       }
 
-      return bikeParkProvider.updateBikePark(id, input, context.user.id, context.user.role);
+      return bikeParkProvider.updateBikePark(id, input, context);
     },
 
     deleteBikePark: async (_: unknown, { id }: { id: string }, context: AuthContext) => {
@@ -24,7 +25,22 @@ export const mutation = {
         throw new Error('Not authenticated');
       }
 
-      return bikeParkProvider.deleteBikePark(id, context.user.id, context.user.role);
+      return bikeParkProvider.deleteBikePark(id, context);
+    },
+
+    uploadImage: async (_: unknown, { file }: { file: any }, context: AuthContext) => {
+      try {
+        // Optional: Check authentication if needed
+        if (!context.user) {
+          throw new GraphQLError('Not authenticated');
+        }
+
+        // Process the file upload
+        return bikeParkProvider.uploadImage(file);
+      } catch (error: any) {
+        console.error('Error in uploadImage resolver:', error);
+        throw new GraphQLError(`Failed to upload image: ${error.message}`);
+      }
     },
   },
 };

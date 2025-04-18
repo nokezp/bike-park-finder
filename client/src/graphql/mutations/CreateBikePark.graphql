@@ -1,0 +1,7 @@
+mutation CreateBikePark($input: CreateBikeParkInput!) {
+  createBikePark(input: $input) {
+    id
+    name
+    location
+  }
+}

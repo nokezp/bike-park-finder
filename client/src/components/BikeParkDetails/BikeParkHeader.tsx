@@ -1,10 +1,17 @@
 import React from "react";
 import FallbackImage from "../common/FallbackImage";
-import { BikePark } from "../../lib/graphql/generated/graphql-operations";
-import { getCurrentWorkingStatus, getWeatherIcon } from "../../lib/helpers/common-helper";
+import { BikePark, MeDocument, MeQuery } from "../../lib/graphql/generated/graphql-operations";
+import { getCurrentWorkingHours, getCurrentWorkingStatus, getWeatherIcon } from "../../lib/helpers/common-helper";
+import { FaPenToSquare } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "urql";
 
-// Component expects a BikePark object
 const BikeParkHeader: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
+  const navigate = useNavigate();
+  const workingStatus = getCurrentWorkingStatus(bikePark.openingHours);
+
+  const [currentUser] = useQuery<MeQuery>({ query: MeDocument });
+
   return (
     <>
       <section id="park-hero" className="relative h-[500px]">
@@ -14,18 +21,28 @@ const BikeParkHeader: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
             alt={bikePark.name || "Bike Park"}
             className="w-full h-full object-cover"
           />
-          {/* <FallbackImage src={bikePark?.imageUrl ?? undefined} alt={bikePark?.name} className="w-full h-full object-cover" /> */}
+          {(currentUser.data?.me?.role === "admin" || bikePark.createdBy?.id === currentUser.data?.me?.id) && (
+            <div className="absolute top-4 right-4 z-[1]">
+              <button
+                type="button"
+                className="bg-white text-gray-700 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50"
+                onClick={() => navigate(`/bike-park/edit/${bikePark.id}`)}>
+                <FaPenToSquare className="inline mr-2" />
+                Edit Bike Park
+              </button>
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
         </div>
         <div className="container mx-auto px-4 relative h-full flex items-end pb-8">
           <div className="text-white">
             <div className="flex items-center space-x-4 mb-4">
-              <span className="bg-emerald-500 px-3 py-1 rounded-full text-sm">
-                {getCurrentWorkingStatus(bikePark.openingHours) !== 'Closed' ? 'Open Today' : 'Closed'}
+              <span className={`${workingStatus === 'Open' ? 'bg-emerald-500' : workingStatus === 'Closed' ? 'bg-red-500' : 'bg-orange-500'} px-3 py-1 rounded-full text-sm`}>
+                {workingStatus}
               </span>
               <div className="flex items-center">
                 <i className="fa-solid fa-star text-yellow-400"></i>
-                <span className="ml-1">{bikePark.rating} ({bikePark.reviews?.length} reviews)</span>
+                <span className="ml-1">{`${bikePark.rating} (${!bikePark.reviews?.length ? 'No reviews' : bikePark.reviews?.length + ' reviews'})`}</span>
               </div>
             </div>
             <h1 className="text-4xl font-bold mb-2">{bikePark.name}</h1>
@@ -35,7 +52,7 @@ const BikeParkHeader: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       <section id="quick-info" className="bg-white shadow-md">
         <div className="container mx-auto px-4">
@@ -50,13 +67,15 @@ const BikeParkHeader: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <i className="fa-solid fa-clock text-2xl text-gray-600"></i>
-                <div>
-                  <p className="text-sm text-gray-600">Hours</p>
-                  <p className="font-bold">{getCurrentWorkingStatus(bikePark.openingHours)}</p>
+              {bikePark.openingHours && (
+                <div className="flex items-center space-x-2">
+                  <i className="fa-solid fa-clock text-2xl text-gray-600"></i>
+                  <div>
+                    <p className="text-sm text-gray-600">Hours</p>
+                    <p className="font-bold">{getCurrentWorkingHours(bikePark.openingHours)}</p>
+                  </div>
                 </div>
-              </div>
+              )}
               {bikePark.trails && bikePark.trails.length > 0 && (
                 <div className="flex items-center space-x-2">
                   <i className="fa-solid fa-ruler-vertical text-2xl text-gray-600"></i>

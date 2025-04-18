@@ -1,94 +1,83 @@
 # Bike Park Finder API
 
-A GraphQL API for the Bike Park Finder application built with GraphQL Yoga and MongoDB.
+## Image Upload Functionality
 
-## Features
+The API now supports image uploads for bike parks. Images can be uploaded to either AWS S3 or local storage.
 
-- GraphQL API with Yoga
-- MongoDB database with Mongoose ODM
-- JWT authentication
-- TypeScript for type safety
+### Configuration
 
-## Getting Started
+1. Copy the `.env.example` file to `.env`:
+   ```
+   cp .env.example .env
+   ```
 
-### Prerequisites
+2. Configure the environment variables in the `.env` file:
 
-- Node.js (v16+) 
-- MongoDB (local instance or MongoDB Atlas)
+   - For AWS S3 upload:
+     ```
+     AWS_ACCESS_KEY_ID=your_aws_access_key_id
+     AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
+     AWS_REGION=us-east-1
+     S3_BUCKET=your-s3-bucket-name
+     ```
 
-### Installation
+   - For local storage (no configuration needed, will be used as fallback if AWS S3 is not configured)
 
-1. Clone the repository
-2. Install dependencies:
+3. Install the required dependencies:
+   ```
+   npm install aws-sdk uuid @types/uuid
+   ```
 
-```bash
-npm install
+### Usage
+
+The API provides a GraphQL mutation for uploading images:
+
+```graphql
+mutation UploadImage($file: Upload!) {
+  uploadImage(file: $file) {
+    url
+    key
+  }
+}
 ```
 
-3. Set up environment variables:
-   - Create a `.env` file in the root directory
-   - Add the following variables:
+This mutation returns:
+- `url`: The URL of the uploaded image
+- `key`: The unique key/filename of the uploaded image
 
-```
-PORT=4000
-MONGODB_URI=mongodb://localhost:27017/bike-park-finder-mac
-JWT_SECRET=your-secret-key-change-in-production
-NODE_ENV=development
-```
+### Client Implementation
 
-### Development
+On the client side, you can use the Apollo Client to upload files:
 
-Start the development server:
+```typescript
+import { useMutation } from '@apollo/client';
+import { UPLOAD_IMAGE_MUTATION } from './graphql/mutations';
 
-```bash
-npm run dev
-```
+const [uploadImage, { loading, error }] = useMutation(UPLOAD_IMAGE_MUTATION);
 
-### Production
-
-Build the project:
-
-```bash
-npm run build
-```
-
-Start the production server:
-
-```bash
-npm start
-```
-
-## API Documentation
-
-Once the server is running, you can access the GraphQL playground at:
-
-```
-http://localhost:4000/graphql
+const handleFileUpload = async (file) => {
+  try {
+    const result = await uploadImage({ 
+      variables: { file },
+      context: {
+        // Enable Apollo's file upload functionality
+        useMultipart: true
+      }
+    });
+    
+    // Get the uploaded image URL
+    const imageUrl = result.data.uploadImage.url;
+    
+    // Use the image URL as needed
+    console.log('Uploaded image URL:', imageUrl);
+  } catch (error) {
+    console.error('Error uploading image:', error);
+  }
+};
 ```
 
-### Main Queries
+### Notes
 
-- `me`: Get the current authenticated user
-- `bikeParks`: Get all bike parks
-- `bikePark(id: ID!)`: Get a specific bike park
-- `searchBikeParks(query: String!)`: Search bike parks by text
-
-### Main Mutations
-
-- `register(username: String!, email: String!, password: String!, name: String)`: Register a new user
-- `login(email: String!, password: String!)`: Login and get authentication token
-- `createBikePark(input: BikeParkInput!)`: Create a new bike park
-- `updateBikePark(id: ID!, input: UpdateBikeParkInput!)`: Update a bike park
-- `deleteBikePark(id: ID!)`: Delete a bike park
-
-## Authentication
-
-To authenticate requests, include the JWT token in the Authorization header:
-
-```
-Authorization: Bearer <your-token>
-```
-
-## License
-
-This project is licensed under the ISC License. 
+- For AWS S3 uploads, make sure your S3 bucket has the appropriate CORS configuration to allow uploads from your client domain.
+- Local storage uploads will be saved to the `uploads` directory in the project root.
+- The API will automatically create the `uploads` directory if it doesn't exist.

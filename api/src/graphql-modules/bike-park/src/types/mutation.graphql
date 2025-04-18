@@ -1,24 +1,6 @@
 type Mutation {
-  createBikePark(
-    name: String!
-    description: String
-    location: String
-    features: [String!]
-    difficulty: String
-    address: String
-    coordinates: CoordinatesInput
-    imageUrl: String
-    openingHours: OpeningHoursInput
-    contact: ContactInput
-    price: PriceInput
-    facilities: [String!]
-    rules: [String!]
-    photos: [String!]
-    videos: [String!]
-    website: String
-    socialMedia: SocialMediaInput
-    status: String
-  ): BikePark!
+  createBikePark(input: CreateBikeParkInput!): BikePark!
   updateBikePark(id: ID!, input: UpdateBikeParkInput!): BikePark!
   deleteBikePark(id: ID!): Boolean!
+  uploadImage(file: Upload!): ImageUploadResponse!
 }

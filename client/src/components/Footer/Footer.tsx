@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
                 { label: 'Terms of Service', route: '/terms' }
               ].map(({ label, route }) => (
                 <li key={route}>
-                  <span 
+                  <span
                     onClick={() => handleNavClick()}
                     className="hover:text-white cursor-pointer transition-colors duration-200"
                   >
@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
                 { label: 'Community', route: '/community' }
               ].map(({ label, route }) => (
                 <li key={route}>
-                  <span 
+                  <span
                     onClick={() => handleNavClick()}
                     className="hover:text-white cursor-pointer transition-colors duration-200"
                   >
@@ -76,10 +76,9 @@ const Footer: React.FC = () => {
               {[
                 { platform: 'facebook', icon: 'fa-brands fa-facebook' },
                 { platform: 'instagram', icon: 'fa-brands fa-instagram' },
-                { platform: 'twitter', icon: 'fa-brands fa-twitter' },
                 { platform: 'youtube', icon: 'fa-brands fa-youtube' }
               ].map(({ platform, icon }) => (
-                <span 
+                <span
                   key={platform}
                   onClick={() => handleSocialClick()}
                   className="hover:text-white cursor-pointer transition-colors duration-200"

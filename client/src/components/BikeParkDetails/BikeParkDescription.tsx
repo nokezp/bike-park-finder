@@ -5,7 +5,6 @@ import { formatCurrency, getWeekendStatus, getWorkWeekStatus } from "../../lib/h
 const BikeParkDescription: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
   const workweekStatus = getWorkWeekStatus(bikePark.openingHours);
   const weekendStatus = getWeekendStatus(bikePark.openingHours);
-  const price = formatCurrency(bikePark.price?.amount, bikePark?.price?.currency);
 
   return (
     <div id="park-description" className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -27,10 +26,10 @@ const BikeParkDescription: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => 
                 <span>{bikePark.contact?.email}</span>
               </div>
             )}
-            {bikePark.website && (
+            {bikePark.contact?.website && (
               <div className="flex items-center space-x-2">
                 <i className="fa-solid fa-globe text-emerald-600"></i>
-                <span>{bikePark.website}</span>
+                <span>{bikePark.contact?.website}</span>
               </div>
             )}
           </div>
@@ -47,12 +46,6 @@ const BikeParkDescription: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => 
                 <span>{bikePark.socialMedia?.instagram}</span>
               </div>
             )}
-            {bikePark.socialMedia?.twitter && (
-              <div className="flex items-center space-x-2">
-                <i className="fa-brands fa-x-twitter text-emerald-600"></i>
-                <span>{bikePark.socialMedia?.twitter}</span>
-              </div>
-            )}
             {bikePark.socialMedia?.youtube && (
               <div className="flex items-center space-x-2">
                 <i className="fa-brands fa-youtube text-emerald-600"></i>
@@ -63,17 +56,18 @@ const BikeParkDescription: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => 
         </div>
       </div>
 
-      <div id="features" className="bg-white rounded-lg shadow-md p-6 mb-8">
-        <h2 className="text-2xl font-bold mb-4">Features & Facilities</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {bikePark.facilities?.map((facility) => (
-            <div key={facility} className="flex items-center space-x-2">
-              <i className="fa-solid fa-mountain text-emerald-600"></i>
-              {/* <span>70+ Trails</span> */}
-              <span>{facility}</span>
-            </div>
-          ))}
-          {/* <div className="flex items-center space-x-2">
+      {!!bikePark.facilities?.length && (
+        <div id="features" className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-2xl font-bold mb-4">Features & Facilities</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {bikePark.facilities?.map((facility) => (
+              <div key={facility} className="flex items-center space-x-2">
+                <i className="fa-solid fa-mountain text-emerald-600"></i>
+                {/* <span>70+ Trails</span> */}
+                <span>{facility}</span>
+              </div>
+            ))}
+            {/* <div className="flex items-center space-x-2">
               <i className="fa-solid fa-elevator text-emerald-600"></i>
               <span>5 Lifts</span>
             </div>
@@ -93,8 +87,9 @@ const BikeParkDescription: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => 
               <i className="fa-solid fa-utensils text-emerald-600"></i>
               <span>Restaurant</span>
             </div> */}
+          </div>
         </div>
-      </div>
+      )}
 
       <div id="hours-prices" className="bg-white rounded-lg shadow-md p-6 mb-8">
         <div className="grid md:grid-cols-2 gap-6">
@@ -113,35 +108,25 @@ const BikeParkDescription: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => 
                   <span>{weekendStatus}</span>
                 </div>
               )}
-              {/* <div className="flex justify-between text-emerald-600">
-                <span>Night Riding (Thu-Sat)</span>
-                <span>6:00 PM - 8:00 PM</span>
-              </div> */}
             </div>
           </div>
-          {price && (
+          {!!bikePark?.prices?.length && (
             <div>
               <h3 className="text-xl font-bold mb-4">Prices</h3>
               <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Day Pass</span>
-                  <span>{price}</span>
-                </div>
-                {/* <div className="flex justify-between">
-                  <span>Half Day (after 1pm)</span>
-                  <span>$69</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Season Pass</span>
-                  <span>$699</span>
-                </div> */}
+                {bikePark?.prices?.map(p => (
+                  <div key={"bikepark_price_" + bikePark.id + "_" + p?.name?.replace(" ", "")} className="flex justify-between" >
+                    <span>{p?.name}</span>
+                    <span>{formatCurrency(p?.price, p?.currency)}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {bikePark.rules && (
+      {!!bikePark.rules?.length && (
         <div id="rules" className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-bold mb-4">Park Rules</h2>
           <div className="grid md:grid-cols-2 gap-4">

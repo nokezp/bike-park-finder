@@ -17,7 +17,14 @@ export type Scalars = {
   Float: { input: number; output: number; }
   Date: { input: any; output: any; }
   JSON: { input: any; output: any; }
+  Upload: { input: any; output: any; }
 };
+
+export enum ApprovedStatus {
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  WAITING_FOR_APPROVAL = 'WAITING_FOR_APPROVAL'
+}
 
 export type AuthPayload = {
   __typename?: 'AuthPayload';
@@ -28,10 +35,11 @@ export type AuthPayload = {
 export type BikePark = {
   __typename?: 'BikePark';
   address?: Maybe<Scalars['String']['output']>;
+  approvalStatus?: Maybe<ApprovedStatus>;
   contact?: Maybe<Contact>;
   coordinates?: Maybe<Coordinates>;
-  createdAt: Scalars['String']['output'];
-  createdBy: User;
+  createdAt?: Maybe<Scalars['String']['output']>;
+  createdBy?: Maybe<User>;
   description?: Maybe<Scalars['String']['output']>;
   difficulty?: Maybe<Scalars['String']['output']>;
   facilities?: Maybe<Array<Scalars['String']['output']>>;
@@ -43,7 +51,7 @@ export type BikePark = {
   name: Scalars['String']['output'];
   openingHours?: Maybe<OpeningHours>;
   photos?: Maybe<Array<Scalars['String']['output']>>;
-  price?: Maybe<Price>;
+  prices?: Maybe<Array<Maybe<Price>>>;
   rating?: Maybe<Scalars['Float']['output']>;
   reviews?: Maybe<Array<Review>>;
   rules?: Maybe<Array<Scalars['String']['output']>>;
@@ -53,7 +61,6 @@ export type BikePark = {
   updatedAt?: Maybe<Scalars['String']['output']>;
   videos?: Maybe<Array<Scalars['String']['output']>>;
   weather?: Maybe<Weather>;
-  website?: Maybe<Scalars['String']['output']>;
 };
 
 export type BikeParkFilter = {
@@ -79,11 +86,13 @@ export type Contact = {
   __typename?: 'Contact';
   email?: Maybe<Scalars['String']['output']>;
   phone?: Maybe<Scalars['String']['output']>;
+  website?: Maybe<Scalars['String']['output']>;
 };
 
 export type ContactInput = {
   email?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
+  website?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Coordinates = {
@@ -101,6 +110,26 @@ export type CoordinatesSearchInput = {
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
   radius?: InputMaybe<Scalars['Float']['input']>;
+};
+
+export type CreateBikeParkInput = {
+  address?: InputMaybe<Scalars['String']['input']>;
+  contact?: InputMaybe<ContactInput>;
+  coordinates: CoordinatesInput;
+  description?: InputMaybe<Scalars['String']['input']>;
+  difficulty?: InputMaybe<Scalars['String']['input']>;
+  facilities?: InputMaybe<Array<Scalars['String']['input']>>;
+  features?: InputMaybe<Array<Scalars['String']['input']>>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
+  location: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  openingHours?: InputMaybe<OpeningHoursInput>;
+  photos?: InputMaybe<Array<Scalars['String']['input']>>;
+  prices?: InputMaybe<Array<InputMaybe<PriceInput>>>;
+  rules?: InputMaybe<Array<Scalars['String']['input']>>;
+  socialMedia?: InputMaybe<SocialMediaInput>;
+  status?: InputMaybe<Scalars['String']['input']>;
+  videos?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type CreateEventInput = {
@@ -190,6 +219,12 @@ export enum EventStatus {
   UPCOMING = 'UPCOMING'
 }
 
+export type ImageUploadResponse = {
+  __typename?: 'ImageUploadResponse';
+  key: Scalars['String']['output'];
+  url: Scalars['String']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createBikePark: BikePark;
@@ -208,28 +243,12 @@ export type Mutation = {
   updateEvent: Event;
   updateProfile: User;
   updateReview: Review;
+  uploadImage: ImageUploadResponse;
 };
 
 
 export type MutationCreateBikeParkArgs = {
-  address?: InputMaybe<Scalars['String']['input']>;
-  contact?: InputMaybe<ContactInput>;
-  coordinates?: InputMaybe<CoordinatesInput>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  difficulty?: InputMaybe<Scalars['String']['input']>;
-  facilities?: InputMaybe<Array<Scalars['String']['input']>>;
-  features?: InputMaybe<Array<Scalars['String']['input']>>;
-  imageUrl?: InputMaybe<Scalars['String']['input']>;
-  location?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
-  openingHours?: InputMaybe<OpeningHoursInput>;
-  photos?: InputMaybe<Array<Scalars['String']['input']>>;
-  price?: InputMaybe<PriceInput>;
-  rules?: InputMaybe<Array<Scalars['String']['input']>>;
-  socialMedia?: InputMaybe<SocialMediaInput>;
-  status?: InputMaybe<Scalars['String']['input']>;
-  videos?: InputMaybe<Array<Scalars['String']['input']>>;
-  website?: InputMaybe<Scalars['String']['input']>;
+  input: CreateBikeParkInput;
 };
 
 
@@ -327,6 +346,11 @@ export type MutationUpdateReviewArgs = {
   rating?: InputMaybe<Scalars['Float']['input']>;
 };
 
+
+export type MutationUploadImageArgs = {
+  file: Scalars['Upload']['input'];
+};
+
 export type Notifications = {
   __typename?: 'Notifications';
   email?: Maybe<Scalars['Boolean']['output']>;
@@ -335,23 +359,34 @@ export type Notifications = {
 
 export type OpeningHours = {
   __typename?: 'OpeningHours';
-  friday?: Maybe<Scalars['String']['output']>;
-  monday?: Maybe<Scalars['String']['output']>;
-  saturday?: Maybe<Scalars['String']['output']>;
-  sunday?: Maybe<Scalars['String']['output']>;
-  thursday?: Maybe<Scalars['String']['output']>;
-  tuesday?: Maybe<Scalars['String']['output']>;
-  wednesday?: Maybe<Scalars['String']['output']>;
+  friday?: Maybe<OpeningHoursDay>;
+  monday?: Maybe<OpeningHoursDay>;
+  saturday?: Maybe<OpeningHoursDay>;
+  sunday?: Maybe<OpeningHoursDay>;
+  thursday?: Maybe<OpeningHoursDay>;
+  tuesday?: Maybe<OpeningHoursDay>;
+  wednesday?: Maybe<OpeningHoursDay>;
+};
+
+export type OpeningHoursDay = {
+  __typename?: 'OpeningHoursDay';
+  from?: Maybe<Scalars['String']['output']>;
+  to?: Maybe<Scalars['String']['output']>;
+};
+
+export type OpeningHoursDayInput = {
+  from?: InputMaybe<Scalars['String']['input']>;
+  to?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type OpeningHoursInput = {
-  friday?: InputMaybe<Scalars['String']['input']>;
-  monday?: InputMaybe<Scalars['String']['input']>;
-  saturday?: InputMaybe<Scalars['String']['input']>;
-  sunday?: InputMaybe<Scalars['String']['input']>;
-  thursday?: InputMaybe<Scalars['String']['input']>;
-  tuesday?: InputMaybe<Scalars['String']['input']>;
-  wednesday?: InputMaybe<Scalars['String']['input']>;
+  friday?: InputMaybe<OpeningHoursDayInput>;
+  monday?: InputMaybe<OpeningHoursDayInput>;
+  saturday?: InputMaybe<OpeningHoursDayInput>;
+  sunday?: InputMaybe<OpeningHoursDayInput>;
+  thursday?: InputMaybe<OpeningHoursDayInput>;
+  tuesday?: InputMaybe<OpeningHoursDayInput>;
+  wednesday?: InputMaybe<OpeningHoursDayInput>;
 };
 
 export type Organizer = {
@@ -400,13 +435,15 @@ export type Preferences = {
 
 export type Price = {
   __typename?: 'Price';
-  amount: Scalars['Float']['output'];
   currency: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  price: Scalars['Float']['output'];
 };
 
 export type PriceInput = {
-  amount: Scalars['Float']['input'];
   currency: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  price: Scalars['Float']['input'];
 };
 
 export type Profile = {
@@ -428,7 +465,9 @@ export type Query = {
   event?: Maybe<Event>;
   events: Array<Event>;
   me?: Maybe<User>;
+  mostCommonFacilities?: Maybe<Array<Scalars['String']['output']>>;
   mostCommonFeatures?: Maybe<Array<Scalars['String']['output']>>;
+  mostCommonRules?: Maybe<Array<Scalars['String']['output']>>;
   popularEventCategories: Array<CategoryInfo>;
   reviews: PaginatedReviews;
   reviewsByUser: PaginatedReviews;
@@ -462,7 +501,17 @@ export type QueryEventsArgs = {
 };
 
 
+export type QueryMostCommonFacilitiesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
 export type QueryMostCommonFeaturesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryMostCommonRulesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -518,14 +567,13 @@ export type SocialMedia = {
   facebook?: Maybe<Scalars['String']['output']>;
   instagram?: Maybe<Scalars['String']['output']>;
   strava?: Maybe<Scalars['String']['output']>;
-  twitter?: Maybe<Scalars['String']['output']>;
   youtube?: Maybe<Scalars['String']['output']>;
 };
 
 export type SocialMediaInput = {
   facebook?: InputMaybe<Scalars['String']['input']>;
   instagram?: InputMaybe<Scalars['String']['input']>;
-  twitter?: InputMaybe<Scalars['String']['input']>;
+  strava?: InputMaybe<Scalars['String']['input']>;
   youtube?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -563,12 +611,11 @@ export type UpdateBikeParkInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   openingHours?: InputMaybe<OpeningHoursInput>;
   photos?: InputMaybe<Array<Scalars['String']['input']>>;
-  price?: InputMaybe<PriceInput>;
+  prices?: InputMaybe<Array<InputMaybe<PriceInput>>>;
   rules?: InputMaybe<Array<Scalars['String']['input']>>;
   socialMedia?: InputMaybe<SocialMediaInput>;
   status?: InputMaybe<Scalars['String']['input']>;
   videos?: InputMaybe<Array<Scalars['String']['input']>>;
-  website?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateEventInput = {
@@ -714,6 +761,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  ApprovedStatus: ApprovedStatus;
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   BikePark: ResolverTypeWrapper<BikePark>;
   BikeParkFilter: BikeParkFilter;
@@ -724,6 +772,7 @@ export type ResolversTypes = {
   Coordinates: ResolverTypeWrapper<Coordinates>;
   CoordinatesInput: CoordinatesInput;
   CoordinatesSearchInput: CoordinatesSearchInput;
+  CreateBikeParkInput: CreateBikeParkInput;
   CreateEventInput: CreateEventInput;
   Date: ResolverTypeWrapper<Scalars['Date']['output']>;
   Event: ResolverTypeWrapper<Event>;
@@ -733,11 +782,14 @@ export type ResolversTypes = {
   EventStatus: EventStatus;
   Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  ImageUploadResponse: ResolverTypeWrapper<ImageUploadResponse>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   Notifications: ResolverTypeWrapper<Notifications>;
   OpeningHours: ResolverTypeWrapper<OpeningHours>;
+  OpeningHoursDay: ResolverTypeWrapper<OpeningHoursDay>;
+  OpeningHoursDayInput: OpeningHoursDayInput;
   OpeningHoursInput: OpeningHoursInput;
   Organizer: ResolverTypeWrapper<Organizer>;
   OrganizerInput: OrganizerInput;
@@ -759,6 +811,7 @@ export type ResolversTypes = {
   Trail: ResolverTypeWrapper<Trail>;
   UpdateBikeParkInput: UpdateBikeParkInput;
   UpdateEventInput: UpdateEventInput;
+  Upload: ResolverTypeWrapper<Scalars['Upload']['output']>;
   User: ResolverTypeWrapper<User>;
   Venue: ResolverTypeWrapper<Venue>;
   VenueInput: VenueInput;
@@ -779,17 +832,21 @@ export type ResolversParentTypes = {
   Coordinates: Coordinates;
   CoordinatesInput: CoordinatesInput;
   CoordinatesSearchInput: CoordinatesSearchInput;
+  CreateBikeParkInput: CreateBikeParkInput;
   CreateEventInput: CreateEventInput;
   Date: Scalars['Date']['output'];
   Event: Event;
   EventFilter: EventFilter;
   Float: Scalars['Float']['output'];
   ID: Scalars['ID']['output'];
+  ImageUploadResponse: ImageUploadResponse;
   Int: Scalars['Int']['output'];
   JSON: Scalars['JSON']['output'];
   Mutation: {};
   Notifications: Notifications;
   OpeningHours: OpeningHours;
+  OpeningHoursDay: OpeningHoursDay;
+  OpeningHoursDayInput: OpeningHoursDayInput;
   OpeningHoursInput: OpeningHoursInput;
   Organizer: Organizer;
   OrganizerInput: OrganizerInput;
@@ -811,6 +868,7 @@ export type ResolversParentTypes = {
   Trail: Trail;
   UpdateBikeParkInput: UpdateBikeParkInput;
   UpdateEventInput: UpdateEventInput;
+  Upload: Scalars['Upload']['output'];
   User: User;
   Venue: Venue;
   VenueInput: VenueInput;
@@ -827,10 +885,11 @@ export type AuthPayloadResolvers<ContextType = any, ParentType extends Resolvers
 
 export type BikeParkResolvers<ContextType = any, ParentType extends ResolversParentTypes['BikePark'] = ResolversParentTypes['BikePark']> = {
   address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  approvalStatus?: Resolver<Maybe<ResolversTypes['ApprovedStatus']>, ParentType, ContextType>;
   contact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType>;
   coordinates?: Resolver<Maybe<ResolversTypes['Coordinates']>, ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  createdBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   difficulty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   facilities?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
@@ -842,7 +901,7 @@ export type BikeParkResolvers<ContextType = any, ParentType extends ResolversPar
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   openingHours?: Resolver<Maybe<ResolversTypes['OpeningHours']>, ParentType, ContextType>;
   photos?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
-  price?: Resolver<Maybe<ResolversTypes['Price']>, ParentType, ContextType>;
+  prices?: Resolver<Maybe<Array<Maybe<ResolversTypes['Price']>>>, ParentType, ContextType>;
   rating?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   reviews?: Resolver<Maybe<Array<ResolversTypes['Review']>>, ParentType, ContextType>;
   rules?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
@@ -852,7 +911,6 @@ export type BikeParkResolvers<ContextType = any, ParentType extends ResolversPar
   updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   videos?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   weather?: Resolver<Maybe<ResolversTypes['Weather']>, ParentType, ContextType>;
-  website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -866,6 +924,7 @@ export type CategoryInfoResolvers<ContextType = any, ParentType extends Resolver
 export type ContactResolvers<ContextType = any, ParentType extends ResolversParentTypes['Contact'] = ResolversParentTypes['Contact']> = {
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   phone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -904,12 +963,18 @@ export type EventResolvers<ContextType = any, ParentType extends ResolversParent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ImageUploadResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImageUploadResponse'] = ResolversParentTypes['ImageUploadResponse']> = {
+  key?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationCreateBikeParkArgs, 'name'>>;
+  createBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationCreateBikeParkArgs, 'input'>>;
   createEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationCreateEventArgs, 'input'>>;
   createReview?: Resolver<ResolversTypes['Review'], ParentType, ContextType, RequireFields<MutationCreateReviewArgs, 'bikeParkId' | 'comment' | 'rating'>>;
   deleteBikePark?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBikeParkArgs, 'id'>>;
@@ -925,6 +990,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   updateEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationUpdateEventArgs, 'id' | 'input'>>;
   updateProfile?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateProfileArgs>>;
   updateReview?: Resolver<ResolversTypes['Review'], ParentType, ContextType, RequireFields<MutationUpdateReviewArgs, 'id'>>;
+  uploadImage?: Resolver<ResolversTypes['ImageUploadResponse'], ParentType, ContextType, RequireFields<MutationUploadImageArgs, 'file'>>;
 };
 
 export type NotificationsResolvers<ContextType = any, ParentType extends ResolversParentTypes['Notifications'] = ResolversParentTypes['Notifications']> = {
@@ -934,13 +1000,19 @@ export type NotificationsResolvers<ContextType = any, ParentType extends Resolve
 };
 
 export type OpeningHoursResolvers<ContextType = any, ParentType extends ResolversParentTypes['OpeningHours'] = ResolversParentTypes['OpeningHours']> = {
-  friday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  monday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  saturday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  sunday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  thursday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  tuesday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  wednesday?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  friday?: Resolver<Maybe<ResolversTypes['OpeningHoursDay']>, ParentType, ContextType>;
+  monday?: Resolver<Maybe<ResolversTypes['OpeningHoursDay']>, ParentType, ContextType>;
+  saturday?: Resolver<Maybe<ResolversTypes['OpeningHoursDay']>, ParentType, ContextType>;
+  sunday?: Resolver<Maybe<ResolversTypes['OpeningHoursDay']>, ParentType, ContextType>;
+  thursday?: Resolver<Maybe<ResolversTypes['OpeningHoursDay']>, ParentType, ContextType>;
+  tuesday?: Resolver<Maybe<ResolversTypes['OpeningHoursDay']>, ParentType, ContextType>;
+  wednesday?: Resolver<Maybe<ResolversTypes['OpeningHoursDay']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type OpeningHoursDayResolvers<ContextType = any, ParentType extends ResolversParentTypes['OpeningHoursDay'] = ResolversParentTypes['OpeningHoursDay']> = {
+  from?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  to?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -978,8 +1050,9 @@ export type PreferencesResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type PriceResolvers<ContextType = any, ParentType extends ResolversParentTypes['Price'] = ResolversParentTypes['Price']> = {
-  amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   currency?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1001,7 +1074,9 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  mostCommonFacilities?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType, Partial<QueryMostCommonFacilitiesArgs>>;
   mostCommonFeatures?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType, Partial<QueryMostCommonFeaturesArgs>>;
+  mostCommonRules?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType, Partial<QueryMostCommonRulesArgs>>;
   popularEventCategories?: Resolver<Array<ResolversTypes['CategoryInfo']>, ParentType, ContextType>;
   reviews?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
   reviewsByUser?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsByUserArgs, 'userId'>>;
@@ -1034,7 +1109,6 @@ export type SocialMediaResolvers<ContextType = any, ParentType extends Resolvers
   facebook?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   instagram?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   strava?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  twitter?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   youtube?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1059,6 +1133,10 @@ export type TrailResolvers<ContextType = any, ParentType extends ResolversParent
   verticalDrop?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1111,10 +1189,12 @@ export type Resolvers<ContextType = any> = {
   Coordinates?: CoordinatesResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Event?: EventResolvers<ContextType>;
+  ImageUploadResponse?: ImageUploadResponseResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   Notifications?: NotificationsResolvers<ContextType>;
   OpeningHours?: OpeningHoursResolvers<ContextType>;
+  OpeningHoursDay?: OpeningHoursDayResolvers<ContextType>;
   Organizer?: OrganizerResolvers<ContextType>;
   PaginatedBikeParks?: PaginatedBikeParksResolvers<ContextType>;
   PaginatedReviews?: PaginatedReviewsResolvers<ContextType>;
@@ -1127,6 +1207,7 @@ export type Resolvers<ContextType = any> = {
   SocialMedia?: SocialMediaResolvers<ContextType>;
   Stats?: StatsResolvers<ContextType>;
   Trail?: TrailResolvers<ContextType>;
+  Upload?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   Venue?: VenueResolvers<ContextType>;
   Weather?: WeatherResolvers<ContextType>;

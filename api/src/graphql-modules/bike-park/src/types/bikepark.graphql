@@ -1,40 +1,8 @@
-type Coordinates {
-  latitude: Float!
-  longitude: Float!
-}
-
-type OpeningHours {
-  monday: String
-  tuesday: String
-  wednesday: String
-  thursday: String
-  friday: String
-  saturday: String
-  sunday: String
-}
-
-type Contact {
-  phone: String
-  email: String
-}
-
-type Price {
-  amount: Float!
-  currency: String!
-}
-
-type SocialMedia {
-  facebook: String
-  instagram: String
-  twitter: String
-  youtube: String
-}
-
 type BikePark {
   id: ID!
   name: String!
-  createdBy: User!
-  createdAt: String!
+  createdBy: User
+  createdAt: String
   description: String
   location: String
   features: [String!]
@@ -46,16 +14,66 @@ type BikePark {
   coordinates: Coordinates
   openingHours: OpeningHours
   contact: Contact
-  price: Price
+  prices: [Price]
   facilities: [String!]
   rules: [String!]
   photos: [String!]
   videos: [String!]
-  website: String
   socialMedia: SocialMedia
   status: String
   lastUpdated: String
   updatedAt: String
   weather: Weather
   trails: [Trail!]
+  approvalStatus: ApprovedStatus
+}
+
+type Coordinates {
+  latitude: Float!
+  longitude: Float!
+}
+
+type OpeningHours {
+  monday: OpeningHoursDay
+  tuesday: OpeningHoursDay
+  wednesday: OpeningHoursDay
+  thursday: OpeningHoursDay
+  friday: OpeningHoursDay
+  saturday: OpeningHoursDay
+  sunday: OpeningHoursDay
+}
+
+type OpeningHoursDay {
+  from: String
+  to: String
+}
+
+type Contact {
+  phone: String
+  email: String
+  website: String
+}
+
+type Price {
+  name: String!
+  price: Float!
+  currency: String!
+}
+
+type SocialMedia {
+  facebook: String
+  instagram: String
+  youtube: String
+  strava: String
+}
+
+type ImageUploadResponse {
+  url: String!
+  key: String!
+}
+
+enum ApprovedStatus {
+  APPROVED
+  REJECTED
+  WAITING_FOR_APPROVAL
 }

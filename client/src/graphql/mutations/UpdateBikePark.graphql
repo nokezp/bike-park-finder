@@ -1,0 +1,7 @@
+mutation UpdateBikePark($id: ID!, $input: UpdateBikeParkInput!) {
+  updateBikePark(id: $id, input: $input) {
+    id
+    name
+    location
+  }
+}

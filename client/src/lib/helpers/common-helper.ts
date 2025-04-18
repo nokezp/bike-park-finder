@@ -1,6 +1,6 @@
 import moment from "moment";
 import { OpeningHours } from "../../utils/types";
-import { BikeParkQuery } from "../graphql/generated/graphql-operations";
+import { BikeParkQuery, PriceInput } from "../graphql/generated/graphql-operations";
 
 type BikeParkOpeningHours = NonNullable<NonNullable<BikeParkQuery['bikePark']>['openingHours']>;
 
@@ -69,29 +69,94 @@ export const convertUnixToDayName = (unixTimestamp: number) => {
   }
 };
 
+function isParkOpen(from: string, to: string) {
+  const currentTime = moment();
+  const openingTime = moment(from, "HH:mm"); // moment().set({ hour: 9, minute: 0, second: 0 });
+  const closingTime = moment(to, "HH:mm"); //moment().set({ hour: 17, minute: 0, second: 0 }); // 05:00 PM
+
+  if (currentTime.isBetween(openingTime, closingTime, null, '[)')) {
+    return 'Open.';
+  }
+
+  return 'Closed';
+}
+
 const formatOpeningHours = (openingHours: BikeParkOpeningHours | null | undefined): OpeningHours[] => {
   if (!openingHours) {
     return [];
   }
 
   return [
-    { days: 'Monday', hours: openingHours.monday || 'Closed' },
-    { days: 'Tuesday', hours: openingHours.tuesday || 'Closed' },
-    { days: 'Wednesday', hours: openingHours.wednesday || 'Closed' },
-    { days: 'Thursday', hours: openingHours.thursday || 'Closed' },
-    { days: 'Friday', hours: openingHours.friday || 'Closed' },
-    { days: 'Saturday', hours: openingHours.saturday || 'Closed' },
-    { days: 'Sunday', hours: openingHours.sunday || 'Closed' },
+    {
+      days: 'Monday',
+      hours: {
+        from: openingHours.monday?.from ?? null,
+        to: openingHours.monday?.to ?? null,
+      }
+    },
+    {
+      days: 'Tuesday',
+      hours: {
+        from: openingHours.tuesday?.from ?? null,
+        to: openingHours.tuesday?.to ?? null,
+      }
+    },
+    {
+      days: 'Wednesday',
+      hours: {
+        from: openingHours.wednesday?.from ?? null,
+        to: openingHours.wednesday?.to ?? null,
+      }
+    },
+    {
+      days: 'Thursday',
+      hours: {
+        from: openingHours.thursday?.from ?? null,
+        to: openingHours.thursday?.to ?? null,
+      }
+    },
+    {
+      days: 'Friday',
+      hours: {
+        from: openingHours.friday?.from ?? null,
+        to: openingHours.friday?.to ?? null,
+      }
+    },
+    {
+      days: 'Saturday',
+      hours: {
+        from: openingHours.saturday?.from ?? null,
+        to: openingHours.saturday?.to ?? null,
+      }
+    },
+    {
+      days: 'Sunday',
+      hours: {
+        from: openingHours.sunday?.from ?? null,
+        to: openingHours.sunday?.to ?? null,
+      }
+    },
   ];
 };
 
 export const getCurrentWorkingStatus = (openingHours: BikeParkOpeningHours | null | undefined): string | undefined => {
   if (!openingHours) {
+    return 'Might be closed';
+  }
+
+  const day = moment().format('dddd');
+  const hours = formatOpeningHours(openingHours).find(({ days }) => days === day)?.hours;
+  return hours?.from && hours?.to ? isParkOpen(hours.from, hours.to) : "Might be closed";
+};
+
+export const getCurrentWorkingHours = (openingHours: BikeParkOpeningHours | null | undefined): string | undefined => {
+  if (!openingHours) {
     return 'Unknown';
   }
 
   const day = moment().format('dddd');
-  return formatOpeningHours(openingHours).find(({ days }) => days === day)?.hours;
+  const hours = formatOpeningHours(openingHours).find(({ days }) => days === day)?.hours;
+  return hours?.from && hours?.to && isParkOpen(hours.from, hours.to) ? [hours?.from, hours?.to].join(":") : "Unknown";
 };
 
 export const getWorkWeekStatus = (openingHours: BikeParkOpeningHours | null | undefined): string | undefined => {
@@ -105,7 +170,12 @@ export const getWorkWeekStatus = (openingHours: BikeParkOpeningHours | null | un
   };
 
   const weekdays = workingHours.slice(0, 5);
-  return weekdays.every((day) => day.hours === weekdays[0].hours) ? weekdays[0].hours : formatHours(weekdays);
+
+  if (weekdays.every((day) => day.hours?.from === null)) {
+    return "Unknown"
+  }
+
+  return weekdays.every((day) => day.hours?.from === weekdays[0].hours?.from) ? [weekdays[0].hours?.from, weekdays[0].hours?.to].join(":") : formatHours(weekdays);
 };
 
 export const getWeekendStatus = (openingHours: BikeParkOpeningHours | null | undefined): string | undefined => {
@@ -119,5 +189,106 @@ export const getWeekendStatus = (openingHours: BikeParkOpeningHours | null | und
   };
 
   const weekendDays = workingHours.slice(5);
-  return weekendDays.every((day) => day.hours === weekendDays[0].hours) ? weekendDays[0].hours : formatHours(weekendDays);
+
+  if (weekendDays.every((day) => day.hours?.from === null)) {
+    return "Unknown"
+  }
+
+  return weekendDays.every((day) => day.hours?.from === weekendDays[0].hours?.from) ? [weekendDays[0].hours?.from, weekendDays[0].hours?.to].join(":") : formatHours(weekendDays);
+};
+
+export const bikeParkStatus = [
+  { status: "Open", value: "open" },
+  { status: "Closed", value: "closed" },
+  { status: "Maintenance", value: "maintenance" },
+];
+
+export const bikeParkPasses = [
+  { name: "Daily Pass", value: "daily" },
+  { name: "Multi-Day Pass", value: "multy_day" },
+  { name: "Season Pass", value: "season" },
+  { name: "Family Pass", value: "family" },
+  { name: "Group Pass", value: "group" },
+  { name: "Lift Access Pass", value: "lift_access" },
+  { name: "Shuttle Pass", value: "shuttle" },
+];
+
+export const currencies = [
+  { code: "USD", name: "US Dollar" },
+  { code: "EUR", name: "Euro" },
+  { code: "GBP", name: "British Pound" },
+  { code: "JPY", name: "Japanese Yen" },
+  { code: "CHF", name: "Swiss Franc" },
+  { code: "AUD", name: "Australian Dollar" },
+  { code: "CAD", name: "Canadian Dollar" },
+  { code: "NZD", name: "New Zealand Dollar" },
+  { code: "SEK", name: "Swedish Krona" },
+  { code: "NOK", name: "Norwegian Krone" },
+  { code: "DKK", name: "Danish Krone" },
+  { code: "CZK", name: "Czech Koruna" },
+  { code: "PLN", name: "Polish Zloty" },
+  { code: "HUF", name: "Hungarian Forint" },
+  { code: "RON", name: "Romanian Leu" },
+  { code: "TRY", name: "Turkish Lira" },
+  { code: "BGN", name: "Bulgarian Lev" },
+  { code: "HRK", name: "Croatian Kuna" },
+  { code: "INR", name: "Indian Rupee" },
+  { code: "CNY", name: "Chinese Yuan" },
+  { code: "RUB", name: "Russian Ruble" },
+  { code: "ZAR", name: "South African Rand" },
+  { code: "MXN", name: "Mexican Peso" },
+  { code: "BRL", name: "Brazilian Real" },
+  { code: "SGD", name: "Singapore Dollar" },
+  { code: "HKD", name: "Hong Kong Dollar" },
+  { code: "KRW", name: "South Korean Won" },
+  { code: "AED", name: "UAE Dirham" },
+  { code: "SAR", name: "Saudi Riyal" },
+  { code: "ILS", name: "Israeli New Shekel" }
+];
+
+export type Price = {
+  name: string | null;
+  price: number | null;
+  currency: string | null;
+};
+
+export type OpeningHoursDay = {
+  from?: string;
+  to?: string;
+};
+
+export type FormValues = {
+  name: string;
+  description?: string | null;
+  location: string;
+  imageUrl?: string | null;
+  difficulty?: string;
+  status?: string | null;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  contact?: {
+    email?: string | null;
+    phone?: string | null;
+    website?: string | null;
+  } | null | undefined;
+  socialMedia?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    youtube?: string | null;
+    strava?: string | null;
+  } | null;
+  openingHours?: {
+    [day: string]: {
+      from?: string | null;
+      to?: string | null;
+    } | null;
+  } | null;
+  prices?: PriceInput[];
+  photos?: string[];
+  videos?: string[];
+  rules?: string[];
+  facilities?: string[];
+  features?: string[];
 };
