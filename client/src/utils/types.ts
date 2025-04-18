@@ -39,5 +39,8 @@ export interface Hotel {
 
 export interface OpeningHours {
   days: string;
-  hours: string;
+  hours?: {
+    from: string | null;
+    to: string | null;
+  } | undefined | null;
 }

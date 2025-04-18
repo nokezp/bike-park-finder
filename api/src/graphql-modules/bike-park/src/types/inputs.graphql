@@ -4,30 +4,57 @@ input CoordinatesInput {
 }
 
 input OpeningHoursInput {
-  monday: String
-  tuesday: String
-  wednesday: String
-  thursday: String
-  friday: String
-  saturday: String
-  sunday: String
+  monday: OpeningHoursDayInput
+  tuesday: OpeningHoursDayInput
+  wednesday: OpeningHoursDayInput
+  thursday: OpeningHoursDayInput
+  friday: OpeningHoursDayInput
+  saturday: OpeningHoursDayInput
+  sunday: OpeningHoursDayInput
+}
+
+input OpeningHoursDayInput {
+  from: String
+  to: String
 }
 
 input ContactInput {
   phone: String
   email: String
+  website: String
 }
 
 input PriceInput {
-  amount: Float!
+  name: String!
+  price: Float!
   currency: String!
 }
 
 input SocialMediaInput {
   facebook: String
   instagram: String
-  twitter: String
   youtube: String
+  strava: String
+}
+
+input CreateBikeParkInput {
+  name: String!
+  description: String
+  location: String!
+  features: [String!]
+  difficulty: String
+  address: String
+  coordinates: CoordinatesInput!
+  imageUrl: String
+  openingHours: OpeningHoursInput
+  contact: ContactInput
+  prices: [PriceInput]
+  facilities: [String!]
+  rules: [String!]
+  photos: [String!]
+  videos: [String!]
+  socialMedia: SocialMediaInput
+  status: String
 }
 
 input UpdateBikeParkInput {
@@ -41,12 +68,11 @@ input UpdateBikeParkInput {
   imageUrl: String
   openingHours: OpeningHoursInput
   contact: ContactInput
-  price: PriceInput
+  prices: [PriceInput]
   facilities: [String!]
   rules: [String!]
   photos: [String!]
   videos: [String!]
-  website: String
   socialMedia: SocialMediaInput
   status: String
 }

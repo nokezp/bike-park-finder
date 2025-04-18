@@ -61,9 +61,24 @@ export class AuthProvider {
   }
 
   /**
+   * Get the user
+   */
+  async getUserById(userId: string) {
+    try {
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        throw new GraphQLError('User not found');
+      }
+      return user;
+    } catch (error: any) {
+      throw new GraphQLError(`Error fetching user: ${error.message}`);
+    }
+  }
+
+  /**
    * Register a new user
    */
-  async register(args: { 
+  async register(args: {
     username: string;
     firstName: string;
     lastName: string;
@@ -84,7 +99,7 @@ export class AuthProvider {
       // Create user
       const user = new UserModel({
         username,
-        email, 
+        email,
         password,
         confirmPassword,
         createdAt: new Date().toISOString(),
@@ -129,7 +144,7 @@ export class AuthProvider {
       if (!user) {
         throw new GraphQLError('Invalid credentials');
       }
-      
+
       // Check password
       const isMatch = await user.comparePassword(password);
       if (!isMatch) {
@@ -182,7 +197,7 @@ export class AuthProvider {
       if (!user) {
         // Create a new user if they don't exist
         const username = email.split('@')[0] + '_' + Math.floor(Math.random() * 1000);
-        
+
         user = new UserModel({
           username,
           email,
@@ -236,7 +251,7 @@ export class AuthProvider {
 
       // Generate reset token
       const resetToken = crypto.randomBytes(32).toString('hex');
-      
+
       // Hash token and set to resetPasswordToken field
       const resetPasswordToken = crypto
         .createHash('sha256')
@@ -300,11 +315,11 @@ export class AuthProvider {
 
       // Set new password
       user.password = password;
-      
+
       // Clear reset token fields
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
-      
+
       // Save user
       await user.save();
 

@@ -1,0 +1,3 @@
+mutation DeleteBikePark($id: ID!) {
+  deleteBikePark(id: $id)
+}

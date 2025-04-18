@@ -16,7 +16,6 @@ query Me {
       socialMedia {
         facebook
         instagram
-        twitter
         youtube
         strava
       }

@@ -1,8 +1,9 @@
-import 'dotenv/config';
-import { createServer } from 'node:http';
-import { createYoga } from 'graphql-yoga';
+import express from "express";
+import { graphqlHTTP } from "express-graphql";
+import { graphqlUploadExpress } from "graphql-upload";
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import mongoose from 'mongoose';
+import 'dotenv/config';
 
 // Import logger
 import Logger from './utils/logger.js';
@@ -44,31 +45,48 @@ const schema = makeExecutableSchema({
   ],
 });
 
-// Create GraphQL Yoga server
-const yoga = createYoga({
-  schema,
-  context: async ({ request }) => {
-    const auth = request.headers.get('authorization');
-    return createContext({ auth });
-  },
-  graphiql: true,
-  cors: {
-    origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'],
-    credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    methods: ['POST', 'OPTIONS', 'GET', 'HEAD'],
-  },
-  // Configure multipart request handling for file uploads
-  multipart: true
+const app = express();
+
+// Configure CORS
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS, GET, HEAD');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
 });
 
-// Create HTTP server
-const server = createServer(yoga);
+// Serve static files from the uploads directory
+app.use('/uploads', express.static('uploads'));
+
+// Configure file upload middleware - MUST be added before graphqlHTTP
+app.use(graphqlUploadExpress({ 
+  maxFileSize: 10000000, // 10 MB
+  maxFiles: 10
+}));
+
+// Configure GraphQL endpoint
+app.use(
+  "/graphql",
+  (req, res) => {
+    // Extract auth token from request headers
+    const auth = req.headers.authorization;
+    
+    return graphqlHTTP({
+      schema,
+      context: createContext({ auth }),
+      graphiql: true,
+    })(req, res);
+  }
+);
 
 // Start server function
 const startServer = () => {
-  server.listen(PORT, () => {
-    Logger.info(`🚀 Server is running at http://localhost:${PORT}/graphql`);
+  app.listen(PORT, () => {
+    Logger.info(`🚀 Express server with graphql-upload is running at http://localhost:${PORT}/graphql`);
     if (!mongoose.connection.readyState) {
       Logger.warn('⚠️  Warning: MongoDB is not connected. Running in mock data mode.');
     }

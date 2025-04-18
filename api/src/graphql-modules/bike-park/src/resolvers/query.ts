@@ -33,6 +33,14 @@ export const query = {
 
     mostCommonFeatures: async (_: unknown, { limit }: { limit?: number }) => {
       return bikeParkProvider.getMostCommonFeatures(limit);
+    },
+
+    mostCommonFacilities: async (_: unknown, { limit }: { limit?: number }) => {
+      return bikeParkProvider.getMostCommonFacilities(limit);
+    },
+
+    mostCommonRules: async (_: unknown, { limit }: { limit?: number }) => {
+      return bikeParkProvider.getMostCommonRules(limit);
     }
   },
 };

@@ -8,7 +8,7 @@ import { CreateReviewDocument, CreateReviewMutation } from "../../lib/graphql/ge
 const ReviewSection = () => {
 	const { id: bikeParkId } = useParams<{ id: string }>();
 	const [showWriteReviewForm, setShowWriteReviewForm] = useState(false);
-	
+
 	const [reviewRes, createReview] = useMutation<CreateReviewMutation>(CreateReviewDocument);
 
 	const handleSubmit = (formData: ReviewFormData) => {
@@ -19,8 +19,8 @@ const ReviewSection = () => {
 		});
 	};
 
-	if(reviewRes.fetching) return <div className="text-center py-4">Submitting review...</div>;
-	if(reviewRes.error) return <div className="text-center py-4 text-red-500">Error submitting review: {reviewRes.error.message}</div>;
+	if (reviewRes.fetching) return <div className="text-center py-4">Submitting review...</div>;
+	if (reviewRes.error) return <div className="text-center py-4 text-red-500">Error submitting review: {reviewRes.error.message}</div>;
 
 	return (
 		<div id="reviews" className="bg-white rounded-lg shadow-md p-6 w-full">

@@ -1,17 +1,18 @@
 import mongoose from 'mongoose';
 import { WeatherData } from '../../../../services/weatherService.js';
+import { Contact, OpeningHours, SocialMedia } from '../../../../core/generated-models.js';
 
 // BikePark interface
 export interface IBikePark extends mongoose.Document {
   name: string;
-  description: string;
+  description?: string;
   location: string;
-  features: string[];
+  features?: string[];
   difficulty: string;
   rating?: number;
-  reviews: mongoose.Types.ObjectId[];
+  reviews?: mongoose.Types.ObjectId[];
   imageUrl?: string;
-  address: string;
+  address?: string;
   coordinates: {
     latitude: number;
     longitude: number;
@@ -22,11 +23,15 @@ export interface IBikePark extends mongoose.Document {
   lastUpdated: Date;
   createdAt: Date;
   updatedAt: Date;
+  openingHours?: OpeningHours;
+  contact?: Contact;
+  socialMedia?: SocialMedia;
   weather?: {
     current: WeatherData;
     forecast: WeatherData[];
     lastUpdated: Date;
   };
+  approvedStatus: string;
 }
 
 // BikePark schema
@@ -37,8 +42,7 @@ const bikeParkSchema = new mongoose.Schema({
     trim: true,
   },
   description: {
-    type: String,
-    required: true,
+    type: String
   },
   location: {
     type: String,
@@ -55,52 +59,48 @@ const bikeParkSchema = new mongoose.Schema({
     },
   },
   imageUrl: {
-    type: String,
-    required: true,
+    type: String
   },
   status: {
     type: String,
-    required: true,
     enum: ['open', 'closed', 'maintenance'],
   },
   difficulty: {
     type: String,
-    required: true,
     enum: ['beginner', 'intermediate', 'expert'],
   },
   features: [
     {
       type: String,
-      required: true,
     },
   ],
   facilities: [
     {
       type: String,
-      required: true,
     },
   ],
   openingHours: {
-    monday: String,
-    tuesday: String,
-    wednesday: String,
-    thursday: String,
-    friday: String,
-    saturday: String,
-    sunday: String,
+    monday: { from: String, to: String },
+    tuesday: { from: String, to: String },
+    wednesday: { from: String, to: String },
+    thursday: { from: String, to: String },
+    friday: { from: String, to: String },
+    saturday: { from: String, to: String },
+    sunday: { from: String, to: String },
   },
   contact: {
     phone: String,
     email: String,
+    website: String,
   },
-  price: {
-    amount: Number,
+  prices: [{
+    name: String,
+    price: Number,
     currency: String,
-  },
+  }],
   rules: [String],
   photos: [String],
   videos: [String],
-  website: String,
   socialMedia: {
     facebook: String,
     instagram: String,
@@ -150,6 +150,7 @@ const bikeParkSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  approvedStatus: String
 });
 
 // Add text index for search functionality

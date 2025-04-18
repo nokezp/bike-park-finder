@@ -55,6 +55,14 @@ export default {
             "args": []
           },
           {
+            "name": "approvalStatus",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
             "name": "contact",
             "type": {
               "kind": "OBJECT",
@@ -75,23 +83,17 @@ export default {
           {
             "name": "createdAt",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+              "kind": "SCALAR",
+              "name": "Any"
             },
             "args": []
           },
           {
             "name": "createdBy",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "User",
+              "ofType": null
             },
             "args": []
           },
@@ -209,11 +211,14 @@ export default {
             "args": []
           },
           {
-            "name": "price",
+            "name": "prices",
             "type": {
-              "kind": "OBJECT",
-              "name": "Price",
-              "ofType": null
+              "kind": "LIST",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Price",
+                "ofType": null
+              }
             },
             "args": []
           },
@@ -316,14 +321,6 @@ export default {
               "ofType": null
             },
             "args": []
-          },
-          {
-            "name": "website",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
           }
         ],
         "interfaces": []
@@ -382,6 +379,14 @@ export default {
           },
           {
             "name": "phone",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "website",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -667,6 +672,35 @@ export default {
       },
       {
         "kind": "OBJECT",
+        "name": "ImageUploadResponse",
+        "fields": [
+          {
+            "name": "key",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "url",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
         "name": "Mutation",
         "fields": [
           {
@@ -681,162 +715,13 @@ export default {
             },
             "args": [
               {
-                "name": "address",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "contact",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "coordinates",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "description",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "difficulty",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "facilities",
-                "type": {
-                  "kind": "LIST",
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "Any"
-                    }
-                  }
-                }
-              },
-              {
-                "name": "features",
-                "type": {
-                  "kind": "LIST",
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "Any"
-                    }
-                  }
-                }
-              },
-              {
-                "name": "imageUrl",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "location",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "name",
+                "name": "input",
                 "type": {
                   "kind": "NON_NULL",
                   "ofType": {
                     "kind": "SCALAR",
                     "name": "Any"
                   }
-                }
-              },
-              {
-                "name": "openingHours",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "photos",
-                "type": {
-                  "kind": "LIST",
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "Any"
-                    }
-                  }
-                }
-              },
-              {
-                "name": "price",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "rules",
-                "type": {
-                  "kind": "LIST",
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "Any"
-                    }
-                  }
-                }
-              },
-              {
-                "name": "socialMedia",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "status",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "videos",
-                "type": {
-                  "kind": "LIST",
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "Any"
-                    }
-                  }
-                }
-              },
-              {
-                "name": "website",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
                 }
               }
             ]
@@ -1357,6 +1242,29 @@ export default {
                 }
               }
             ]
+          },
+          {
+            "name": "uploadImage",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ImageUploadResponse",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "file",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
           }
         ],
         "interfaces": []
@@ -1391,45 +1299,75 @@ export default {
           {
             "name": "friday",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "OBJECT",
+              "name": "OpeningHoursDay",
+              "ofType": null
             },
             "args": []
           },
           {
             "name": "monday",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "OBJECT",
+              "name": "OpeningHoursDay",
+              "ofType": null
             },
             "args": []
           },
           {
             "name": "saturday",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "OBJECT",
+              "name": "OpeningHoursDay",
+              "ofType": null
             },
             "args": []
           },
           {
             "name": "sunday",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "OBJECT",
+              "name": "OpeningHoursDay",
+              "ofType": null
             },
             "args": []
           },
           {
             "name": "thursday",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "OBJECT",
+              "name": "OpeningHoursDay",
+              "ofType": null
             },
             "args": []
           },
           {
             "name": "tuesday",
+            "type": {
+              "kind": "OBJECT",
+              "name": "OpeningHoursDay",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "wednesday",
+            "type": {
+              "kind": "OBJECT",
+              "name": "OpeningHoursDay",
+              "ofType": null
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "OpeningHoursDay",
+        "fields": [
+          {
+            "name": "from",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -1437,7 +1375,7 @@ export default {
             "args": []
           },
           {
-            "name": "wednesday",
+            "name": "to",
             "type": {
               "kind": "SCALAR",
               "name": "Any"
@@ -1675,7 +1613,7 @@ export default {
         "name": "Price",
         "fields": [
           {
-            "name": "amount",
+            "name": "currency",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -1686,7 +1624,18 @@ export default {
             "args": []
           },
           {
-            "name": "currency",
+            "name": "name",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "price",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -1906,7 +1855,51 @@ export default {
             "args": []
           },
           {
+            "name": "mostCommonFacilities",
+            "type": {
+              "kind": "LIST",
+              "ofType": {
+                "kind": "NON_NULL",
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "limit",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
             "name": "mostCommonFeatures",
+            "type": {
+              "kind": "LIST",
+              "ofType": {
+                "kind": "NON_NULL",
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "limit",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "mostCommonRules",
             "type": {
               "kind": "LIST",
               "ofType": {
@@ -2230,14 +2223,6 @@ export default {
           },
           {
             "name": "strava",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "twitter",
             "type": {
               "kind": "SCALAR",
               "name": "Any"

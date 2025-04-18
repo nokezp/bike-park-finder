@@ -1,4 +1,4 @@
-import { createClient, fetchExchange, Operation } from 'urql';
+import { createClient, Operation, fetchExchange } from 'urql';
 import { cacheExchange, UpdatesConfig } from '@urql/exchange-graphcache';
 import { authExchange } from '@urql/exchange-auth';
 import { CombinedError } from '@urql/core';
@@ -96,7 +96,6 @@ const urqlClient = createClient({
         Preferences: () => null,
         Stats: () => null,
       },
-      fetchExchange
     }),
     authExchange(async () => ({
       addAuthToOperation,
