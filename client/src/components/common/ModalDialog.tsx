@@ -4,11 +4,12 @@ import React, { useEffect, useRef } from 'react';
 interface ModalProps {
   isOpen: boolean;
   onClose?: () => void;
+  size?: "3xs" | "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | "7xl",
   title?: string;
   children: React.ReactNode;
 }
 
-const ModalDialog: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+const ModalDialog: React.FC<ModalProps> = ({ isOpen, onClose, title, size, children }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const ModalDialog: React.FC<ModalProps> = ({ isOpen, onClose, title, children })
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div
         ref={modalRef}
-        className="bg-white rounded-lg shadow-xl w-full max-w-xl mx-4 overflow-hidden"
+        className={`bg-white rounded-lg shadow-xl w-full max-w-${size || 'xl'} mx-4 overflow-hidden`}
       >
         {title && (
           <div className="px-6 py-4 border-b border-gray-200">

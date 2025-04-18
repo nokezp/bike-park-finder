@@ -17,7 +17,7 @@ const BikeParkHeader: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
       <section id="park-hero" className="relative h-[500px]">
         <div className="absolute inset-0">
           <FallbackImage
-            src="https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png"
+            src={bikePark.imageUrl || "https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png"}
             alt={bikePark.name || "Bike Park"}
             className="w-full h-full object-cover"
           />

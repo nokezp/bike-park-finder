@@ -26,8 +26,6 @@ const BikeParkDetailPage: React.FC = () => {
   if (error) return <div>Error: {error.message}</div>;
   if (!data?.bikePark) return <div>No bike park found</div>;
 
-  // Using the bikePark data from the query result
-  // Adding type assertion to satisfy the BikePark type requirements
   const bikePark = data.bikePark as unknown as BikePark;
 
   return (

@@ -227,11 +227,16 @@ const MapLeftMenu: React.FC<{
                   >
                     <div className="flex">
                       <div className='flex-[30%]'>
-                        <FallbackImage
+                        {park.imageUrl ? (
+                          <div className={`w-full h-full bg-center bg-no-repeat bg-cover bg-[url(${park.imageUrl})]`}></div>
+                        ) : (
+                          <div className="w-full h-full bg-center bg-no-repeat bg-cover bg-[url('https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png')]"></div>
+                        )}
+                        {/* <FallbackImage
                           src={park.imageUrl || "https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png"}
                           alt={park.name || "Bike Park"}
                           className="rounded-lg object-cover"
-                        />
+                        /> */}
                       </div>
                       <div className="flex-[70%] m-4">
                         <div className="flex justify-between">

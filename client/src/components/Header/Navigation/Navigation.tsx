@@ -57,7 +57,7 @@ const Navigation = () => {
       ))}
       {data?.me?.id ? (
         <>
-          {location.pathname !== "/bike-park/new" && (
+          {location.pathname !== "/bike-park/new" && location.pathname !== "/bike-park/edit" && (
             <Link to="/bike-park/new">
               <button
                 type="submit"

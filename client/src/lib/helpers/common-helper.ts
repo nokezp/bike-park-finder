@@ -156,7 +156,7 @@ export const getCurrentWorkingHours = (openingHours: BikeParkOpeningHours | null
 
   const day = moment().format('dddd');
   const hours = formatOpeningHours(openingHours).find(({ days }) => days === day)?.hours;
-  return hours?.from && hours?.to && isParkOpen(hours.from, hours.to) ? [hours?.from, hours?.to].join(":") : "Unknown";
+  return hours?.from && hours?.to && isParkOpen(hours.from, hours.to) ? [hours?.from, hours?.to].join(" - ") : "Unknown";
 };
 
 export const getWorkWeekStatus = (openingHours: BikeParkOpeningHours | null | undefined): string | undefined => {
@@ -175,7 +175,7 @@ export const getWorkWeekStatus = (openingHours: BikeParkOpeningHours | null | un
     return "Unknown"
   }
 
-  return weekdays.every((day) => day.hours?.from === weekdays[0].hours?.from) ? [weekdays[0].hours?.from, weekdays[0].hours?.to].join(":") : formatHours(weekdays);
+  return weekdays.every((day) => day.hours?.from === weekdays[0].hours?.from) ? [weekdays[0].hours?.from, weekdays[0].hours?.to].join(" - ") : formatHours(weekdays);
 };
 
 export const getWeekendStatus = (openingHours: BikeParkOpeningHours | null | undefined): string | undefined => {
@@ -194,7 +194,7 @@ export const getWeekendStatus = (openingHours: BikeParkOpeningHours | null | und
     return "Unknown"
   }
 
-  return weekendDays.every((day) => day.hours?.from === weekendDays[0].hours?.from) ? [weekendDays[0].hours?.from, weekendDays[0].hours?.to].join(":") : formatHours(weekendDays);
+  return weekendDays.every((day) => day.hours?.from === weekendDays[0].hours?.from) ? [weekendDays[0].hours?.from, weekendDays[0].hours?.to].join(" - ") : formatHours(weekendDays);
 };
 
 export const bikeParkStatus = [
