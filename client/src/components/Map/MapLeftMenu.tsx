@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { BikePark, BikeParkFilter, BikeParksDocument } from '../../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 import FallbackImage from '../common/FallbackImage';
+import { capitalize } from 'lodash';
 
 export enum Difficulty {
   ALL = 'All',
@@ -227,16 +228,11 @@ const MapLeftMenu: React.FC<{
                   >
                     <div className="flex">
                       <div className='flex-[30%]'>
-                        {park.imageUrl ? (
-                          <div className={`w-full h-full bg-center bg-no-repeat bg-cover bg-[url(${park.imageUrl})]`}></div>
-                        ) : (
-                          <div className="w-full h-full bg-center bg-no-repeat bg-cover bg-[url('https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png')]"></div>
-                        )}
-                        {/* <FallbackImage
-                          src={park.imageUrl || "https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-440d7ef9c1fdf0470128.png"}
-                          alt={park.name || "Bike Park"}
+                        <FallbackImage
+                          src={park.imageUrl ?? ""}
+                          alt={park.name ?? "Bike Park"}
                           className="rounded-lg object-cover"
-                        /> */}
+                        />
                       </div>
                       <div className="flex-[70%] m-4">
                         <div className="flex justify-between">
@@ -269,7 +265,7 @@ const MapLeftMenu: React.FC<{
                                 : 'bg-red-100 text-red-600'
                               }`}
                           >
-                            {park.difficulty?.[0]?.toUpperCase()}
+                            {capitalize(park.difficulty ?? "")}
                           </span>
                         </div>
                       </div>
