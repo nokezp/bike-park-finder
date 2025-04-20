@@ -57,7 +57,7 @@ const BikeParkDescription: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => 
       </div>
 
       {!!bikePark.facilities?.length && (
-        <div id="features" className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div id="facilities" className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-bold mb-4">Features & Facilities</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {bikePark.facilities?.map((facility) => (

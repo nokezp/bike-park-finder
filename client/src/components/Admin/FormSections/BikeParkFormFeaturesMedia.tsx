@@ -1,10 +1,10 @@
 /* eslint-disable no-undef */
-import React, { useRef, useState, ChangeEvent } from 'react';
+import React, { useRef, useState, ChangeEvent, useMemo } from 'react';
 import { capitalize } from 'lodash';
-import { MostCommonFacilitiesDocument, MostCommonFacilitiesQuery, MostCommonFeaturesDocument, MostCommonFeaturesQuery, MostCommonRulesDocument, MostCommonRulesQuery, Price } from '../../../lib/graphql/generated/graphql-operations';
+import { MostCommonFacilitiesDocument, MostCommonFacilitiesQuery, MostCommonRulesDocument, MostCommonRulesQuery, Price } from '../../../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 import { BikeParkFormProp } from './BikeParkFormBasicInfo';
-import { bikeParkPasses, currencies } from '../../../lib/helpers/common-helper';
+import { bikeParkPasses, currencies, featuresObject } from '../../../lib/helpers/common-helper';
 
 const BikeParkFormFeaturesMedia: React.FC<BikeParkFormProp> = ({ form }) => {
   const [loadAllFeatures, setLoadAllFeatures] = useState<boolean>(false);
@@ -16,10 +16,13 @@ const BikeParkFormFeaturesMedia: React.FC<BikeParkFormProp> = ({ form }) => {
   const multipleImagesRef = useRef<HTMLInputElement>(null);
   const [uploadingGallery, setUploadingGallery] = useState<boolean>(false);
 
-  const [{ data: features }] = useQuery<MostCommonFeaturesQuery>({
-    query: MostCommonFeaturesDocument,
-    ...(!loadAllFeatures ? { variables: { limit: 5 } } : {}),
-  });
+  const features = useMemo(() => {
+    if (loadAllFeatures) {
+      return featuresObject;
+    } else {
+      return featuresObject.slice(0, 5);
+    }
+  }, [loadAllFeatures])
 
   const [{ data: facilities }] = useQuery<MostCommonFacilitiesQuery>({
     query: MostCommonFacilitiesDocument,
@@ -105,26 +108,26 @@ const BikeParkFormFeaturesMedia: React.FC<BikeParkFormProp> = ({ form }) => {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Park Features</label>
-        <div className="space-y-2 max-h-40 overflow-auto mb-[10px]">
-          {features?.mostCommonFeatures?.map((feature, index) => {
-            return (
-              <label key={`feature_${index}`} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={selectedFeatures.includes(feature)}
-                  onChange={(e) => {
-                    const current = form.getValues("features") || [];
-                    const updated = e.target.checked
-                      ? [...current, feature]
-                      : current.filter((f: string) => f !== feature);
-                    form.setValue("features", updated);
-                  }}
-                  className="mr-2"
-                />
-                {capitalize(feature)}
-              </label>
-            );
-          })}
+        <div className="space-y-2 max-h-[185px] overflow-auto mb-[10px]">
+          {features?.map((feature, index) => (
+            <label key={`feature_${index}`} className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={selectedFeatures.includes(feature.name)}
+                onChange={(e) => {
+                  const current = form.getValues("features") || [];
+                  const updated = e.target.checked
+                    ? [...current, feature.name]
+                    : current.filter((f: string) => f !== feature.name);
+                  form.setValue("features", updated);
+                }}
+              />
+              <div className={`bg-${feature.color}-500 rounded-full flex items-center justify-center w-[30px] h-[30px]`}>
+                <i className={`fa-solid fa-${feature.icon} text-white text-xs`}></i>
+              </div>
+              <span className="text-sm">{capitalize(feature.name)}</span>
+            </label>
+          ))}
         </div>
 
         <button
@@ -139,7 +142,7 @@ const BikeParkFormFeaturesMedia: React.FC<BikeParkFormProp> = ({ form }) => {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Park Facilities</label>
-        <div className="space-y-2 max-h-40 overflow-auto mb-[10px]">
+        <div className="space-y-2 max-h-[40] overflow-auto mb-[10px]">
           {facilities?.mostCommonFacilities?.map((facility, index) => {
             return (
               <label key={`facility_${index}`} className="flex items-center">
@@ -543,7 +546,7 @@ const BikeParkFormFeaturesMedia: React.FC<BikeParkFormProp> = ({ form }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

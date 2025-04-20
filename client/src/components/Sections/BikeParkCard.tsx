@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import FallbackImage from '../common/FallbackImage';
-import { getColorByIndex } from '../../utils/colors';
+import { getRandomColor } from '../../utils/colors';
 import { BikePark } from '../../lib/graphql/generated/graphql-operations';
 
 const BikeParkCard: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
@@ -28,8 +28,8 @@ const BikeParkCard: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
           <span className="text-ellipsis whitespace-nowrap overflow-hidden">{bikePark.location}</span>
         </div>
         <div className="flex flex-wrap gap-2 mb-4">
-          {bikePark?.features?.slice(0, 2)?.map((feature, index) => {
-            const color = getColorByIndex(index);
+          {bikePark?.features?.slice(0, 2)?.map((feature) => {
+            const color = getRandomColor();
             return (
               <span key={feature} className={`px-3 py-1 bg-${color}-100 text-${color}-600 rounded-full text-sm`}>
                 {feature}

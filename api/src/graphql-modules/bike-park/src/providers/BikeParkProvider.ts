@@ -14,7 +14,7 @@ import { AuthContext } from '../../../../utils/auth.js';
 
 const DEFAULT_RESULTS_PER_PAGE = 15;
 const WEATHER_UPDATE_INTERVAL = 30 * 60 * 1000; // 30 minutes
-const DEFAULT_SEARCH_RADIUS_KM = 50;
+const DEFAULT_SEARCH_RADIUS_KM = 500;
 
 export class BikeParkProvider {
   /**
@@ -40,96 +40,143 @@ export class BikeParkProvider {
       const skip = filter?.skip ?? 0;
       const take = filter?.take ?? DEFAULT_RESULTS_PER_PAGE;
 
-      // Build filter query
-      const query: any = { approvedStatus: { $nin: [ApprovedStatus.REJECTED, ApprovedStatus.WAITING_FOR_APPROVAL] } };
-      let sort: any = { createdAt: -1 }; // Default sort
+      // Build aggregation pipeline
+      const pipeline: any[] = [
+        {
+          $match: {
+            approvedStatus: { $nin: [ApprovedStatus.REJECTED, ApprovedStatus.WAITING_FOR_APPROVAL] },
+          },
+        },
+      ];
+
       if (filter) {
         // Text search for location or name
         if (filter.location) {
-          query.location = { $regex: filter.location, $options: 'i' };
+          pipeline.push({
+            $match: { location: { $regex: filter.location, $options: 'i' } },
+          });
         }
         if (filter.name) {
-          query.name = { $regex: filter.name, $options: 'i' };
+          pipeline.push({
+            $match: { name: { $regex: filter.name, $options: 'i' } },
+          });
         }
 
         // Exact match for difficulty
         if (filter.difficulty && filter.difficulty !== 'all') {
-          query.difficulty = filter.difficulty;
+          pipeline.push({
+            $match: { difficulty: filter.difficulty },
+          });
         }
 
         // Features filter - match any of the provided features
         if (filter.features && filter.features.length > 0 && !filter.features.includes('All')) {
-          query.features = { $all: filter.features };
+          pipeline.push({
+            $match: { features: { $all: filter.features } },
+          });
         }
 
         // Amenities filter - match all provided facilities
         if (filter.facilities && filter.facilities.length > 0) {
-          query.facilities = { $all: filter.facilities };
+          pipeline.push({
+            $match: { facilities: { $all: filter.facilities } },
+          });
         }
 
         // Sort order
         if (filter.sortBy) {
-          if (filter.sortBy === 'Rating') {
-            sort = { rating: -1 };
-          } else if (filter.sortBy === 'Name') {
-            sort = { name: 1 };
+          if (filter.sortBy === 'rating') {
+            pipeline.push({
+              $lookup: {
+                from: 'reviews', // Assuming the reviews collection is named 'reviews'
+                localField: '_id',
+                foreignField: 'bikePark',
+                as: 'reviews',
+              },
+            });
+            pipeline.push({
+              $addFields: {
+                averageRating: {
+                  $cond: {
+                    if: { $gt: [{ $size: '$reviews' }, 0] },
+                    then: { $avg: '$reviews.rating' },
+                    else: 0,
+                  },
+                },
+              },
+            });
+            pipeline.push({ $sort: { averageRating: -1 } });
           }
-          // Distance sorting will be handled after database query
         }
       }
-
-      // Fetch parks without pagination first if coordinates search is used
-      let bikeParks;
-      let totalCount;
 
       // Special handling for location-based search with coordinates
       if (filter?.coordinates) {
-        // Get all matching parks first
-        bikeParks = await BikeParkModel.find(query).sort(sort);
-
-        // Filter by distance
         const { latitude, longitude, radius = DEFAULT_SEARCH_RADIUS_KM } = filter.coordinates;
 
-        bikeParks = bikeParks.filter((park) => {
-          if (!park.coordinates || !park.coordinates.latitude || !park.coordinates.longitude) {
-            return false;
-          }
-
-          const distance = this.calculateDistance(
-            latitude,
-            longitude,
-            park.coordinates.latitude,
-            park.coordinates.longitude
-          );
-
-          // Add distance to park object for sorting
-          (park as any).distance = distance;
-
-          // Include only parks within radius
-          return distance <= (radius ?? 0);
+        pipeline.push({
+          $addFields: {
+            distance: {
+              $multiply: [
+                6371, // Earth's radius in km
+                {
+                  $acos: {
+                    $add: [
+                      {
+                        $multiply: [
+                          { $sin: { $degreesToRadians: latitude } },
+                          { $sin: { $degreesToRadians: '$coordinates.latitude' } },
+                        ],
+                      },
+                      {
+                        $multiply: [
+                          { $cos: { $degreesToRadians: latitude } },
+                          { $cos: { $degreesToRadians: '$coordinates.latitude' } },
+                          { $cos: { $subtract: [{ $degreesToRadians: '$coordinates.longitude' }, { $degreesToRadians: longitude }] } },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
         });
 
-        // Sort by distance if required
-        if (filter.sortBy === 'Distance') {
-          bikeParks.sort((a: any, b: any) => a.distance - b.distance);
+        pipeline.push({
+          $match: {
+            distance: { $lte: radius },
+          },
+        });
+
+        if (filter.sortBy === 'distance') {
+          pipeline.push({ $sort: { distance: 1 } });
         }
-
-        totalCount = bikeParks.length;
-
-        // Apply pagination manually
-        bikeParks = bikeParks.slice(skip, skip + take);
-      } else {
-        // Regular database query with pagination
-        totalCount = await BikeParkModel.countDocuments(query);
-        bikeParks = await BikeParkModel.find(query).skip(skip).limit(take).sort(sort);
       }
 
-      // Calculate pagination info
+      // Pagination
+      pipeline.push({ $skip: skip });
+      pipeline.push({ $limit: take });
+
+      console.log(pipeline);
+
+      // Count total documents
+      const countPipeline = [...pipeline];
+      countPipeline.pop(); // Remove $skip and $limit for count
+      countPipeline.pop();
+      countPipeline.push({ $count: 'totalCount' });
+
+      const [bikeParks, countResult] = await Promise.all([
+        BikeParkModel.aggregate(pipeline),
+        BikeParkModel.aggregate(countPipeline),
+      ]);
+
+      const totalCount = countResult[0]?.totalCount || 0;
       const totalPages = Math.ceil(totalCount / take);
-      const hasNextPage = skip < totalPages;
+      const hasNextPage = skip + take < totalCount;
 
       return {
-        bikeParks,
+        bikeParks: bikeParks?.map(park => ({ ...park, id: park._id })),
         totalCount,
         currentPage: skip,
         totalPages,

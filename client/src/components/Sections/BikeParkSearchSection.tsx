@@ -1,8 +1,8 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { BikeParkFilter, MostCommonFeaturesDocument, MostCommonFeaturesQuery } from '../../lib/graphql/generated/graphql-operations';
-import { useQuery } from 'urql';
+import { BikeParkFilter } from '../../lib/graphql/generated/graphql-operations';
 import { Difficulty } from '../Map/LeftMenu';
+import { featuresObject } from '../../lib/helpers/common-helper';
 
 const BikeParkSearchSection: React.FC<{ setSearchQuery: (searchQuery: BikeParkFilter) => void }> = ({ setSearchQuery }) => {
   const navigate = useNavigate();
@@ -11,14 +11,18 @@ const BikeParkSearchSection: React.FC<{ setSearchQuery: (searchQuery: BikeParkFi
   const [location, setLocation] = useState(searchParams.get('location') ?? '');
   const [difficulty, setDifficulty] = useState(searchParams.get('difficulty') ?? 'all');
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDifficultyDropdownOpen, setIsDifficultyDropdownOpen] = useState(false);
+  const [isFeaturesDropdownOpen, setIsFeaturesDropdownOpen] = useState(false);
   const [facilities, setFacilities] = useState<string[]>([]);
   const [loadAll, setLoadAll] = useState<boolean>(false);
 
-  const [{ data }] = useQuery<MostCommonFeaturesQuery>({
-    query: MostCommonFeaturesDocument,
-    ...(!loadAll ? { variables: { limit: 5 } } : {}),
-  });
+  const features = useMemo(() => {
+    if (loadAll) {
+      return featuresObject;
+    } else {
+      return featuresObject.slice(0, 5);
+    }
+  }, [loadAll])
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -59,56 +63,72 @@ const BikeParkSearchSection: React.FC<{ setSearchQuery: (searchQuery: BikeParkFi
                 />
               </div>
             </div>
-            <div className='flex-1'>
+            <div className='flex-1' onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget)) {
+                setIsDifficultyDropdownOpen(false);
+              }
+            }} tabIndex={-1}>
               <label className="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
-              <select
-                value={difficulty}
-                onChange={(e) => {
-                  setDifficulty(e.target.value);
-                  searchParams.set('difficulty', e.target.value);
-                  setSearchParams(searchParams);
-                }}
-                className="w-full px-4 py-2 rounded-md border border-gray-200 text-gray-800
-                            focus:ring-2 focus:ring-emerald-500 focus:border-transparent
-                            transition-all duration-200"
-              >
-                {Object.values(Difficulty).map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <div
+                  className="w-full px-4 py-2 rounded-md border border-gray-200 text-gray-800
+                    focus:ring-2 focus:ring-emerald-500 focus:border-transparent
+                    transition-all duration-200 cursor-pointer flex items-center justify-between"
+                  onClick={() => setIsDifficultyDropdownOpen(!isDifficultyDropdownOpen)}
+                >
+                  <div className="flex flex-wrap gap-1">
+                    <span>{difficulty}</span>
+                  </div>
+                  <svg className="fill-current h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+
+                {isDifficultyDropdownOpen && (
+                  <div className="absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-200 max-h-[295px] overflow-auto">
+                    <div className="p-2">
+                      {Object.values(Difficulty)?.map((difficultyObject) => (
+                        <div
+                          key={difficultyObject}
+                          className={`flex items-center px-3 py-2 hover:bg-gray-100 rounded ${difficulty === difficultyObject ? 'bg-emerald-100 text-emerald-800' : ''}`}
+                          onClick={() => {
+                            setDifficulty(difficultyObject);
+                            setIsDifficultyDropdownOpen(!isDifficultyDropdownOpen);
+                          }}>
+                          <label htmlFor={`difficulty-${difficultyObject}`} className="text-sm cursor-pointer flex-1">
+                            {difficultyObject}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className='flex-1'>
+            <div
+              className='flex-1'
+              onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget)) {
+                  setIsFeaturesDropdownOpen(false);
+                }
+              }}
+              tabIndex={-1}
+            >
               <label className="block text-sm font-medium text-gray-700 mb-1">Features</label>
               <div className="relative">
                 <div
                   className="w-full px-4 py-2 rounded-md border border-gray-200 text-gray-800
-                            focus:ring-2 focus:ring-emerald-500 focus:border-transparent
-                            transition-all duration-200 cursor-pointer flex items-center justify-between"
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    focus:ring-2 focus:ring-emerald-500 focus:border-transparent
+                    transition-all duration-200 cursor-pointer flex items-center justify-between"
+                  onClick={() => setIsFeaturesDropdownOpen(!isFeaturesDropdownOpen)}
                 >
                   <div className="flex flex-wrap gap-1">
                     {selectedFeatures.length === 0 ? (
                       <span className="text-gray-500">Select features...</span>
                     ) : (
-                      selectedFeatures.map(feature => (
-                        <span
-                          key={feature}
-                          className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded text-xs flex items-center"
-                        >
-                          {feature}
-                          <button
-                            className="ml-1 text-emerald-600 hover:text-emerald-800"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedFeatures(selectedFeatures.filter(f => f !== feature));
-                            }}
-                          >
-                            ×
-                          </button>
-                        </span>
-                      ))
+                      <span className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded text-xs flex items-center">{
+                        `${selectedFeatures.length} selected`}
+                      </span>
                     )}
                   </div>
                   <svg className="fill-current h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -116,38 +136,38 @@ const BikeParkSearchSection: React.FC<{ setSearchQuery: (searchQuery: BikeParkFi
                   </svg>
                 </div>
 
-                {isDropdownOpen && (
-                  <div className="absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-200 max-h-60 overflow-auto">
+                {isFeaturesDropdownOpen && (
+                  <div className="absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg border border-gray-200 max-h-[295px] overflow-auto">
                     <div className="p-2">
                       <div className="flex items-center mb-2">
                         <button
                           className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded"
                           onClick={() => {
                             setSelectedFeatures([]);
-                            setIsDropdownOpen(false);
+                            setIsFeaturesDropdownOpen(false);
                           }}
                         >
                           Clear all
                         </button>
                       </div>
 
-                      {data?.mostCommonFeatures?.map((option) => (
-                        <div key={option} className="flex items-center px-3 py-2 hover:bg-gray-100 rounded">
+                      {features?.map((featurObject) => (
+                        <div key={featurObject.name} className="flex items-center px-3 py-2 hover:bg-gray-100 rounded">
                           <input
                             type="checkbox"
-                            id={`feature-${option}`}
-                            checked={selectedFeatures.includes(option)}
+                            id={`feature-${featurObject.name}`}
+                            checked={selectedFeatures.includes(featurObject.name)}
                             onChange={() => {
-                              if (selectedFeatures.includes(option)) {
-                                setSelectedFeatures(selectedFeatures.filter(f => f !== option));
+                              if (selectedFeatures.includes(featurObject.name)) {
+                                setSelectedFeatures(selectedFeatures.filter(f => f !== featurObject.name));
                               } else {
-                                setSelectedFeatures([...selectedFeatures, option]);
+                                setSelectedFeatures([...selectedFeatures, featurObject.name]);
                               }
                             }}
                             className="mr-2 h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
                           />
-                          <label htmlFor={`feature-${option}`} className="text-sm cursor-pointer flex-1">
-                            {option}
+                          <label htmlFor={`feature-${featurObject.name}`} className="text-sm cursor-pointer flex-1">
+                            {featurObject.name}
                           </label>
                         </div>
                       ))}

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import BikeParkCard from './BikeParkCard';
 import { useQuery } from 'urql';
-import { BikeParkFilter, BikeParksDocument, BikeParksQuery } from '../../lib/graphql/generated/graphql-operations';
+import { BikePark, BikeParkFilter, BikeParksDocument, BikeParksQuery } from '../../lib/graphql/generated/graphql-operations';
 import { useInView } from 'react-intersection-observer';
 import BikeParkListItem from './BikeParkListItem';
+import { unionBy } from 'lodash';
 
 enum View {
   Grid,
@@ -12,12 +13,14 @@ enum View {
 
 const ITEMS_PER_PAGE = 15;
 
-const ResultsGrid: React.FC<{ searchQuery: BikeParkFilter | undefined }> = ({ searchQuery }) => {
+const ResultsGrid: React.FC<{ searchQuery: BikeParkFilter | undefined, setSearchQuery: (searchQuery: BikeParkFilter) => void }> = ({
+  searchQuery,
+  setSearchQuery
+}) => {
   const [view, setView] = useState(View.Grid);
   const [skip, setSkip] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [allBikeParks, setAllBikeParks] = useState<any[]>([]);
+  const [allBikeParks, setAllBikeParks] = useState<BikePark[]>([]);
 
   const [{ data, fetching }] = useQuery<BikeParksQuery>({
     query: BikeParksDocument,
@@ -38,12 +41,11 @@ const ResultsGrid: React.FC<{ searchQuery: BikeParkFilter | undefined }> = ({ se
       if (skip === 0) {
         setAllBikeParks(data.bikeParks.bikeParks ?? []);
       } else {
-        setAllBikeParks((prev) => [...prev, ...data.bikeParks.bikeParks]);
+        setAllBikeParks((prev) => unionBy([...prev, ...data.bikeParks.bikeParks], ({ id }) => id));
       }
     }
   }, [data, skip]);
 
-  // Reset pagination when search query changes
   useEffect(() => {
     setSkip(0);
     setHasMore(true);
@@ -67,10 +69,18 @@ const ResultsGrid: React.FC<{ searchQuery: BikeParkFilter | undefined }> = ({ se
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold">Found {data?.bikeParks.totalCount || 0} bike parks</h2>
           <div className="flex items-center space-x-4">
-            <select className="px-4 py-2 rounded-md border border-gray-200 text-gray-800">
-              <option>Sort by: Popular</option>
-              <option>Rating</option>
-              <option>Distance</option>
+            <select
+              onChange={e => {
+                searchQuery = {
+                  ...searchQuery,
+                  sortBy: e.target.value
+                }
+                setSearchQuery(searchQuery);
+              }}
+              className="px-4 py-2 rounded-md border border-gray-200 text-gray-800">
+              <option value="rating">Sort by: Popular</option>
+              {/* <option>Rating</option> */}
+              <option value="distance">Distance</option>
             </select>
             <div className="flex space-x-2">
               <button

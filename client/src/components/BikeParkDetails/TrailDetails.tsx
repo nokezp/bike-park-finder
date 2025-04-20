@@ -1,6 +1,6 @@
 import React from 'react';
 import { BikePark } from '../../lib/graphql/generated/graphql-operations';
-import { getTrailDifficultyColorClass } from '../../lib/helpers/common-helper';
+import { featuresObject, getTrailDifficultyColorClass } from '../../lib/helpers/common-helper';
 
 const TrailDetails: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
   if (bikePark?.trails?.length === 0) {
@@ -33,11 +33,12 @@ const TrailDetails: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Features</span>
                   <div className="flex space-x-2">
-                    {trail.features?.map((feature) => (
-                      <i key={`trail_details_feature_${feature}`} className="fa-solid fa-person-biking text-emerald-600"></i>
-                    ))}
-                    {/* <i className="fa-solid fa-mountain text-emerald-600"></i>
-                  <i className="fa-solid fa-bridge text-emerald-600"></i> */}
+                    {trail.features?.map((feature) => {
+                      const fo = featuresObject.find(({ name }) => name === feature);
+                      return (
+                        <i key={`trail_details_feature_${feature}`} className={`fa-solid fa-${fo?.icon} text-${fo?.color}-600`}></i>
+                      )
+                    })}
                   </div>
                 </div>
               </div>

@@ -75,7 +75,7 @@ function isParkOpen(from: string, to: string) {
   const closingTime = moment(to, "HH:mm"); //moment().set({ hour: 17, minute: 0, second: 0 }); // 05:00 PM
 
   if (currentTime.isBetween(openingTime, closingTime, null, '[)')) {
-    return 'Open.';
+    return 'Open';
   }
 
   return 'Closed';
@@ -244,6 +244,29 @@ export const currencies = [
   { code: "AED", name: "UAE Dirham" },
   { code: "SAR", name: "Saudi Riyal" },
   { code: "ILS", name: "Israeli New Shekel" }
+];
+
+export const featuresObject = [
+  { name: "Flow Trail", icon: "person-biking-mountain", color: "blue", description: "Smooth, winding trails with berms and rollers for a fun, flowing ride." },
+  { name: "Jump Line", icon: "fperson-skiing-jumping", color: "orange", description: "Trails filled with jumps of various sizes for airtime and tricks." },
+  { name: "Downhill", icon: "angles-down", color: "red", description: "Steep, fast trails with technical sections, built for high-speed descents." },
+  { name: "Enduro Routes", icon: "person-running", color: "purple", description: "Challenging trails combining uphill climbs and technical downhill sections." },
+  { name: "Cross Country", icon: "bicycle", color: "green", description: "Varied terrain trails focusing on endurance, speed, and distance." },
+  { name: "Freeride", icon: "person-biking", color: "yellow", description: "Trails with natural and man-made obstacles designed for creative, technical riding." },
+  { name: "Pump Track", icon: "wave-square", color: "cyan", description: "A compact loop of rollers and berms designed for riding without pedaling." },
+  { name: "Skills Area", icon: "graduation-cap", color: "indigo", description: "A training zone with features to practice and improve MTB techniques." },
+  { name: "XC Trails", icon: "bicycle", color: "emerald", description: "Cross-country trails emphasizing fitness, efficiency, and technical skills." },
+  { name: "Rock Gardens", icon: "mountain-rock", color: "stone", description: "Sections of trail filled with rocks, testing balance and bike control." },
+  { name: "Natural Trails", icon: "tree", color: "stone", description: "Untouched, raw trails following natural terrain and features." },
+  { name: "Race Track", icon: "flag-checkered", color: "red", description: "A competitive course built for MTB races and time trials." },
+  { name: "Gravity Trails", icon: "person-falling", color: "violet", description: "Trails focused on downhill riding, using gravity for speed and flow." },
+  { name: "Family Route", icon: "people-group", color: "teal", description: "Easy, safe trails ideal for family rides and all skill levels." },
+  { name: "North Shore", icon: "bridge", color: "slate", description: "Technical trails with wooden features, drops, and skinnies." },
+  { name: "Dirt Jumps", icon: "mountain", color: "amber", description: "Dedicated areas with dirt ramps for jumping and trick riding." },
+  { name: "Training Area", icon: "dumbbell", color: "blue", description: "A practice area with varied features to build riding confidence." },
+  { name: "Scenic Routes", icon: "mountain-sun", color: "green", description: "Leisurely trails offering beautiful views and relaxed riding." },
+  { name: "Beginner Zone", icon: "star", color: "sky", description: "Safe and simple trails designed for new and learning riders." },
+  { name: "Kids Zone", icon: "child", color: "pink", description: "Special trails and areas tailored for young and beginner kids." }
 ];
 
 export type Price = {

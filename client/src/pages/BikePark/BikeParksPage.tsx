@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable no-undef */
+import React, { useEffect, useState } from 'react';
 import BikeParkSearchSection from '../../components/Sections/BikeParkSearchSection';
 import ResultsGrid from '../../components/Sections/ResultsGrid';
 import { BikeParkFilter } from '../../lib/graphql/generated/graphql-operations';
@@ -12,12 +13,30 @@ const BikeParksPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<BikeParkFilter>({
     location,
     difficulty,
+    sortBy: "rating",
   });
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setSearchQuery({
+          coordinates: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          }
+        });
+      },
+    );
+  }, []);
 
   return (
     <>
       <BikeParkSearchSection setSearchQuery={setSearchQuery} />
-      <ResultsGrid searchQuery={searchQuery} />
+      <ResultsGrid searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
     </>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import FallbackImage from '../common/FallbackImage';
-import { getColorByIndex } from '../../utils/colors';
+import { getRandomColor } from '../../utils/colors';
 import { BikePark } from '../../lib/graphql/generated/graphql-operations';
 
 const BikeParkListItem: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
@@ -24,23 +24,22 @@ const BikeParkListItem: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-xl font-bold mb-2 text-ellipsis whitespace-nowrap overflow-hidden">{bikePark?.name}</h3>
-              <h3 className="text-xl font-bold mb-2">Whistler Mountain Bike Park</h3>
               <div className="flex items-center space-x-2 text-gray-600 mb-3">
                 <i className="fa-solid fa-location-dot"></i>
                 <span className="text-ellipsis whitespace-nowrap overflow-hidden">{bikePark.location}</span>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <i className="fa-solid fa-cloud-sun text-gray-600"></i>
               <span className="text-gray-600">{bikePark?.weather?.current?.temperature}°C</span>
-            </div>
+            </div> */}
           </div>
           <p className="text-gray-600 mb-4">
             {bikePark.description}
           </p>
           <div className="flex flex-wrap gap-2 mb-4">
-            {bikePark?.features?.slice(0, 2)?.map((feature, index) => {
-              const color = getColorByIndex(index);
+            {bikePark?.features?.slice(0, 2)?.map((feature) => {
+              const color = getRandomColor();
               return (
                 <span key={feature} className={`px-3 py-1 bg-${color}-100 text-${color}-600 rounded-full text-sm`}>
                   {feature}

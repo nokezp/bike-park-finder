@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable no-undef */
+import React, { useEffect, useState } from 'react';
 
 interface FallbackImageProps {
   src: string | undefined;
@@ -7,26 +8,25 @@ interface FallbackImageProps {
   defaultSrc?: string;
 }
 
-const FallbackImage: React.FC<FallbackImageProps> = ({ src, alt, className = '' }) => {
-  const [error, setError] = useState(false);
+const FallbackImage: React.FC<FallbackImageProps> = ({ src, className = '' }) => {
+  const [imgSrc, setImgSrc] = useState<string>('');
 
-  const handleError = () => {
-    if (!error) {
-      setError(true);
+  useEffect(() => {
+    const img = new Image();
+    if (img) {
+      img.src = src || '/src/assets/images/hero-image.png';
+      img.onload = () => setImgSrc(src || '/src/assets/images/hero-image.png');
+      img.onerror = () => setImgSrc('/src/assets/images/hero-image.png');
     }
-  };
+  }, [src]);
 
-  return error ? (
-    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-      <img
-        className="inset-0 w-full h-full object-cover rounded-l-lg"
-        src="src/assets/images/hero-image.png"
-        alt="aerial view of mountain bike park"
+  return (
+    <div className={`w-full h-full bg-gray-200 flex items-center justify-center ${className}`}>
+      <div
+        className="w-full h-full bg-center bg-no-repeat bg-cover"
+        style={{ backgroundImage: `url(${imgSrc})` }}
       />
     </div>
-  ) : (
-    <img src={src} alt={alt} className={className} onError={handleError} />
   );
 };
-
 export default FallbackImage;
