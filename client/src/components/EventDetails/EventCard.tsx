@@ -3,7 +3,7 @@ import { Event } from "../../lib/graphql/generated/graphql-operations";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 
-const EventCard: React.FC<{ 
+const EventCard: React.FC<{
   event: Event
 }> = ({ event }) => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const EventCard: React.FC<{
     <div
       key={event.id}
       className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-shadow hover:shadow-lg"
-      onClick={() => navigate(`/events/${event.id}`)}
+      onClick={() => navigate(`/event/${event.id}`)}
     >
       <div className="relative h-48">
         <img className="w-full h-full object-cover" src={event.imageUrl} alt={event.title} />
@@ -24,12 +24,11 @@ const EventCard: React.FC<{
       </div>
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <span className={`px-3 py-1 rounded-full text-sm ${
-            event.category === 'CHAMPIONSHIP' ? 'bg-blue-100 text-blue-600' :
-            event.category === 'WORKSHOP' ? 'bg-green-100 text-green-600' :
-            event.category === 'FESTIVAL' ? 'bg-purple-100 text-purple-600' :
-            'bg-orange-100 text-orange-600'
-          }`}>
+          <span className={`px-3 py-1 rounded-full text-sm ${event.category === 'CHAMPIONSHIP' ? 'bg-blue-100 text-blue-600' :
+              event.category === 'WORKSHOP' ? 'bg-green-100 text-green-600' :
+                event.category === 'FESTIVAL' ? 'bg-purple-100 text-purple-600' :
+                  'bg-orange-100 text-orange-600'
+            }`}>
             {event.category.charAt(0) + event.category.slice(1).toLowerCase().replace('_', ' ')}
           </span>
           <div className="text-gray-600">

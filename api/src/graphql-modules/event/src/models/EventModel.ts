@@ -38,6 +38,7 @@ export interface IEvent extends mongoose.Document {
   venue: IVenue;
   createdAt: Date;
   updatedAt: Date;
+  approvalStatus: string;
 }
 
 const scheduleItemSchema = new mongoose.Schema<IScheduleItem>({
@@ -58,7 +59,7 @@ const venueSchema = new mongoose.Schema<IVenue>({
   mapImageUrl: { type: String, required: true }
 });
 
-const eventSchema = new mongoose.Schema<IEvent>(
+const eventSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     date: { type: Date, required: true },
@@ -80,7 +81,16 @@ const eventSchema = new mongoose.Schema<IEvent>(
     featured: { type: Boolean, default: false },
     organizer: { type: organizerSchema, required: true },
     schedule: [{ type: scheduleItemSchema, required: true }],
-    venue: { type: venueSchema, required: true }
+    venue: { type: venueSchema, required: true },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    approvalStatus: String,
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: true

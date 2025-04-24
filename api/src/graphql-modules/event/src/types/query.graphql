@@ -2,4 +2,5 @@ type Query {
   events(filter: EventFilter): [Event!]!
   event(id: ID!): Event
   popularEventCategories: [CategoryInfo!]!
+  pendingEvents(status: ApprovalStatus): [Event!]!
 }

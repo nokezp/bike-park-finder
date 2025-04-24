@@ -1,23 +1,36 @@
 /* eslint-disable no-undef */
 import React, { useState } from 'react';
 import { useQuery, useMutation } from 'urql';
-import { ApproveBikeParkDocument, GetPendingBikeParksDocument, RejectBikeParkDocument } from '../../lib/graphql/generated/graphql-operations';
+import { ApproveEventDocument, GetPendingEventsDocument, RejectEventDocument } from '../../lib/graphql/generated/graphql-operations';
 import FallbackImage from '../common/FallbackImage';
-import BikeParkApproveConfirmDialog from './Dialog/BikeParkApproveConfirmDialog';
-import BikeParkRejectConfirmDialog from './Dialog/BikeParkRejectConfirmDialog';
+import EventApproveConfirmDialog from './Dialog/EventApproveConfirmDialog';
+import EventRejectConfirmDialog from './Dialog/EventRejectConfirmDialog';
 import moment from 'moment';
 
-export interface IBikeParkReview {
+export interface IEventReview {
   id: string;
-  name: string;
+  title: string;
   location: string;
   imageUrl?: string;
+  date: string;
   createdAt: string;
+  startTime: string;
+  endTime: string;
   approvalStatus: string;
   createdBy?: {
     id: string;
     username: string;
     email: string;
+  };
+  organizer?: {
+    description: string;
+    imageUrl: string;
+    name: string;
+  };
+  venue?: {
+    address: string;
+    mapImageUrl: string;
+    name: string;
   };
 }
 
@@ -27,51 +40,51 @@ enum ApprovalStatus {
   WAITING_FOR_APPROVAL = 'WAITING_FOR_APPROVAL'
 }
 
-const PARKS_PER_PAGE = 25;
+const EVENTS_PER_PAGE = 25;
 
-const ReviewBikeParks: React.FC = () => {
+const ReviewEvents: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState<ApprovalStatus | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [approveDialogOpen, setApproveDialogOpen] = useState<IBikeParkReview>();
-  const [rejectDialogOpen, setRejectDialogOpen] = useState<IBikeParkReview>();
+  const [approveDialogOpen, setApproveDialogOpen] = useState<IEventReview>();
+  const [rejectDialogOpen, setRejectDialogOpen] = useState<IEventReview>();
 
   const [{ data, fetching, error }] = useQuery({
-    query: GetPendingBikeParksDocument,
+    query: GetPendingEventsDocument,
     variables: { status: selectedStatus },
   });
 
-  const [approveBikeParkResult, approveBikePark] = useMutation(ApproveBikeParkDocument);
-  const [rejectBikeParkResult, rejectBikePark] = useMutation(RejectBikeParkDocument);
+  const [approveEventResult, approveEvent] = useMutation(ApproveEventDocument);
+  const [rejectEventResult, rejectEvent] = useMutation(RejectEventDocument);
 
-  const handleApproveBikePark = async (id: string) => {
+  const handleApproveEvent = async (id: string) => {
     try {
-      await approveBikePark({ id });
+      await approveEvent({ id });
     } catch (err) {
-      console.error('Error approving bike park:', err);
+      console.error('Error approving event:', err);
     }
   };
 
-  const handleRejectBikePark = async (id: string) => {
+  const handleRejectEvent = async (id: string) => {
     try {
-      await rejectBikePark({ id });
+      await rejectEvent({ id });
     } catch (err) {
-      console.error('Error rejecting bike park:', err);
+      console.error('Error rejecting event:', err);
     }
   };
 
-  const filteredParks = data?.pendingBikeParks
-    ? data.pendingBikeParks.filter(
-      (park: IBikeParkReview) =>
-        park.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        park.location.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredEvents = data?.pendingEvents
+    ? data.pendingEvents.filter(
+      (event: IEventReview) =>
+        event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.location.toLowerCase().includes(searchQuery.toLowerCase())
     )
     : [];
 
-  const totalPages = Math.ceil(filteredParks.length / PARKS_PER_PAGE);
-  const startIndex = (currentPage - 1) * PARKS_PER_PAGE;
-  const endIndex = startIndex + PARKS_PER_PAGE;
-  const currentParks = filteredParks.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredEvents.length / EVENTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * EVENTS_PER_PAGE;
+  const endIndex = startIndex + EVENTS_PER_PAGE;
+  const currentEvents = filteredEvents.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -82,6 +95,14 @@ const ReviewBikeParks: React.FC = () => {
       return moment(dateString).format('MMMM DD, YYYY')
     } catch (error) {
       return dateString;
+    }
+  };
+
+  const formatTime = (timeString: string) => {
+    try {
+      return moment(timeString, 'HH:mm').format('h:mm A');
+    } catch (error) {
+      return timeString;
     }
   };
 
@@ -118,7 +139,7 @@ const ReviewBikeParks: React.FC = () => {
     <>
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold">Pending Park Reviews</h1>
+          <h1 className="text-2xl font-bold">Pending Events Reviews</h1>
           <div className="flex gap-4">
             <select
               className="px-4 py-2 border rounded-md"
@@ -132,7 +153,7 @@ const ReviewBikeParks: React.FC = () => {
             </select>
             <input
               type="text"
-              placeholder="Search parks..."
+              placeholder="Search events..."
               className="px-4 py-2 border rounded-md"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -140,57 +161,63 @@ const ReviewBikeParks: React.FC = () => {
           </div>
         </div>
 
-        <div id="pending-parks-list" className="space-y-4">
-          {currentParks.length === 0 ? (
+        <div id="pending-events-list" className="space-y-4">
+          {currentEvents.length === 0 ? (
             <div className="bg-white rounded-lg shadow-sm p-6 text-center text-gray-500">
-              No bike parks found matching your criteria.
+              No events found matching your criteria.
             </div>
           ) : (
-            currentParks.map((park: IBikeParkReview) => (
-              <div key={park.id} className="bg-white rounded-lg shadow-sm p-6">
+            currentEvents.map((event: IEventReview) => (
+              <div key={event.id} className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-start justify-between">
                   <div className="flex gap-4">
                     <div className="w-24 h-24 bg-gray-200 rounded-lg overflow-hidden">
                       <FallbackImage
                         className="w-full h-full object-cover"
-                        src={park.imageUrl || "https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-dc443d34ddf3a4049811.png"}
-                        alt={park.name}
+                        src={event.imageUrl || "https://storage.googleapis.com/uxpilot-auth.appspot.com/db4aa7e988-dc443d34ddf3a4049811.png"}
+                        alt={event.title}
                       />
                     </div>
                     <div className='flex justify-between flex-col max-w-[80%]'>
                       <div>
-                        <h3 className="text-lg font-bold">{park.name}</h3>
-                        <p className="text-gray-600 text-sm mt-2">{park.location}</p>
+                        <h3 className="text-lg font-bold">{event.title}</h3>
+                        <p className="text-gray-600 text-sm mt-2">{event.location}</p>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <span>Submitted: {formatDate(park.createdAt)}</span>
-                        <span>By: {park.createdBy?.username}</span>
+                        <i className="fa-regular fa-calendar"></i>
+                        <span>{formatDate(event.date)}</span>
+                        <span>|</span>
+                        <span>{formatTime(event.startTime)}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <span>Submitted: {formatDate(event.createdAt)}</span>
+                        <span>By: {event.createdBy?.username}</span>
                       </div>
                     </div>
                   </div>
                   <div className='flex items-end justify-between flex-col h-[90px]'>
-                    <div className={`${getStatusBadgeClass(park.approvalStatus)} px-2 py-1 rounded-full text-xs`}>
-                      {getStatusDisplayText(park.approvalStatus)}
+                    <div className={`${getStatusBadgeClass(event.approvalStatus)} px-2 py-1 rounded-full text-xs`}>
+                      {getStatusDisplayText(event.approvalStatus)}
                     </div>
                     <div className="flex gap-2">
-                      {park.approvalStatus !== 'APPROVED' && (
+                      {event.approvalStatus !== 'APPROVED' && (
                         <button
                           className="px-3 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700"
-                          onClick={() => setApproveDialogOpen(park)}
-                          disabled={approveBikeParkResult.fetching}>
+                          onClick={() => setApproveDialogOpen(event)}
+                          disabled={approveEventResult.fetching}>
                           Approve
                         </button>
                       )}
-                      {park.approvalStatus !== 'REJECTED' && (
+                      {event.approvalStatus !== 'REJECTED' && (
                         <button
                           className="px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                          onClick={() => setRejectDialogOpen(park)}
-                          disabled={rejectBikeParkResult.fetching}>
+                          onClick={() => setRejectDialogOpen(event)}
+                          disabled={rejectEventResult.fetching}>
                           Reject
                         </button>
                       )}
                       <button className="px-3 py-2 bg-gray-100 rounded-md hover:bg-gray-200">
-                        <a href={`/bike-park/${park.id}`} target="_blank" rel="noopener noreferrer">
+                        <a href={`/event/${event.id}`} target="_blank" rel="noopener noreferrer">
                           View Details
                         </a>
                       </button>
@@ -202,10 +229,10 @@ const ReviewBikeParks: React.FC = () => {
           )}
         </div>
 
-        {filteredParks.length > 0 && filteredParks > PARKS_PER_PAGE && (
+        {filteredEvents.length > 0 && filteredEvents > EVENTS_PER_PAGE && (
           <div className="flex items-center justify-between mt-8">
             <p className="text-gray-600">
-              Showing {startIndex + 1}-{Math.min(endIndex, filteredParks.length)} of {filteredParks.length} parks
+              Showing {startIndex + 1}-{Math.min(endIndex, filteredEvents.length)} of {filteredEvents.length} events
             </p>
             <div className="flex gap-2">
               <button
@@ -251,23 +278,23 @@ const ReviewBikeParks: React.FC = () => {
         )}
       </div>
       {approveDialogOpen &&
-        <BikeParkApproveConfirmDialog
+        <EventApproveConfirmDialog
           isOpen={!!approveDialogOpen}
-          bikePark={approveDialogOpen}
+          event={approveDialogOpen}
           onClose={() => setApproveDialogOpen(undefined)}
           onConfirm={(id) => {
-            handleApproveBikePark(id);
+            handleApproveEvent(id);
             setApproveDialogOpen(undefined);
           }}
         />
       }
       {rejectDialogOpen &&
-        <BikeParkRejectConfirmDialog
+        <EventRejectConfirmDialog
           isOpen={!!rejectDialogOpen}
-          bikePark={rejectDialogOpen}
+          event={rejectDialogOpen}
           onClose={() => setRejectDialogOpen(undefined)}
           onConfirm={(id) => {
-            handleRejectBikePark(id);
+            handleRejectEvent(id);
             setRejectDialogOpen(undefined);
           }}
         />
@@ -276,4 +303,4 @@ const ReviewBikeParks: React.FC = () => {
   );
 };
 
-export default ReviewBikeParks;
+export default ReviewEvents;

@@ -306,7 +306,7 @@ const HomePage: React.FC = () => {
                       <i className="fa-solid fa-users text-gray-600"></i>
                       <span className="text-gray-600">{event.registeredCount} registered</span>
                     </div>
-                    <Link to={`/events/${event.id}`} className="text-emerald-600 hover:text-emerald-700">
+                    <Link to={`/event/${event.id}`} className="text-emerald-600 hover:text-emerald-700">
                       Details
                     </Link>
                   </div>

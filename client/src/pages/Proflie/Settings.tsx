@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReviewBikeParks from '../../components/Admin/ReviewBikeParks';
+import ReviewEvents from '../../components/Admin/ReviewEvents';
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState('bike-parks');
@@ -28,7 +29,9 @@ const Settings: React.FC = () => {
         {activeTab === 'bike-parks' && (
           <ReviewBikeParks />
         )}
-        {activeTab === 'events' && (<div>Events</div>)}
+        {activeTab === 'events' && (
+          <ReviewEvents />
+        )}
       </div>
     </section>
   )
