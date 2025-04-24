@@ -31,7 +31,8 @@ export interface IBikePark extends mongoose.Document {
     forecast: WeatherData[];
     lastUpdated: Date;
   };
-  approvedStatus: string;
+  approvalStatus: string;
+  isFavorite?: boolean;
 }
 
 // BikePark schema
@@ -150,7 +151,7 @@ const bikeParkSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  approvedStatus: String
+  approvalStatus: String
 });
 
 // Add text index for search functionality

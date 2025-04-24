@@ -1,0 +1,7 @@
+mutation ApproveBikePark($id: ID!) {
+  approveBikePark(id: $id) {
+    id
+    name
+    approvalStatus
+  }
+}

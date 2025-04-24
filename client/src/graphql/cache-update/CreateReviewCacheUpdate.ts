@@ -1,21 +1,45 @@
 import {
   CreateReviewMutation,
   MutationCreateReviewArgs,
+  Review,
   ReviewsDocument,
-  ReviewsQuery
+  ReviewsQuery,
+  WithTypename
 } from "../../lib/graphql/generated/graphql-operations";
 import { Cache } from '@urql/exchange-graphcache';
 
 const createReviewCacheUpdate = (
-  result: CreateReviewMutation, 
-  _args: MutationCreateReviewArgs, 
+  parent: { createReview: WithTypename<Review> },
+  args: MutationCreateReviewArgs,
   cache: Cache
 ) => {
+  const result: CreateReviewMutation = {
+    createReview: {
+      ...parent.createReview,
+      id: parent.createReview.id || '',
+      comment: parent.createReview.comment || '',
+      rating: parent.createReview.rating || 0,
+      bikePark: parent.createReview.bikePark || '',
+      createdAt: parent.createReview.createdAt || '',
+      createdBy: parent.createReview.createdBy ? {
+        ...parent.createReview.createdBy,
+        id: parent.createReview.createdBy.id || '',
+        username: parent.createReview.createdBy.username || '',
+        email: parent.createReview.createdBy.email || ''
+      } : {
+        __typename: 'User',
+        id: '',
+        username: '',
+        email: ''
+      }
+    }
+  };
+
   if (result.createReview) {
     cache.updateQuery({
       query: ReviewsDocument,
       variables: {
-        bikeParkId: _args.bikeParkId,
+        bikeParkId: args.bikeParkId,
         page: 1,
         limit: 5
       }
@@ -30,6 +54,6 @@ const createReviewCacheUpdate = (
     });
   }
   return null;
-}
+};
 
 export default createReviewCacheUpdate;

@@ -94,7 +94,7 @@ const LeftMenu: React.FC<{
   };
 
   const handleViewDetails = (id: string) => {
-    navigate(`/bike-parks/${id}`);
+    navigate(`/bike-park/${id}`);
   };
 
   return (

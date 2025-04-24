@@ -8,7 +8,7 @@ const BikeParkListItem: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
   const navigate = useNavigate();
 
   const handleViewDetails = () => {
-    navigate(`/bike-parks/${bikePark.id}`);
+    navigate(`/bike-park/${bikePark.id}`);
   };
 
   return (

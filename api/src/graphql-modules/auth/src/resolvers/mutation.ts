@@ -3,7 +3,7 @@ import { authProvider } from '../providers/AuthProvider.js';
 
 export const mutation = {
   Mutation: {
-    register: async (_: unknown, args: { 
+    register: async (_: unknown, args: {
       username: string;
       firstName: string;
       lastName: string;
@@ -31,7 +31,7 @@ export const mutation = {
       if (args.password !== args.confirmPassword) {
         throw new Error('Passwords do not match');
       }
-      
+
       return authProvider.resetPassword(args.token, args.password);
     },
 
@@ -39,8 +39,16 @@ export const mutation = {
       if (!context.user) {
         throw new Error('Not authenticated');
       }
-      
+
       return authProvider.updateProfile(context.user.id, args);
+    },
+
+    toggleFavoriteBikePark: async (_: unknown, args: { bikeParkId: string }, context: AuthContext) => {
+      if (!context.user) {
+        throw new Error('Not authenticated');
+      }
+
+      return authProvider.toggleFavoriteBikePark(context.user.id, args.bikeParkId);
     },
   },
 };

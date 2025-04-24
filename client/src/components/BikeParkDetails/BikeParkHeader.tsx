@@ -5,6 +5,7 @@ import { getCurrentWorkingHours, getCurrentWorkingStatus, getWeatherIcon } from 
 import { FaPenToSquare } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "urql";
+import FavoriteButton from "../common/FavoriteButton";
 
 const BikeParkHeader: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
   const navigate = useNavigate();
@@ -90,9 +91,7 @@ const BikeParkHeader: React.FC<{ bikePark: BikePark }> = ({ bikePark }) => {
               <button className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700">
                 <i className="fa-solid fa-ticket mr-2"></i>Book Tickets
               </button>
-              <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-                <i className="fa-regular fa-heart mr-2"></i>Save
-              </button>
+              <FavoriteButton id={bikePark.id} textAdd="Save" textRemove="Remove" />
               <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
                 <i className="fa-solid fa-share-nodes mr-2"></i>Share
               </button>

@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql';
 import { WeatherService } from '../../../../services/weatherService.js';
-import { ApprovedStatus, BikeParkFilter, CreateBikeParkInput } from '../../../../core/generated-models.js';
+import { ApprovalStatus, BikeParkFilter, CreateBikeParkInput } from '../../../../core/generated-models.js';
 import { ReviewModel } from '../../../review/src/models/ReviewModel.js';
 import { BikeParkModel } from '../models/BikeParkModel.js';
 import AWS from 'aws-sdk';
@@ -11,27 +11,13 @@ import { finished } from 'stream/promises';
 import { createWriteStream } from 'fs';
 import { Readable } from 'stream';
 import { AuthContext } from '../../../../utils/auth.js';
+import { authProvider } from '../../../auth/src/providers/AuthProvider.js';
 
 const DEFAULT_RESULTS_PER_PAGE = 15;
 const WEATHER_UPDATE_INTERVAL = 30 * 60 * 1000; // 30 minutes
 const DEFAULT_SEARCH_RADIUS_KM = 500;
 
 export class BikeParkProvider {
-  /**
-   * Calculate distance between two coordinates using Haversine formula
-   */
-  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371; // Radius of the earth in km
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in km
-    return distance;
-  }
-
   /**
    * Get bike parks with filtering and pagination
    */
@@ -44,7 +30,7 @@ export class BikeParkProvider {
       const pipeline: any[] = [
         {
           $match: {
-            approvedStatus: { $nin: [ApprovedStatus.REJECTED, ApprovedStatus.WAITING_FOR_APPROVAL] },
+            approvalStatus: { $nin: [ApprovalStatus.REJECTED, ApprovalStatus.WAITING_FOR_APPROVAL] },
           },
         },
       ];
@@ -203,6 +189,82 @@ export class BikeParkProvider {
   }
 
   /**
+   * Get pending bike parks for admin review
+   */
+  async getPendingBikeParks(status?: ApprovalStatus) {
+    try {
+      let query: any = {};
+
+      if (status) {
+        query.approvalStatus = status;
+        // } else {
+        //   query.approvalStatus = ApprovalStatus.WAITING_FOR_APPROVAL;
+      }
+
+      const bikeParks = await BikeParkModel.find(query)
+        .populate('createdBy')
+        .sort({ createdAt: -1 });
+
+      return bikeParks;
+    } catch (error: any) {
+      throw new GraphQLError(`Error fetching pending bike parks: ${error.message}`);
+    }
+  }
+
+  /**
+   * Approve a bike park
+   */
+  async approveBikePark(id: string) {
+    try {
+      const bikePark = await BikeParkModel.findById(id);
+      if (!bikePark) {
+        throw new GraphQLError('Bike park not found');
+      }
+
+      bikePark.approvalStatus = ApprovalStatus.APPROVED;
+      await bikePark.save();
+      return bikePark;
+    } catch (error: any) {
+      throw new GraphQLError(`Error approving bike park: ${error.message}`);
+    }
+  }
+
+  /**
+   * Reject a bike park
+   */
+  async rejectBikePark(id: string) {
+    try {
+      const bikePark = await BikeParkModel.findById(id);
+      if (!bikePark) {
+        throw new GraphQLError('Bike park not found');
+      }
+
+      bikePark.approvalStatus = ApprovalStatus.REJECTED;
+      await bikePark.save();
+      return bikePark;
+    } catch (error: any) {
+      throw new GraphQLError(`Error rejecting bike park: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get bike parks with filtering and pagination
+   */
+  async getFavoriteBikeParks(currentUser: AuthContext) {
+    try {
+      const favorites = await authProvider.getFavorites(currentUser);
+
+      if (!favorites) {
+        return [];
+      }
+
+      return BikeParkModel.find({ _id: { $in: favorites } });
+    } catch (error: any) {
+      throw new GraphQLError(`Error fetching bike parks: ${error.message}`);
+    }
+  }
+
+  /**
    * Search bike parks by query string
    */
   async searchBikeParks(query: string) {
@@ -284,7 +346,7 @@ export class BikeParkProvider {
         createdBy: currentUser.user?.id,
         createdAt: new Date(),
         updatedAt: new Date(),
-        ...(currentUser.user.role === "admin" ? { approvedStatus: ApprovedStatus.APPROVED } : { approvedStatus: ApprovedStatus.WAITING_FOR_APPROVAL })
+        ...(currentUser.user.role === "admin" ? { approvalStatus: ApprovalStatus.APPROVED } : { approvalStatus: ApprovalStatus.WAITING_FOR_APPROVAL })
       });
 
       // Log the bike park data before saving for debugging

@@ -24,7 +24,7 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
-export enum ApprovedStatus {
+export enum ApprovalStatus {
   Approved = 'APPROVED',
   Rejected = 'REJECTED',
   WaitingForApproval = 'WAITING_FOR_APPROVAL'
@@ -39,7 +39,7 @@ export type AuthPayload = {
 export type BikePark = {
   __typename?: 'BikePark';
   address?: Maybe<Scalars['String']['output']>;
-  approvalStatus?: Maybe<ApprovedStatus>;
+  approvalStatus?: Maybe<ApprovalStatus>;
   contact?: Maybe<Contact>;
   coordinates?: Maybe<Coordinates>;
   createdAt?: Maybe<Scalars['String']['output']>;
@@ -50,6 +50,7 @@ export type BikePark = {
   features?: Maybe<Array<Scalars['String']['output']>>;
   id: Scalars['ID']['output'];
   imageUrl?: Maybe<Scalars['String']['output']>;
+  isFavorite?: Maybe<Scalars['Boolean']['output']>;
   lastUpdated?: Maybe<Scalars['String']['output']>;
   location?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
@@ -231,6 +232,7 @@ export type ImageUploadResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  approveBikePark: BikePark;
   createBikePark: BikePark;
   createEvent: Event;
   createReview: Review;
@@ -242,12 +244,19 @@ export type Mutation = {
   login: AuthPayload;
   register: AuthPayload;
   registerForEvent: Event;
+  rejectBikePark: BikePark;
   resetPassword: AuthPayload;
+  toggleFavoriteBikePark: User;
   updateBikePark: BikePark;
   updateEvent: Event;
   updateProfile: User;
   updateReview: Review;
   uploadImage: ImageUploadResponse;
+};
+
+
+export type MutationApproveBikeParkArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -319,10 +328,20 @@ export type MutationRegisterForEventArgs = {
 };
 
 
+export type MutationRejectBikeParkArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationResetPasswordArgs = {
   confirmPassword: Scalars['String']['input'];
   password: Scalars['String']['input'];
   token: Scalars['String']['input'];
+};
+
+
+export type MutationToggleFavoriteBikeParkArgs = {
+  bikeParkId: Scalars['ID']['input'];
 };
 
 
@@ -468,10 +487,12 @@ export type Query = {
   bikeParksByViewport: Array<BikePark>;
   event?: Maybe<Event>;
   events: Array<Event>;
+  favoriteBikeParks?: Maybe<Array<Maybe<BikePark>>>;
   me?: Maybe<User>;
   mostCommonFacilities?: Maybe<Array<Scalars['String']['output']>>;
   mostCommonFeatures?: Maybe<Array<Scalars['String']['output']>>;
   mostCommonRules?: Maybe<Array<Scalars['String']['output']>>;
+  pendingBikeParks: Array<BikePark>;
   popularEventCategories: Array<CategoryInfo>;
   reviews: PaginatedReviews;
   reviewsByUser: PaginatedReviews;
@@ -517,6 +538,11 @@ export type QueryMostCommonFeaturesArgs = {
 
 export type QueryMostCommonRulesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryPendingBikeParksArgs = {
+  status?: InputMaybe<ApprovalStatus>;
 };
 
 
@@ -698,6 +724,13 @@ export type BikeParkFragment = { __typename?: 'BikePark', id: string, name: stri
 
 export type EventFragment = { __typename?: 'Event', id: string, attendeeCount: number, capacity: number, category: EventCategory, date: any, description: string, featured: boolean, imageUrl: string, location: string, price: number, title: string, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string } };
 
+export type ApproveBikeParkMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type ApproveBikeParkMutation = { __typename?: 'Mutation', approveBikePark: { __typename?: 'BikePark', id: string, name: string, approvalStatus?: ApprovalStatus | null } };
+
 export type CreateBikeParkMutationVariables = Exact<{
   input: CreateBikeParkInput;
 }>;
@@ -760,6 +793,13 @@ export type RegisterMutationVariables = Exact<{
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'AuthPayload', token: string } };
 
+export type RejectBikeParkMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type RejectBikeParkMutation = { __typename?: 'Mutation', rejectBikePark: { __typename?: 'BikePark', id: string, name: string, approvalStatus?: ApprovalStatus | null } };
+
 export type ResetPasswordMutationVariables = Exact<{
   token: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -768,6 +808,13 @@ export type ResetPasswordMutationVariables = Exact<{
 
 
 export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: { __typename?: 'AuthPayload', token: string, user: { __typename?: 'User', id: string, username: string, email: string } } };
+
+export type ToggleFavoriteBikeParkMutationVariables = Exact<{
+  bikeParkId: Scalars['ID']['input'];
+}>;
+
+
+export type ToggleFavoriteBikeParkMutation = { __typename?: 'Mutation', toggleFavoriteBikePark: { __typename?: 'User', id: string, stats?: { __typename?: 'Stats', favoriteParks?: Array<string | null> | null } | null } };
 
 export type UpdateBikeParkMutationVariables = Exact<{
   id: Scalars['ID']['input'];
@@ -789,14 +836,14 @@ export type BikeParkQueryVariables = Exact<{
 }>;
 
 
-export type BikeParkQuery = { __typename?: 'Query', bikePark?: { __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, facilities?: Array<string> | null, photos?: Array<string> | null, rating?: number | null, rules?: Array<string> | null, videos?: Array<string> | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, contact?: { __typename?: 'Contact', email?: string | null, phone?: string | null, website?: string | null } | null, openingHours?: { __typename?: 'OpeningHours', monday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, tuesday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, wednesday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, thursday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, friday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, saturday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, sunday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null } | null, prices?: Array<{ __typename?: 'Price', name: string, price: number, currency: string } | null> | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, youtube?: string | null, strava?: string | null } | null, weather?: { __typename?: 'Weather', current?: { __typename?: 'WeatherData', description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null, forecast?: Array<{ __typename?: 'WeatherData', date?: string | null, description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null> | null } | null, trails?: Array<{ __typename?: 'Trail', id: string, imageUrl?: string | null, length: number, name: string, status: string, verticalDrop: number, features?: Array<string> | null, difficulty: string, description?: string | null }> | null, reviews?: Array<{ __typename?: 'Review', id: string, title?: string | null, comment: string, rating: number, createdAt: string, updatedAt?: string | null, createdBy: { __typename?: 'User', id: string, username: string, email: string } }> | null, createdBy?: { __typename?: 'User', id: string, role: string, username: string, email: string, isVerified?: boolean | null } | null } | null };
+export type BikeParkQuery = { __typename?: 'Query', bikePark?: { __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, facilities?: Array<string> | null, photos?: Array<string> | null, rating?: number | null, rules?: Array<string> | null, videos?: Array<string> | null, isFavorite?: boolean | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, contact?: { __typename?: 'Contact', email?: string | null, phone?: string | null, website?: string | null } | null, openingHours?: { __typename?: 'OpeningHours', monday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, tuesday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, wednesday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, thursday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, friday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, saturday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null, sunday?: { __typename?: 'OpeningHoursDay', from?: string | null, to?: string | null } | null } | null, prices?: Array<{ __typename?: 'Price', name: string, price: number, currency: string } | null> | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, youtube?: string | null, strava?: string | null } | null, weather?: { __typename?: 'Weather', current?: { __typename?: 'WeatherData', description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null, forecast?: Array<{ __typename?: 'WeatherData', date?: string | null, description?: string | null, feelsLike?: number | null, humidity?: number | null, icon?: string | null, precipitation?: number | null, temperature?: number | null, uvIndex?: number | null, windSpeed?: number | null } | null> | null } | null, trails?: Array<{ __typename?: 'Trail', id: string, imageUrl?: string | null, length: number, name: string, status: string, verticalDrop: number, features?: Array<string> | null, difficulty: string, description?: string | null }> | null, reviews?: Array<{ __typename?: 'Review', id: string, title?: string | null, comment: string, rating: number, createdAt: string, updatedAt?: string | null, createdBy: { __typename?: 'User', id: string, username: string, email: string } }> | null, createdBy?: { __typename?: 'User', id: string, role: string, username: string, email: string, isVerified?: boolean | null } | null } | null };
 
 export type BikeParksQueryVariables = Exact<{
   filter?: InputMaybe<BikeParkFilter>;
 }>;
 
 
-export type BikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, rating?: number | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> } };
+export type BikeParksQuery = { __typename?: 'Query', bikeParks: { __typename?: 'PaginatedBikeParks', totalCount: number, currentPage: number, totalPages: number, hasNextPage: boolean, bikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, description?: string | null, location?: string | null, imageUrl?: string | null, difficulty?: string | null, status?: string | null, features?: Array<string> | null, rating?: number | null, isFavorite?: boolean | null, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null }> } };
 
 export type BikeParksByViewportQueryVariables = Exact<{
   viewport: ViewportInput;
@@ -820,10 +867,22 @@ export type EventsQueryVariables = Exact<{
 
 export type EventsQuery = { __typename?: 'Query', events: Array<{ __typename?: 'Event', id: string, attendeeCount: number, capacity: number, category: EventCategory, date: any, description: string, featured: boolean, imageUrl: string, location: string, price: number, title: string, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string } }> };
 
+export type FavoriteBikeParksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FavoriteBikeParksQuery = { __typename?: 'Query', favoriteBikeParks?: Array<{ __typename?: 'BikePark', id: string, name: string, location?: string | null, imageUrl?: string | null, difficulty?: string | null, rating?: number | null, isFavorite?: boolean | null, reviews?: Array<{ __typename?: 'Review', id: string }> | null } | null> | null };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, email: string, username: string, role: string, profile?: { __typename?: 'Profile', firstName: string, lastName: string, location?: string | null, preferences?: { __typename?: 'Preferences', ridingStyles?: Array<string | null> | null, skillLevel?: string | null, preferredBikes?: Array<string | null> | null } | null, socialMedia?: { __typename?: 'SocialMedia', facebook?: string | null, instagram?: string | null, youtube?: string | null, strava?: string | null } | null } | null, stats?: { __typename?: 'Stats', favoriteParks?: Array<string | null> | null, favoriteTrails?: Array<string | null> | null, totalReviews?: number | null, totalRides?: number | null } | null } | null };
+
+export type GetPendingBikeParksQueryVariables = Exact<{
+  status?: InputMaybe<ApprovalStatus>;
+}>;
+
+
+export type GetPendingBikeParksQuery = { __typename?: 'Query', pendingBikeParks: Array<{ __typename?: 'BikePark', id: string, name: string, location?: string | null, imageUrl?: string | null, createdAt?: string | null, approvalStatus?: ApprovalStatus | null, createdBy?: { __typename?: 'User', id: string, username: string, email: string } | null }> };
 
 export type PopularEventCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -906,10 +965,12 @@ export type GraphCacheResolvers = {
     bikeParksByViewport?: GraphCacheResolver<WithTypename<Query>, QueryBikeParksByViewportArgs, Array<WithTypename<BikePark> | string>>,
     event?: GraphCacheResolver<WithTypename<Query>, QueryEventArgs, WithTypename<Event> | string>,
     events?: GraphCacheResolver<WithTypename<Query>, QueryEventsArgs, Array<WithTypename<Event> | string>>,
+    favoriteBikeParks?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<BikePark> | string>>,
     me?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     mostCommonFacilities?: GraphCacheResolver<WithTypename<Query>, QueryMostCommonFacilitiesArgs, Array<Scalars['String'] | string>>,
     mostCommonFeatures?: GraphCacheResolver<WithTypename<Query>, QueryMostCommonFeaturesArgs, Array<Scalars['String'] | string>>,
     mostCommonRules?: GraphCacheResolver<WithTypename<Query>, QueryMostCommonRulesArgs, Array<Scalars['String'] | string>>,
+    pendingBikeParks?: GraphCacheResolver<WithTypename<Query>, QueryPendingBikeParksArgs, Array<WithTypename<BikePark> | string>>,
     popularEventCategories?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<CategoryInfo> | string>>,
     reviews?: GraphCacheResolver<WithTypename<Query>, QueryReviewsArgs, WithTypename<PaginatedReviews> | string>,
     reviewsByUser?: GraphCacheResolver<WithTypename<Query>, QueryReviewsByUserArgs, WithTypename<PaginatedReviews> | string>,
@@ -921,7 +982,7 @@ export type GraphCacheResolvers = {
   },
   BikePark?: {
     address?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
-    approvalStatus?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, ApprovedStatus | string>,
+    approvalStatus?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, ApprovalStatus | string>,
     contact?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Contact> | string>,
     coordinates?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, WithTypename<Coordinates> | string>,
     createdAt?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
@@ -932,6 +993,7 @@ export type GraphCacheResolvers = {
     features?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Array<Scalars['String'] | string>>,
     id?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['ID'] | string>,
     imageUrl?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
+    isFavorite?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['Boolean'] | string>,
     lastUpdated?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
     location?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
     name?: GraphCacheResolver<WithTypename<BikePark>, Record<string, never>, Scalars['String'] | string>,
@@ -1124,6 +1186,7 @@ export type GraphCacheResolvers = {
 };
 
 export type GraphCacheOptimisticUpdaters = {
+  approveBikePark?: GraphCacheOptimisticMutationResolver<MutationApproveBikeParkArgs, WithTypename<BikePark>>,
   createBikePark?: GraphCacheOptimisticMutationResolver<MutationCreateBikeParkArgs, WithTypename<BikePark>>,
   createEvent?: GraphCacheOptimisticMutationResolver<MutationCreateEventArgs, WithTypename<Event>>,
   createReview?: GraphCacheOptimisticMutationResolver<MutationCreateReviewArgs, WithTypename<Review>>,
@@ -1135,7 +1198,9 @@ export type GraphCacheOptimisticUpdaters = {
   login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<AuthPayload>>,
   register?: GraphCacheOptimisticMutationResolver<MutationRegisterArgs, WithTypename<AuthPayload>>,
   registerForEvent?: GraphCacheOptimisticMutationResolver<MutationRegisterForEventArgs, WithTypename<Event>>,
+  rejectBikePark?: GraphCacheOptimisticMutationResolver<MutationRejectBikeParkArgs, WithTypename<BikePark>>,
   resetPassword?: GraphCacheOptimisticMutationResolver<MutationResetPasswordArgs, WithTypename<AuthPayload>>,
+  toggleFavoriteBikePark?: GraphCacheOptimisticMutationResolver<MutationToggleFavoriteBikeParkArgs, WithTypename<User>>,
   updateBikePark?: GraphCacheOptimisticMutationResolver<MutationUpdateBikeParkArgs, WithTypename<BikePark>>,
   updateEvent?: GraphCacheOptimisticMutationResolver<MutationUpdateEventArgs, WithTypename<Event>>,
   updateProfile?: GraphCacheOptimisticMutationResolver<MutationUpdateProfileArgs, WithTypename<User>>,
@@ -1150,16 +1215,19 @@ export type GraphCacheUpdaters = {
     bikeParksByViewport?: GraphCacheUpdateResolver<{ bikeParksByViewport: Array<WithTypename<BikePark>> }, QueryBikeParksByViewportArgs>,
     event?: GraphCacheUpdateResolver<{ event: Maybe<WithTypename<Event>> }, QueryEventArgs>,
     events?: GraphCacheUpdateResolver<{ events: Array<WithTypename<Event>> }, QueryEventsArgs>,
+    favoriteBikeParks?: GraphCacheUpdateResolver<{ favoriteBikeParks: Maybe<Array<WithTypename<BikePark>>> }, Record<string, never>>,
     me?: GraphCacheUpdateResolver<{ me: Maybe<WithTypename<User>> }, Record<string, never>>,
     mostCommonFacilities?: GraphCacheUpdateResolver<{ mostCommonFacilities: Maybe<Array<Scalars['String']>> }, QueryMostCommonFacilitiesArgs>,
     mostCommonFeatures?: GraphCacheUpdateResolver<{ mostCommonFeatures: Maybe<Array<Scalars['String']>> }, QueryMostCommonFeaturesArgs>,
     mostCommonRules?: GraphCacheUpdateResolver<{ mostCommonRules: Maybe<Array<Scalars['String']>> }, QueryMostCommonRulesArgs>,
+    pendingBikeParks?: GraphCacheUpdateResolver<{ pendingBikeParks: Array<WithTypename<BikePark>> }, QueryPendingBikeParksArgs>,
     popularEventCategories?: GraphCacheUpdateResolver<{ popularEventCategories: Array<WithTypename<CategoryInfo>> }, Record<string, never>>,
     reviews?: GraphCacheUpdateResolver<{ reviews: WithTypename<PaginatedReviews> }, QueryReviewsArgs>,
     reviewsByUser?: GraphCacheUpdateResolver<{ reviewsByUser: WithTypename<PaginatedReviews> }, QueryReviewsByUserArgs>,
     searchBikeParks?: GraphCacheUpdateResolver<{ searchBikeParks: Array<WithTypename<BikePark>> }, QuerySearchBikeParksArgs>
   },
   Mutation?: {
+    approveBikePark?: GraphCacheUpdateResolver<{ approveBikePark: WithTypename<BikePark> }, MutationApproveBikeParkArgs>,
     createBikePark?: GraphCacheUpdateResolver<{ createBikePark: WithTypename<BikePark> }, MutationCreateBikeParkArgs>,
     createEvent?: GraphCacheUpdateResolver<{ createEvent: WithTypename<Event> }, MutationCreateEventArgs>,
     createReview?: GraphCacheUpdateResolver<{ createReview: WithTypename<Review> }, MutationCreateReviewArgs>,
@@ -1171,7 +1239,9 @@ export type GraphCacheUpdaters = {
     login?: GraphCacheUpdateResolver<{ login: WithTypename<AuthPayload> }, MutationLoginArgs>,
     register?: GraphCacheUpdateResolver<{ register: WithTypename<AuthPayload> }, MutationRegisterArgs>,
     registerForEvent?: GraphCacheUpdateResolver<{ registerForEvent: WithTypename<Event> }, MutationRegisterForEventArgs>,
+    rejectBikePark?: GraphCacheUpdateResolver<{ rejectBikePark: WithTypename<BikePark> }, MutationRejectBikeParkArgs>,
     resetPassword?: GraphCacheUpdateResolver<{ resetPassword: WithTypename<AuthPayload> }, MutationResetPasswordArgs>,
+    toggleFavoriteBikePark?: GraphCacheUpdateResolver<{ toggleFavoriteBikePark: WithTypename<User> }, MutationToggleFavoriteBikeParkArgs>,
     updateBikePark?: GraphCacheUpdateResolver<{ updateBikePark: WithTypename<BikePark> }, MutationUpdateBikeParkArgs>,
     updateEvent?: GraphCacheUpdateResolver<{ updateEvent: WithTypename<Event> }, MutationUpdateEventArgs>,
     updateProfile?: GraphCacheUpdateResolver<{ updateProfile: WithTypename<User> }, MutationUpdateProfileArgs>,
@@ -1196,6 +1266,7 @@ export type GraphCacheUpdaters = {
     features?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     id?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     imageUrl?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
+    isFavorite?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     lastUpdated?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     location?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
     name?: GraphCacheUpdateResolver<Maybe<WithTypename<BikePark>>, Record<string, never>>,
@@ -1429,6 +1500,19 @@ export const EventFragmentDoc = gql`
   title
 }
     `;
+export const ApproveBikeParkDocument = gql`
+    mutation ApproveBikePark($id: ID!) {
+  approveBikePark(id: $id) {
+    id
+    name
+    approvalStatus
+  }
+}
+    `;
+
+export function useApproveBikeParkMutation() {
+  return Urql.useMutation<ApproveBikeParkMutation, ApproveBikeParkMutationVariables>(ApproveBikeParkDocument);
+};
 export const CreateBikeParkDocument = gql`
     mutation CreateBikePark($input: CreateBikeParkInput!) {
   createBikePark(input: $input) {
@@ -1535,6 +1619,19 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const RejectBikeParkDocument = gql`
+    mutation RejectBikePark($id: ID!) {
+  rejectBikePark(id: $id) {
+    id
+    name
+    approvalStatus
+  }
+}
+    `;
+
+export function useRejectBikeParkMutation() {
+  return Urql.useMutation<RejectBikeParkMutation, RejectBikeParkMutationVariables>(RejectBikeParkDocument);
+};
 export const ResetPasswordDocument = gql`
     mutation ResetPassword($token: String!, $password: String!, $confirmPassword: String!) {
   resetPassword(
@@ -1554,6 +1651,20 @@ export const ResetPasswordDocument = gql`
 
 export function useResetPasswordMutation() {
   return Urql.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(ResetPasswordDocument);
+};
+export const ToggleFavoriteBikeParkDocument = gql`
+    mutation ToggleFavoriteBikePark($bikeParkId: ID!) {
+  toggleFavoriteBikePark(bikeParkId: $bikeParkId) {
+    id
+    stats {
+      favoriteParks
+    }
+  }
+}
+    `;
+
+export function useToggleFavoriteBikeParkMutation() {
+  return Urql.useMutation<ToggleFavoriteBikeParkMutation, ToggleFavoriteBikeParkMutationVariables>(ToggleFavoriteBikeParkDocument);
 };
 export const UpdateBikeParkDocument = gql`
     mutation UpdateBikePark($id: ID!, $input: UpdateBikeParkInput!) {
@@ -1701,6 +1812,7 @@ export const BikeParkDocument = gql`
       email
       isVerified
     }
+    isFavorite
   }
 }
     `;
@@ -1725,6 +1837,7 @@ export const BikeParksDocument = gql`
         latitude
         longitude
       }
+      isFavorite
     }
     totalCount
     currentPage
@@ -1815,6 +1928,26 @@ export const EventsDocument = gql`
 export function useEventsQuery(options?: Omit<Urql.UseQueryArgs<EventsQueryVariables>, 'query'>) {
   return Urql.useQuery<EventsQuery, EventsQueryVariables>({ query: EventsDocument, ...options });
 };
+export const FavoriteBikeParksDocument = gql`
+    query FavoriteBikeParks {
+  favoriteBikeParks {
+    id
+    name
+    location
+    imageUrl
+    difficulty
+    rating
+    reviews {
+      id
+    }
+    isFavorite
+  }
+}
+    `;
+
+export function useFavoriteBikeParksQuery(options?: Omit<Urql.UseQueryArgs<FavoriteBikeParksQueryVariables>, 'query'>) {
+  return Urql.useQuery<FavoriteBikeParksQuery, FavoriteBikeParksQueryVariables>({ query: FavoriteBikeParksDocument, ...options });
+};
 export const MeDocument = gql`
     query Me {
   me {
@@ -1850,6 +1983,27 @@ export const MeDocument = gql`
 
 export function useMeQuery(options?: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'>) {
   return Urql.useQuery<MeQuery, MeQueryVariables>({ query: MeDocument, ...options });
+};
+export const GetPendingBikeParksDocument = gql`
+    query GetPendingBikeParks($status: ApprovalStatus) {
+  pendingBikeParks(status: $status) {
+    id
+    name
+    location
+    imageUrl
+    createdAt
+    approvalStatus
+    createdBy {
+      id
+      username
+      email
+    }
+  }
+}
+    `;
+
+export function useGetPendingBikeParksQuery(options?: Omit<Urql.UseQueryArgs<GetPendingBikeParksQueryVariables>, 'query'>) {
+  return Urql.useQuery<GetPendingBikeParksQuery, GetPendingBikeParksQueryVariables>({ query: GetPendingBikeParksDocument, ...options });
 };
 export const PopularEventCategoriesDocument = gql`
     query PopularEventCategories {
@@ -1946,7 +2100,9 @@ export const namedOperations = {
     BikeParksByViewport: 'BikeParksByViewport',
     Event: 'Event',
     Events: 'Events',
+    FavoriteBikeParks: 'FavoriteBikeParks',
     Me: 'Me',
+    GetPendingBikeParks: 'GetPendingBikeParks',
     PopularEventCategories: 'PopularEventCategories',
     Reviews: 'Reviews',
     ReviewsByUser: 'ReviewsByUser',
@@ -1955,6 +2111,7 @@ export const namedOperations = {
     MostCommonRules: 'MostCommonRules'
   },
   Mutation: {
+    ApproveBikePark: 'ApproveBikePark',
     CreateBikePark: 'CreateBikePark',
     CreateReview: 'CreateReview',
     DeleteBikePark: 'DeleteBikePark',
@@ -1962,7 +2119,9 @@ export const namedOperations = {
     GoogleLogin: 'GoogleLogin',
     Login: 'Login',
     Register: 'Register',
+    RejectBikePark: 'RejectBikePark',
     ResetPassword: 'ResetPassword',
+    ToggleFavoriteBikePark: 'ToggleFavoriteBikePark',
     UpdateBikePark: 'UpdateBikePark',
     UploadImage: 'UploadImage'
   },

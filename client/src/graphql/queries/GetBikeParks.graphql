@@ -15,6 +15,7 @@ query BikeParks($filter: BikeParkFilter) {
         latitude
         longitude
       }
+      isFavorite
       # weather {
       #   current {
       #     description

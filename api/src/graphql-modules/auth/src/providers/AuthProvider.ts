@@ -1,10 +1,11 @@
 import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
-import { JWT_SECRET, JWT_EXPIRES_IN } from '../../../../utils/auth.js';
+import { JWT_SECRET, JWT_EXPIRES_IN, AuthContext } from '../../../../utils/auth.js';
 import { UserModel } from '../models/UserModel.js';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import { ObjectId } from 'mongoose';
 
 // Google OAuth client
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '938158311101-08if6hhqen4ag4v1ihbfsl4ci5kq58hu.apps.googleusercontent.com';
@@ -358,6 +359,81 @@ export class AuthProvider {
     } catch (error: any) {
       throw new GraphQLError(`Update failed: ${error.message}`);
     }
+  }
+
+  /**
+   * Toggle a bike park as favorite
+   */
+  async toggleFavoriteBikePark(userId: string, bikeParkId: string) {
+    try {
+      const user = await UserModel.findById(userId);
+      if (!user) {
+        throw new GraphQLError('User not found');
+      }
+
+      // Initialize stats if it doesn't exist
+      if (!user.stats) {
+        user.stats = {};
+      }
+
+      // Initialize favoriteParks array if it doesn't exist
+      if (!user.stats.favoriteParks) {
+        user.stats.favoriteParks = [];
+      }
+
+      // Check if the bike park is already in favorites
+      const favoriteIndex = user.stats.favoriteParks.findIndex(
+        (id) => id.toString() === bikeParkId
+      );
+
+      // Toggle favorite status
+      if (favoriteIndex === -1) {
+        // Add to favorites
+        user.stats.favoriteParks.push(bikeParkId as any);
+      } else {
+        // Remove from favorites
+        user.stats.favoriteParks.splice(favoriteIndex, 1);
+      }
+
+      await user.save();
+      return user;
+    } catch (error: any) {
+      throw new GraphQLError(`Toggle favorite failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Check is bike park in favorites
+   */
+  async isFavorite(bikeParkId: ObjectId | string, currentUser: AuthContext) {
+    if (!currentUser.user?.id) {
+      throw new Error('Not authenticated');
+    }
+
+    const user = await UserModel.findById(currentUser.user.id);
+    if (!user) {
+      throw new GraphQLError('User not found');
+    }
+
+    return user.stats?.favoriteParks?.some(
+      (id) => id.toString() === bikeParkId.toString()
+    );
+  }
+
+  /**
+   * Get favorites bike parks
+   */
+  async getFavorites(currentUser: AuthContext) {
+    if (!currentUser.user?.id) {
+      throw new Error('Not authenticated');
+    }
+
+    const user = await UserModel.findById(currentUser.user.id);
+    if (!user) {
+      throw new GraphQLError('User not found');
+    }
+
+    return user.stats?.favoriteParks;
   }
 }
 

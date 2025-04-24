@@ -3,4 +3,6 @@ type Mutation {
   updateBikePark(id: ID!, input: UpdateBikeParkInput!): BikePark!
   deleteBikePark(id: ID!): Boolean!
   uploadImage(file: Upload!): ImageUploadResponse!
+  approveBikePark(id: ID!): BikePark!
+  rejectBikePark(id: ID!): BikePark!
 }
