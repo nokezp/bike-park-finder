@@ -22,6 +22,8 @@ type Event {
   createdAt: Date!
   updatedAt: Date!
   coordinates: Coordinates
+  approvalStatus: ApprovalStatus
+  createdBy: User
 }
 
 type Organizer {
@@ -83,4 +85,10 @@ enum EventPeriod {
   THIS_WEEK
   THIS_MONTH
   NEXT_MONTH
+}
+
+enum ApprovalStatus {
+  APPROVED
+  REJECTED
+  WAITING_FOR_APPROVAL
 }

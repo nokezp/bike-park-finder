@@ -1,0 +1,28 @@
+query GetPendingEvents($status: ApprovalStatus) {
+  pendingEvents(status: $status) {
+    id
+    title
+    location
+    imageUrl
+    date
+    createdAt
+    startTime
+    endTime
+    approvalStatus
+    createdBy {
+      id
+      username
+      email
+    }
+    organizer {
+      description
+      imageUrl
+      name
+    }
+    venue {
+      address
+      mapImageUrl
+      name
+    }
+  }
+}

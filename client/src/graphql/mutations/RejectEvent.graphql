@@ -1,0 +1,7 @@
+mutation RejectEvent($id: ID!) {
+  rejectEvent(id: $id) {
+    id
+    title
+    approvalStatus
+  }
+}

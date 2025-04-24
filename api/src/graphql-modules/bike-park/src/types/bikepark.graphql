@@ -2,7 +2,7 @@ type BikePark {
   id: ID!
   name: String!
   createdBy: User
-  createdAt: String
+  createdAt: Date
   description: String
   location: String
   features: [String!]
@@ -22,7 +22,7 @@ type BikePark {
   socialMedia: SocialMedia
   status: String
   lastUpdated: String
-  updatedAt: String
+  updatedAt: Date
   weather: Weather
   trails: [Trail!]
   approvalStatus: ApprovalStatus

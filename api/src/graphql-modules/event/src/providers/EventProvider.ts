@@ -1,7 +1,8 @@
 import moment from 'moment';
 import axios from 'axios';
-import { CategoryInfo, CreateEventInput, EventCategory, EventFilter, EventPeriod, UpdateEventInput } from '../../../../core/generated-models.js';
+import { ApprovalStatus, CategoryInfo, CreateEventInput, EventCategory, EventFilter, EventPeriod, UpdateEventInput } from '../../../../core/generated-models.js';
 import { EventModel } from '../models/EventModel.js';
+import { GraphQLError } from 'graphql';
 
 export class EventProvider {
   /**
@@ -150,6 +151,7 @@ export class EventProvider {
         ...input,
         availableTickets: input.capacity,
         attendeeCount: 0,
+        createdAt: new Date(),
       });
 
       await event.save();
@@ -169,6 +171,8 @@ export class EventProvider {
       if (!event) {
         throw new Error('Event not found');
       }
+
+      event.updatedAt = new Date();
 
       // Update only the provided fields
       Object.assign(event, input);
@@ -249,6 +253,63 @@ export class EventProvider {
     } catch (error: any) {
       console.error('Error geocoding location:', error);
       throw new Error('Failed to geocode location');
+    }
+  }
+
+  /**
+    * Get pending events for admin review
+    */
+  async getPendingEvents(status?: ApprovalStatus) {
+    try {
+      let query: any = {};
+
+      if (status) {
+        query.approvalStatus = status;
+      }
+
+      const events = await EventModel.find(query)
+        .populate('createdBy')
+        .sort({ createdAt: -1 });
+
+      return events;
+    } catch (error: any) {
+      throw new GraphQLError(`Error fetching pending events: ${error.message}`);
+    }
+  }
+
+  /**
+   * Approve an event
+   */
+  async approveEvent(id: string) {
+    try {
+      const event = await EventModel.findById(id);
+      if (!event) {
+        throw new GraphQLError('Event not found');
+      }
+
+      event.approvalStatus = ApprovalStatus.APPROVED;
+      await event.save();
+      return event;
+    } catch (error: any) {
+      throw new GraphQLError(`Error approving event: ${error.message}`);
+    }
+  }
+
+  /**
+   * Reject a event
+   */
+  async rejectEvent(id: string) {
+    try {
+      const event = await EventModel.findById(id);
+      if (!event) {
+        throw new GraphQLError('Event not found');
+      }
+
+      event.approvalStatus = ApprovalStatus.REJECTED;
+      await event.save();
+      return event;
+    } catch (error: any) {
+      throw new GraphQLError(`Error rejecting event: ${error.message}`);
     }
   }
 }

@@ -1,5 +1,7 @@
+import { GraphQLError } from 'graphql';
 import { CreateEventInput, UpdateEventInput } from '../../../../core/generated-models';
 import { Context } from '../../../../types';
+import { AuthContext } from '../../../../utils/auth';
 import { eventProvider } from '../providers/EventProvider.js';
 
 export const mutation = {
@@ -34,6 +36,30 @@ export const mutation = {
       }
 
       return eventProvider.registerForEvent(id);
+    },
+
+    approveEvent: async (_: unknown, { id }: { id: string }, context: AuthContext) => {
+      if (!context.user) {
+        throw new GraphQLError('Not authenticated');
+      }
+
+      if (context.user.role !== 'admin') {
+        throw new GraphQLError('Not authorized. Only admins can approve bike parks.');
+      }
+
+      return eventProvider.approveEvent(id);
+    },
+
+    rejectEvent: async (_: unknown, { id }: { id: string }, context: AuthContext) => {
+      if (!context.user) {
+        throw new GraphQLError('Not authenticated');
+      }
+
+      if (context.user.role !== 'admin') {
+        throw new GraphQLError('Not authorized. Only admins can reject bike parks.');
+      }
+
+      return eventProvider.rejectEvent(id);
     },
   },
 };

@@ -1,0 +1,7 @@
+mutation ApproveEvent($id: ID!) {
+  approveEvent(id: $id) {
+    id
+    title
+    approvalStatus
+  }
+}

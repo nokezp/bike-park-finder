@@ -3,4 +3,6 @@ type Mutation {
   updateEvent(id: ID!, input: UpdateEventInput!): Event!
   deleteEvent(id: ID!): Boolean!
   registerForEvent(id: ID!): Event!
+  approveEvent(id: ID!): Event!
+  rejectEvent(id: ID!): Event!
 }
