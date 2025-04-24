@@ -12,4 +12,5 @@ type Mutation {
   forgotPassword(email: String!): Boolean!
   resetPassword(token: String!, password: String!, confirmPassword: String!): AuthPayload!
   updateProfile(name: String, email: String): User!
+  toggleFavoriteBikePark(bikeParkId: ID!): User!
 }

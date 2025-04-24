@@ -161,6 +161,14 @@ export default {
             "args": []
           },
           {
+            "name": "isFavorite",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
             "name": "lastUpdated",
             "type": {
               "kind": "SCALAR",
@@ -704,6 +712,29 @@ export default {
         "name": "Mutation",
         "fields": [
           {
+            "name": "approveBikePark",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "BikePark",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "id",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
             "name": "createBikePark",
             "type": {
               "kind": "NON_NULL",
@@ -1071,6 +1102,29 @@ export default {
             ]
           },
           {
+            "name": "rejectBikePark",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "BikePark",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "id",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
             "name": "resetPassword",
             "type": {
               "kind": "NON_NULL",
@@ -1103,6 +1157,29 @@ export default {
               },
               {
                 "name": "token",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "toggleFavoriteBikePark",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "User",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "bikeParkId",
                 "type": {
                   "kind": "NON_NULL",
                   "ofType": {
@@ -1846,6 +1923,18 @@ export default {
             ]
           },
           {
+            "name": "favoriteBikeParks",
+            "type": {
+              "kind": "LIST",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "BikePark",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
             "name": "me",
             "type": {
               "kind": "OBJECT",
@@ -1913,6 +2002,32 @@ export default {
             "args": [
               {
                 "name": "limit",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
+          },
+          {
+            "name": "pendingBikeParks",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "BikePark",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "status",
                 "type": {
                   "kind": "SCALAR",
                   "name": "Any"

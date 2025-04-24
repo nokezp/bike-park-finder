@@ -1,0 +1,15 @@
+query GetPendingBikeParks($status: ApprovalStatus) {
+  pendingBikeParks(status: $status) {
+    id
+    name
+    location
+    imageUrl
+    createdAt
+    approvalStatus
+    createdBy {
+      id
+      username
+      email
+    }
+  }
+}

@@ -1,9 +1,11 @@
 type Query {
   bikeParks(filter: BikeParkFilter): PaginatedBikeParks!
   bikePark(id: ID!): BikePark
+  favoriteBikeParks: [BikePark]
   searchBikeParks(query: String!): [BikePark!]!
   bikeParksByViewport(viewport: ViewportInput!, searchQuery: String): [BikePark!]!
   mostCommonFeatures(limit: Int): [String!]
   mostCommonFacilities(limit: Int): [String!]
   mostCommonRules(limit: Int): [String!]
+  pendingBikeParks(status: ApprovalStatus): [BikePark!]!
 }

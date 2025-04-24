@@ -17,10 +17,11 @@ import ResetPasswordPage from './pages/Proflie/ResetPasswordPage';
 import CommunityPage from './pages/Community/CommunityPage';
 import { MapsPage } from './pages/Map/MapsPage';
 import BikeParkFormPage from './pages/Admin/BikeParkFormPage';
+import SavedParks from './pages/Proflie/SavedParks';
+import Settings from './pages/Proflie/Settings';
 import 'react-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
-
 
 const App: React.FC = () => {
   return (
@@ -32,7 +33,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/bike-parks" element={<BikeParksPage />} />
-              <Route path="/bike-parks/:id" element={<BikeParkDetailPage />} />
+              <Route path="/bike-park/:id" element={<BikeParkDetailPage />} />
               <Route path="/bike-park/new" element={<BikeParkFormPage />} />
               <Route path="/bike-park/edit/:id" element={<BikeParkFormPage />} />
               <Route path="/events" element={<EventsPage />} />
@@ -45,6 +46,8 @@ const App: React.FC = () => {
               <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
               <Route path='/user-account' element={<ProfilePage />} />
               <Route path='/community' element={<CommunityPage />} />
+              <Route path='/saved-parks' element={<SavedParks />} />
+              <Route path='/settings' element={<Settings />} />
             </Routes>
           </div>
           <Footer />

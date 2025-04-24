@@ -11,7 +11,7 @@ const FeaturedParks: React.FC = () => {
   const title = 'Popular Bike Parks';
 
   const handleViewDetails = (bikeParkId: string) => {
-    navigate(`/bike-parks/${bikeParkId}`);
+    navigate(`/bike-park/${bikeParkId}`);
   };
 
   const [{ data }] = useQuery({

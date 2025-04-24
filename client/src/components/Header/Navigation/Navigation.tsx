@@ -11,7 +11,7 @@ const Navigation = () => {
   const ref = useRef<any>(null);
   const [showMoreLinks, setShowMoreLinks] = useState(false);
 
-  const [{ data }] = useQuery<MeQuery>({
+  const [{ data }, refetch] = useQuery<MeQuery>({
     query: MeDocument,
     requestPolicy: "network-only"
   });
@@ -49,9 +49,8 @@ const Navigation = () => {
         <Link
           key={path}
           to={path}
-          className={`text-base font-medium transition-colors duration-200 hover:text-emerald-500 ${isSelected(path) ? 'text-emerald-500 border-b-2 border-emerald-500' : 'text-gray-700'
-            }`}
-        >
+          className={`text-base font-medium transition-colors duration-200 hover:text-emerald-500 ${isSelected(path)
+            ? 'text-emerald-500 border-b-2 border-emerald-500' : 'text-gray-700'}`}>
           {label}
         </Link>
       ))}
@@ -75,20 +74,33 @@ const Navigation = () => {
               <img src={userAvatar} className="w-8 h-8 rounded-full cursor-pointer" alt="User avatar" />
               {showMoreLinks && (
                 <div ref={ref} className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                  <Link to="/user-account" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                  <Link to="/user-account"
+                    className={`block px-4 py-2 text-gray-700 hover:bg-gray-100 ${isSelected("/user-account")
+                      ? 'bg-gray-200' : 'text-gray-700'}`}>
                     <i className="fa-regular fa-user mr-2"></i>
                     Profile
                   </Link>
-                  <Link to="/settings" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                    <i className="fa-regular fa-gear mr-2"></i>
-                    Settings
-                  </Link>
-                  <Link to="/saved-parks" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
-                    <i className="fa-regular fa-bookmark mr-2"></i>
+                  <Link to="/saved-parks"
+                    className={`block px-4 py-2 text-gray-700 hover:bg-gray-100 ${isSelected("/saved-parks")
+                      ? 'bg-gray-200' : 'text-gray-700'}`}>
+                    <i className="fa-regular fa-heart mr-2"></i>
                     Saved Parks
                   </Link>
+                  <Link to="/settings"
+                    className={`block px-4 py-2 text-gray-700 hover:bg-gray-100 ${isSelected("/settings")
+                      ? 'bg-gray-200' : 'text-gray-700'}`}>
+                    {/* <i className="fa-solid fa-gear mr-2"></i> */}
+                    <i className="fa-solid fa-gear mr-2"></i>
+                    Settings
+                  </Link>
                   <div className="border-t border-gray-100 my-1"></div>
-                  <Link to="/" className="block px-4 py-2 text-red-700 hover:bg-gray-100" onClick={removeToken}>
+                  <Link
+                    to="/"
+                    className="block px-4 py-2 text-red-700 hover:bg-gray-100"
+                    onClick={() => {
+                      removeToken();
+                      refetch({ requestPolicy: "network-only" });
+                    }}>
                     <i className="fa-solid fa-right-from-bracket mr-2"></i>
                     Logout
                   </Link>
@@ -105,8 +117,9 @@ const Navigation = () => {
         >
           Login
         </Link>
-      )}
-    </nav>
+      )
+      }
+    </nav >
   );
 };
 

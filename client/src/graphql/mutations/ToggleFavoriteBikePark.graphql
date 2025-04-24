@@ -1,0 +1,8 @@
+mutation ToggleFavoriteBikePark($bikeParkId: ID!) {
+  toggleFavoriteBikePark(bikeParkId: $bikeParkId) {
+    id
+    stats {
+      favoriteParks
+    }
+  }
+}

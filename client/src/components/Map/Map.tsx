@@ -157,7 +157,7 @@ const Map: React.FC<{
     }
 
     const handleViewDetails = (id: string) => {
-      navigate(`/bike-parks/${id}`);
+      navigate(`/bike-park/${id}`);
     };
 
     return <div style={{ position: "relative", width: "100%" }}>

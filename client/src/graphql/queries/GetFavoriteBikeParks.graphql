@@ -1,0 +1,14 @@
+query FavoriteBikeParks {
+  favoriteBikeParks {
+    id
+    name
+    location
+    imageUrl
+    difficulty
+    rating
+    reviews {
+      id
+    }
+    isFavorite
+  }
+}

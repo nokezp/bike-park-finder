@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { BikePark, BikeParkFilter, BikeParksDocument } from '../../lib/graphql/generated/graphql-operations';
-import { useQuery } from 'urql';
+import { BikePark, BikeParkFilter, BikeParksDocument, MeDocument, ToggleFavoriteBikeParkDocument } from '../../lib/graphql/generated/graphql-operations';
+import { useQuery, useMutation } from 'urql';
 import FallbackImage from '../common/FallbackImage';
 import { capitalize } from 'lodash';
 
@@ -237,10 +237,13 @@ const MapLeftMenu: React.FC<{
                       <div className="flex-[70%] m-4">
                         <div className="flex justify-between">
                           <h3 className="font-bold text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]">{park.name}</h3>
-                          <span className="text-sm">
-                            <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i>{' '}
-                            {park.rating}
-                          </span>
+                          <div className="flex items-center">
+                            <span className="text-sm mr-2">
+                              <i className="fa-solid fa-star text-yellow-400 text-ellipsis whitespace-nowrap overflow-hidden max-w-[170px]"></i>{' '}
+                              {park.rating}
+                            </span>
+                            {/* <FavoriteButton parkId={park.id} /> */}
+                          </div>
                         </div>
                         <p className="text-sm text-gray-600 mb-2">{park.location}</p>
                         <div className="flex gap-2">

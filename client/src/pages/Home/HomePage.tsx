@@ -159,7 +159,7 @@ const HomePage: React.FC = () => {
                       <i className={`fa-solid fa-${park.weather.icon} text-gray-600`}></i>
                       <span className="text-gray-600">{park.weather.temp}°C</span>
                     </div>
-                    <Link to={`/bike-parks/${park.id}`} className="text-emerald-600 hover:text-emerald-700">
+                    <Link to={`/bike-park/${park.id}`} className="text-emerald-600 hover:text-emerald-700">
                       View Details <i className="fa-solid fa-arrow-right ml-1"></i>
                     </Link>
                   </div>
@@ -217,9 +217,9 @@ const HomePage: React.FC = () => {
             <div id="gear-card-1" className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="h-48 relative">
                 <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/9eeeabafdb-332ed31b7001108b8fc1.png" alt="downhill mountain bike helmet and protective gear arranged professionally, product photography" />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                    <h3 className="text-white font-bold">Protection</h3>
-                  </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                  <h3 className="text-white font-bold">Protection</h3>
+                </div>
               </div>
               <div className="p-4">
                 <p className="text-gray-600 mb-4">Essential protective gear for safe riding</p>
@@ -234,9 +234,9 @@ const HomePage: React.FC = () => {
             <div id="gear-card-2" className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="h-48 relative">
                 <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/4a1fc659b9-27080713c091f5de0078.png" alt="mountain bike shoes and pedals on wooden surface, product photography" />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                    <h3 className="text-white font-bold">Footwear</h3>
-                  </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                  <h3 className="text-white font-bold">Footwear</h3>
+                </div>
               </div>
               <div className="p-4">
                 <p className="text-gray-600 mb-4">Proper footwear for optimal control</p>
@@ -251,9 +251,9 @@ const HomePage: React.FC = () => {
             <div id="gear-card-3" className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="h-48 relative">
                 <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b8b3909dbb-4d5857e93347c8e1f0ba.png" alt="mountain bike tools and repair kit neatly arranged, product photography" />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                    <h3 className="text-white font-bold">Tools</h3>
-                  </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                  <h3 className="text-white font-bold">Tools</h3>
+                </div>
               </div>
               <div className="p-4">
                 <p className="text-gray-600 mb-4">Must-have tools for trail repairs</p>
@@ -268,9 +268,9 @@ const HomePage: React.FC = () => {
             <div id="gear-card-4" className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="h-48 relative">
                 <img className="w-full h-full object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/6bc454aace-b174810927334bf91ffb.png" alt="hydration pack and water bottles for mountain biking, product photography" />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                    <h3 className="text-white font-bold">Hydration</h3>
-                  </div>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                  <h3 className="text-white font-bold">Hydration</h3>
+                </div>
               </div>
               <div className="p-4">
                 <p className="text-gray-600 mb-4">Stay hydrated on the trails</p>

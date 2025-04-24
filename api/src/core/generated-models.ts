@@ -20,7 +20,7 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
-export enum ApprovedStatus {
+export enum ApprovalStatus {
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
   WAITING_FOR_APPROVAL = 'WAITING_FOR_APPROVAL'
@@ -35,7 +35,7 @@ export type AuthPayload = {
 export type BikePark = {
   __typename?: 'BikePark';
   address?: Maybe<Scalars['String']['output']>;
-  approvalStatus?: Maybe<ApprovedStatus>;
+  approvalStatus?: Maybe<ApprovalStatus>;
   contact?: Maybe<Contact>;
   coordinates?: Maybe<Coordinates>;
   createdAt?: Maybe<Scalars['String']['output']>;
@@ -46,6 +46,7 @@ export type BikePark = {
   features?: Maybe<Array<Scalars['String']['output']>>;
   id: Scalars['ID']['output'];
   imageUrl?: Maybe<Scalars['String']['output']>;
+  isFavorite?: Maybe<Scalars['Boolean']['output']>;
   lastUpdated?: Maybe<Scalars['String']['output']>;
   location?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
@@ -227,6 +228,7 @@ export type ImageUploadResponse = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  approveBikePark: BikePark;
   createBikePark: BikePark;
   createEvent: Event;
   createReview: Review;
@@ -238,12 +240,19 @@ export type Mutation = {
   login: AuthPayload;
   register: AuthPayload;
   registerForEvent: Event;
+  rejectBikePark: BikePark;
   resetPassword: AuthPayload;
+  toggleFavoriteBikePark: User;
   updateBikePark: BikePark;
   updateEvent: Event;
   updateProfile: User;
   updateReview: Review;
   uploadImage: ImageUploadResponse;
+};
+
+
+export type MutationApproveBikeParkArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -315,10 +324,20 @@ export type MutationRegisterForEventArgs = {
 };
 
 
+export type MutationRejectBikeParkArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type MutationResetPasswordArgs = {
   confirmPassword: Scalars['String']['input'];
   password: Scalars['String']['input'];
   token: Scalars['String']['input'];
+};
+
+
+export type MutationToggleFavoriteBikeParkArgs = {
+  bikeParkId: Scalars['ID']['input'];
 };
 
 
@@ -464,10 +483,12 @@ export type Query = {
   bikeParksByViewport: Array<BikePark>;
   event?: Maybe<Event>;
   events: Array<Event>;
+  favoriteBikeParks?: Maybe<Array<Maybe<BikePark>>>;
   me?: Maybe<User>;
   mostCommonFacilities?: Maybe<Array<Scalars['String']['output']>>;
   mostCommonFeatures?: Maybe<Array<Scalars['String']['output']>>;
   mostCommonRules?: Maybe<Array<Scalars['String']['output']>>;
+  pendingBikeParks: Array<BikePark>;
   popularEventCategories: Array<CategoryInfo>;
   reviews: PaginatedReviews;
   reviewsByUser: PaginatedReviews;
@@ -513,6 +534,11 @@ export type QueryMostCommonFeaturesArgs = {
 
 export type QueryMostCommonRulesArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryPendingBikeParksArgs = {
+  status?: InputMaybe<ApprovalStatus>;
 };
 
 
@@ -761,7 +787,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  ApprovedStatus: ApprovedStatus;
+  ApprovalStatus: ApprovalStatus;
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   BikePark: ResolverTypeWrapper<BikePark>;
   BikeParkFilter: BikeParkFilter;
@@ -885,7 +911,7 @@ export type AuthPayloadResolvers<ContextType = any, ParentType extends Resolvers
 
 export type BikeParkResolvers<ContextType = any, ParentType extends ResolversParentTypes['BikePark'] = ResolversParentTypes['BikePark']> = {
   address?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  approvalStatus?: Resolver<Maybe<ResolversTypes['ApprovedStatus']>, ParentType, ContextType>;
+  approvalStatus?: Resolver<Maybe<ResolversTypes['ApprovalStatus']>, ParentType, ContextType>;
   contact?: Resolver<Maybe<ResolversTypes['Contact']>, ParentType, ContextType>;
   coordinates?: Resolver<Maybe<ResolversTypes['Coordinates']>, ParentType, ContextType>;
   createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -896,6 +922,7 @@ export type BikeParkResolvers<ContextType = any, ParentType extends ResolversPar
   features?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   imageUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  isFavorite?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   lastUpdated?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -974,6 +1001,7 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  approveBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationApproveBikeParkArgs, 'id'>>;
   createBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationCreateBikeParkArgs, 'input'>>;
   createEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationCreateEventArgs, 'input'>>;
   createReview?: Resolver<ResolversTypes['Review'], ParentType, ContextType, RequireFields<MutationCreateReviewArgs, 'bikeParkId' | 'comment' | 'rating'>>;
@@ -985,7 +1013,9 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   register?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'confirmPassword' | 'email' | 'firstName' | 'lastName' | 'password' | 'username'>>;
   registerForEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationRegisterForEventArgs, 'id'>>;
+  rejectBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationRejectBikeParkArgs, 'id'>>;
   resetPassword?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'confirmPassword' | 'password' | 'token'>>;
+  toggleFavoriteBikePark?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationToggleFavoriteBikeParkArgs, 'bikeParkId'>>;
   updateBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationUpdateBikeParkArgs, 'id' | 'input'>>;
   updateEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationUpdateEventArgs, 'id' | 'input'>>;
   updateProfile?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationUpdateProfileArgs>>;
@@ -1073,10 +1103,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   bikeParksByViewport?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QueryBikeParksByViewportArgs, 'viewport'>>;
   event?: Resolver<Maybe<ResolversTypes['Event']>, ParentType, ContextType, RequireFields<QueryEventArgs, 'id'>>;
   events?: Resolver<Array<ResolversTypes['Event']>, ParentType, ContextType, Partial<QueryEventsArgs>>;
+  favoriteBikeParks?: Resolver<Maybe<Array<Maybe<ResolversTypes['BikePark']>>>, ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   mostCommonFacilities?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType, Partial<QueryMostCommonFacilitiesArgs>>;
   mostCommonFeatures?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType, Partial<QueryMostCommonFeaturesArgs>>;
   mostCommonRules?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType, Partial<QueryMostCommonRulesArgs>>;
+  pendingBikeParks?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, Partial<QueryPendingBikeParksArgs>>;
   popularEventCategories?: Resolver<Array<ResolversTypes['CategoryInfo']>, ParentType, ContextType>;
   reviews?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
   reviewsByUser?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsByUserArgs, 'userId'>>;

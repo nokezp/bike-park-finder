@@ -25,7 +25,8 @@ type BikePark {
   updatedAt: String
   weather: Weather
   trails: [Trail!]
-  approvalStatus: ApprovedStatus
+  approvalStatus: ApprovalStatus
+  isFavorite: Boolean
 }
 
 type Coordinates {
@@ -72,7 +73,7 @@ type ImageUploadResponse {
   key: String!
 }
 
-enum ApprovedStatus {
+enum ApprovalStatus {
   APPROVED
   REJECTED
   WAITING_FOR_APPROVAL

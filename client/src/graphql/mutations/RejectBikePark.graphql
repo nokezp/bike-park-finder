@@ -1,0 +1,7 @@
+mutation RejectBikePark($id: ID!) {
+  rejectBikePark(id: $id) {
+    id
+    name
+    approvalStatus
+  }
+}

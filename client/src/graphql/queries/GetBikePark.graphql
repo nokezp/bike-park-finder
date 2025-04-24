@@ -119,5 +119,6 @@ query BikePark($id: ID!) {
       email
       isVerified
     }
+    isFavorite
   }
 }

@@ -42,5 +42,29 @@ export const mutation = {
         throw new GraphQLError(`Failed to upload image: ${error.message}`);
       }
     },
+
+    approveBikePark: async (_: unknown, { id }: { id: string }, context: AuthContext) => {
+      if (!context.user) {
+        throw new GraphQLError('Not authenticated');
+      }
+
+      if (context.user.role !== 'admin') {
+        throw new GraphQLError('Not authorized. Only admins can approve bike parks.');
+      }
+
+      return bikeParkProvider.approveBikePark(id);
+    },
+
+    rejectBikePark: async (_: unknown, { id }: { id: string }, context: AuthContext) => {
+      if (!context.user) {
+        throw new GraphQLError('Not authenticated');
+      }
+
+      if (context.user.role !== 'admin') {
+        throw new GraphQLError('Not authorized. Only admins can reject bike parks.');
+      }
+
+      return bikeParkProvider.rejectBikePark(id);
+    },
   },
 };
