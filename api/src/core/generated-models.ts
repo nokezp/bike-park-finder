@@ -232,12 +232,14 @@ export type Mutation = {
   __typename?: 'Mutation';
   approveBikePark: BikePark;
   approveEvent: Event;
+  connectStrava: Scalars['Boolean']['output'];
   createBikePark: BikePark;
   createEvent: Event;
   createReview: Review;
   deleteBikePark: Scalars['Boolean']['output'];
   deleteEvent: Scalars['Boolean']['output'];
   deleteReview: Scalars['Boolean']['output'];
+  disconnectStrava: Scalars['Boolean']['output'];
   forgotPassword: Scalars['Boolean']['output'];
   googleLogin: AuthPayload;
   login: AuthPayload;
@@ -262,6 +264,11 @@ export type MutationApproveBikeParkArgs = {
 
 export type MutationApproveEventArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationConnectStravaArgs = {
+  code: Scalars['String']['input'];
 };
 
 
@@ -508,6 +515,10 @@ export type Query = {
   reviews: PaginatedReviews;
   reviewsByUser: PaginatedReviews;
   searchBikeParks: Array<BikePark>;
+  stravaActivities: Array<StravaActivity>;
+  stravaActivity?: Maybe<StravaActivity>;
+  stravaAuthUrl: Scalars['String']['output'];
+  stravaConnection: StravaConnection;
 };
 
 
@@ -580,6 +591,24 @@ export type QuerySearchBikeParksArgs = {
   query: Scalars['String']['input'];
 };
 
+
+export type QueryStravaActivitiesArgs = {
+  after?: InputMaybe<Scalars['Int']['input']>;
+  before?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  perPage?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryStravaActivityArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type QueryStravaAuthUrlArgs = {
+  state?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Review = {
   __typename?: 'Review';
   bikePark: Scalars['ID']['output'];
@@ -629,6 +658,76 @@ export type Stats = {
   favoriteTrails?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   totalReviews?: Maybe<Scalars['Int']['output']>;
   totalRides?: Maybe<Scalars['Int']['output']>;
+};
+
+export type StravaActivity = {
+  __typename?: 'StravaActivity';
+  achievementCount?: Maybe<Scalars['Int']['output']>;
+  athleteCount?: Maybe<Scalars['Int']['output']>;
+  averageHeartrate?: Maybe<Scalars['Float']['output']>;
+  averageSpeed?: Maybe<Scalars['Float']['output']>;
+  averageWatts?: Maybe<Scalars['Float']['output']>;
+  commentCount?: Maybe<Scalars['Int']['output']>;
+  commute?: Maybe<Scalars['Boolean']['output']>;
+  deviceWatts?: Maybe<Scalars['Boolean']['output']>;
+  distance: Scalars['Float']['output'];
+  elapsedTime: Scalars['Int']['output'];
+  endLatlng?: Maybe<Array<Maybe<Scalars['Float']['output']>>>;
+  flagged?: Maybe<Scalars['Boolean']['output']>;
+  gearId?: Maybe<Scalars['String']['output']>;
+  hasHeartrate?: Maybe<Scalars['Boolean']['output']>;
+  id: Scalars['Float']['output'];
+  kilojoules?: Maybe<Scalars['Float']['output']>;
+  kudosCount?: Maybe<Scalars['Int']['output']>;
+  manual?: Maybe<Scalars['Boolean']['output']>;
+  map?: Maybe<StravaMap>;
+  maxHeartrate?: Maybe<Scalars['Float']['output']>;
+  maxSpeed?: Maybe<Scalars['Float']['output']>;
+  movingTime: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  photoCount?: Maybe<Scalars['Int']['output']>;
+  private?: Maybe<Scalars['Boolean']['output']>;
+  sportType: Scalars['String']['output'];
+  startDate: Scalars['String']['output'];
+  startDateLocal: Scalars['String']['output'];
+  startLatlng?: Maybe<Array<Maybe<Scalars['Float']['output']>>>;
+  timezone?: Maybe<Scalars['String']['output']>;
+  totalElevationGain: Scalars['Float']['output'];
+  trainer?: Maybe<Scalars['Boolean']['output']>;
+  type: Scalars['String']['output'];
+  visibility?: Maybe<Scalars['String']['output']>;
+};
+
+export type StravaAthlete = {
+  __typename?: 'StravaAthlete';
+  bio?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['String']['output']>;
+  firstname: Scalars['String']['output'];
+  id: Scalars['Float']['output'];
+  lastname: Scalars['String']['output'];
+  premium?: Maybe<Scalars['Boolean']['output']>;
+  profile?: Maybe<Scalars['String']['output']>;
+  profileMedium?: Maybe<Scalars['String']['output']>;
+  sex?: Maybe<Scalars['String']['output']>;
+  state?: Maybe<Scalars['String']['output']>;
+  summit?: Maybe<Scalars['Boolean']['output']>;
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+};
+
+export type StravaConnection = {
+  __typename?: 'StravaConnection';
+  athlete?: Maybe<StravaAthlete>;
+  connected: Scalars['Boolean']['output'];
+};
+
+export type StravaMap = {
+  __typename?: 'StravaMap';
+  id: Scalars['String']['output'];
+  polyline?: Maybe<Scalars['String']['output']>;
+  summaryPolyline?: Maybe<Scalars['String']['output']>;
 };
 
 export type Trail = {
@@ -853,6 +952,10 @@ export type ResolversTypes = {
   SocialMedia: ResolverTypeWrapper<SocialMedia>;
   SocialMediaInput: SocialMediaInput;
   Stats: ResolverTypeWrapper<Stats>;
+  StravaActivity: ResolverTypeWrapper<StravaActivity>;
+  StravaAthlete: ResolverTypeWrapper<StravaAthlete>;
+  StravaConnection: ResolverTypeWrapper<StravaConnection>;
+  StravaMap: ResolverTypeWrapper<StravaMap>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Trail: ResolverTypeWrapper<Trail>;
   UpdateBikeParkInput: UpdateBikeParkInput;
@@ -910,6 +1013,10 @@ export type ResolversParentTypes = {
   SocialMedia: SocialMedia;
   SocialMediaInput: SocialMediaInput;
   Stats: Stats;
+  StravaActivity: StravaActivity;
+  StravaAthlete: StravaAthlete;
+  StravaConnection: StravaConnection;
+  StravaMap: StravaMap;
   String: Scalars['String']['output'];
   Trail: Trail;
   UpdateBikeParkInput: UpdateBikeParkInput;
@@ -1025,12 +1132,14 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   approveBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationApproveBikeParkArgs, 'id'>>;
   approveEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationApproveEventArgs, 'id'>>;
+  connectStrava?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationConnectStravaArgs, 'code'>>;
   createBikePark?: Resolver<ResolversTypes['BikePark'], ParentType, ContextType, RequireFields<MutationCreateBikeParkArgs, 'input'>>;
   createEvent?: Resolver<ResolversTypes['Event'], ParentType, ContextType, RequireFields<MutationCreateEventArgs, 'input'>>;
   createReview?: Resolver<ResolversTypes['Review'], ParentType, ContextType, RequireFields<MutationCreateReviewArgs, 'bikeParkId' | 'comment' | 'rating'>>;
   deleteBikePark?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteBikeParkArgs, 'id'>>;
   deleteEvent?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteEventArgs, 'id'>>;
   deleteReview?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteReviewArgs, 'id'>>;
+  disconnectStrava?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   forgotPassword?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationForgotPasswordArgs, 'email'>>;
   googleLogin?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationGoogleLoginArgs, 'idToken'>>;
   login?: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
@@ -1138,6 +1247,10 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   reviews?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsArgs, 'bikeParkId'>>;
   reviewsByUser?: Resolver<ResolversTypes['PaginatedReviews'], ParentType, ContextType, RequireFields<QueryReviewsByUserArgs, 'userId'>>;
   searchBikeParks?: Resolver<Array<ResolversTypes['BikePark']>, ParentType, ContextType, RequireFields<QuerySearchBikeParksArgs, 'query'>>;
+  stravaActivities?: Resolver<Array<ResolversTypes['StravaActivity']>, ParentType, ContextType, Partial<QueryStravaActivitiesArgs>>;
+  stravaActivity?: Resolver<Maybe<ResolversTypes['StravaActivity']>, ParentType, ContextType, RequireFields<QueryStravaActivityArgs, 'id'>>;
+  stravaAuthUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType, Partial<QueryStravaAuthUrlArgs>>;
+  stravaConnection?: Resolver<ResolversTypes['StravaConnection'], ParentType, ContextType>;
 };
 
 export type ReviewResolvers<ContextType = any, ParentType extends ResolversParentTypes['Review'] = ResolversParentTypes['Review']> = {
@@ -1175,6 +1288,76 @@ export type StatsResolvers<ContextType = any, ParentType extends ResolversParent
   favoriteTrails?: Resolver<Maybe<Array<Maybe<ResolversTypes['ID']>>>, ParentType, ContextType>;
   totalReviews?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   totalRides?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type StravaActivityResolvers<ContextType = any, ParentType extends ResolversParentTypes['StravaActivity'] = ResolversParentTypes['StravaActivity']> = {
+  achievementCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  athleteCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  averageHeartrate?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  averageSpeed?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  averageWatts?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  commentCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  commute?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  deviceWatts?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  distance?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  elapsedTime?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  endLatlng?: Resolver<Maybe<Array<Maybe<ResolversTypes['Float']>>>, ParentType, ContextType>;
+  flagged?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  gearId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  hasHeartrate?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  kilojoules?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  kudosCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  manual?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  map?: Resolver<Maybe<ResolversTypes['StravaMap']>, ParentType, ContextType>;
+  maxHeartrate?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  maxSpeed?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  movingTime?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  photoCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  private?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  sportType?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  startDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  startDateLocal?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  startLatlng?: Resolver<Maybe<Array<Maybe<ResolversTypes['Float']>>>, ParentType, ContextType>;
+  timezone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  totalElevationGain?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  trainer?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  visibility?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type StravaAthleteResolvers<ContextType = any, ParentType extends ResolversParentTypes['StravaAthlete'] = ResolversParentTypes['StravaAthlete']> = {
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  firstname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  lastname?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  premium?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  profile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  profileMedium?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  sex?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  summit?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type StravaConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['StravaConnection'] = ResolversParentTypes['StravaConnection']> = {
+  athlete?: Resolver<Maybe<ResolversTypes['StravaAthlete']>, ParentType, ContextType>;
+  connected?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type StravaMapResolvers<ContextType = any, ParentType extends ResolversParentTypes['StravaMap'] = ResolversParentTypes['StravaMap']> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  polyline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  summaryPolyline?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1263,6 +1446,10 @@ export type Resolvers<ContextType = any> = {
   ScheduleItem?: ScheduleItemResolvers<ContextType>;
   SocialMedia?: SocialMediaResolvers<ContextType>;
   Stats?: StatsResolvers<ContextType>;
+  StravaActivity?: StravaActivityResolvers<ContextType>;
+  StravaAthlete?: StravaAthleteResolvers<ContextType>;
+  StravaConnection?: StravaConnectionResolvers<ContextType>;
+  StravaMap?: StravaMapResolvers<ContextType>;
   Trail?: TrailResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;

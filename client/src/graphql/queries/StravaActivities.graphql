@@ -1,0 +1,24 @@
+query StravaActivities($page: Int, $perPage: Int) {
+  stravaActivities(page: $page, perPage: $perPage) {
+    id
+    name
+    distance
+    movingTime
+    elapsedTime
+    totalElevationGain
+    type
+    sportType
+    startDate
+    startDateLocal
+    startLatlng
+    endLatlng
+    kudosCount
+    averageSpeed
+    maxSpeed
+    achievementCount
+    map {
+      id
+      summaryPolyline
+    }
+  }
+}

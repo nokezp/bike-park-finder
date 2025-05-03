@@ -1,0 +1,31 @@
+export const strava = {
+  StravaAthlete: {
+    profileMedium: (parent: any) => parent.profile_medium,
+  },
+  StravaActivity: {
+    movingTime: (parent: any) => parent.moving_time,
+    elapsedTime: (parent: any) => parent.elapsed_time,
+    totalElevationGain: (parent: any) => parent.total_elevation_gain,
+    sportType: (parent: any) => parent.sport_type,
+    startDate: (parent: any) => parent.start_date,
+    startDateLocal: (parent: any) => parent.start_date_local,
+    startLatlng: (parent: any) => parent.start_latlng,
+    endLatlng: (parent: any) => parent.end_latlng,
+    achievementCount: (parent: any) => parent.achievement_count,
+    kudosCount: (parent: any) => parent.kudos_count,
+    commentCount: (parent: any) => parent.comment_count,
+    athleteCount: (parent: any) => parent.athlete_count,
+    photoCount: (parent: any) => parent.photo_count,
+    gearId: (parent: any) => parent.gear_id,
+    averageSpeed: (parent: any) => parent.average_speed,
+    maxSpeed: (parent: any) => parent.max_speed,
+    averageWatts: (parent: any) => parent.average_watts,
+    deviceWatts: (parent: any) => parent.device_watts,
+    hasHeartrate: (parent: any) => parent.has_heartrate,
+    averageHeartrate: (parent: any) => parent.average_heartrate,
+    maxHeartrate: (parent: any) => parent.max_heartrate,
+  },
+  StravaMap: {
+    summaryPolyline: (parent: any) => parent.summary_polyline,
+  },
+};

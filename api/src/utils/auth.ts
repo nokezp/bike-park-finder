@@ -5,6 +5,29 @@ import { UserModel } from '../graphql-modules/auth/src/index.js';
 export const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 export const JWT_EXPIRES_IN = '7d';
 
+// Verify JWT token and return user data
+export async function verifyToken(token: string): Promise<{ id: string; role: string } | null> {
+  try {
+    // Verify token
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: string; role: string };
+
+    // Find user
+    const userDoc = await UserModel.findById(decoded.id);
+    if (!userDoc) {
+      return null;
+    }
+
+    // Return user data
+    return {
+      id: userDoc.id,
+      role: userDoc.get('role') as string,
+    };
+  } catch (err) {
+    // Return null if token is invalid
+    return null;
+  }
+}
+
 // Context interface
 export interface AuthContext {
   user: {

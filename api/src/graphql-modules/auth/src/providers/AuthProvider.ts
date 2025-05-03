@@ -138,7 +138,7 @@ export class AuthProvider {
   /**
    * Login a user
    */
-  async login(email: string, password: string, rememberMe?: boolean) {
+  async login(email: string, password: string, rememberMe?: boolean, req?: any) {
     try {
       // Find user
       const user = await UserModel.findOne({ email }).select('+password');
@@ -164,6 +164,10 @@ export class AuthProvider {
 
       user.lastLogin = new Date().toISOString();
       await user.save();
+
+      if (req?.session) {
+        req.session.userId = user._id.toString();
+      }
 
       return {
         token,

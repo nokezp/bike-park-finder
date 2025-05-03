@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { FaBicycle, FaLocationDot, FaPenToSquare } from 'react-icons/fa6';
-import { MeDocument, MeQuery, ReviewsByUserDocument, ReviewsByUserQuery } from '../../lib/graphql/generated/graphql-operations';
+import { MeDocument, MeQuery, ReviewsByUserDocument, ReviewsByUserQuery, StravaConnectionDocument, StravaConnectionQuery } from '../../lib/graphql/generated/graphql-operations';
 import { useQuery } from 'urql';
 import ProfileActivityCard from '../../components/Profile/ProfileActivityCard';
 import ProfileReviewCard from '../../components/Profile/ProfileReviewCard';
 import ProfileImageCard from '../../components/Profile/ProfileImageCard';
 import ProfileBadgeCard from '../../components/Profile/ProfileBadgeCard';
+import StravaConnect from '../../components/Profile/StravaConnect';
+import StravaActivitiesList from '../../components/Profile/StravaActivitiesList';
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('activity');
@@ -15,6 +17,7 @@ const ProfilePage = () => {
     { id: 'reviews', label: 'Reviews' },
     { id: 'photos', label: 'Photos' },
     { id: 'badges', label: 'Badges' },
+    { id: 'integrations', label: 'Integrations' },
   ];
 
   const [{ data: userData }] = useQuery<MeQuery>({
@@ -30,6 +33,12 @@ const ProfilePage = () => {
     },
     pause: !userData?.me?.id,
   });
+
+  const [{ data: stravaData }] = useQuery<StravaConnectionQuery>({
+    query: StravaConnectionDocument,
+  });
+
+  const isStravaConnected = stravaData?.stravaConnection?.connected;
 
   const user = userData?.me;
   const reviews = ratingData?.reviewsByUser?.reviews;
@@ -111,16 +120,24 @@ const ProfilePage = () => {
             {activeTab === 'activity' && (
               <div id="activity-feed" className="py-8">
                 <div className="space-y-6">
-                  <ProfileActivityCard
-                    type="ride"
-                    timestamp="1743119917730"
-                    data={{
-                      username: user?.username,
-                      distance: '15.2km',
-                      elevation: '867m',
-                      duration: '1:45:22',
-                    }}
-                  />
+                  {isStravaConnected ? (
+                    <>
+                      <h2 className="text-xl font-bold mb-4">Strava Activities</h2>
+                      <StravaActivitiesList limit={3} />
+                    </>
+                  ) : (
+                    <ProfileActivityCard
+                      type="ride"
+                      timestamp="1743119917730"
+                      data={{
+                        username: user?.username,
+                        distance: '15.2km',
+                        elevation: '867m',
+                        duration: '1:45:22',
+                      }}
+                    />
+                  )}
+
                   {reviews?.[0] && (
                     <ProfileActivityCard
                       type="review"
@@ -133,6 +150,21 @@ const ProfilePage = () => {
                         comments: 8,
                       }}
                     />
+                  )}
+
+                  {!isStravaConnected && (
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold">Connect with Strava</h2>
+                        <img src="https://cdn.worldvectorlogo.com/logos/strava-2.svg" alt="Strava Logo" className="h-8" />
+                      </div>
+                      <p className="mb-4">
+                        Connect your Strava account to display your rides and activities in your profile.
+                      </p>
+                      <a href="#integrations" onClick={() => setActiveTab('integrations')} className="px-4 py-2 text-white bg-orange-600 rounded-md hover:bg-orange-700 inline-block">
+                        Connect Now
+                      </a>
+                    </div>
                   )}
                 </div>
               </div>
@@ -248,6 +280,36 @@ const ProfilePage = () => {
                     description="Write 50 detailed reviews"
                     icon="fa-star"
                     status="In Progress" />
+                </div>
+              </div>
+            )}
+            {activeTab === 'integrations' && (
+              <div id="integrations-feed" className="py-8">
+                <div className="space-y-6">
+                  <StravaConnect />
+
+                  {/* Placeholder for future integrations */}
+                  <div className="p-6 bg-white rounded-lg shadow-sm opacity-50">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-xl font-bold">Garmin Connect</h2>
+                      <img src="https://cdn.worldvectorlogo.com/logos/garmin-2.svg" alt="Garmin Logo" className="h-8" />
+                    </div>
+                    <p className="mb-4">Coming soon! Connect your Garmin account to sync your activities.</p>
+                    <button disabled className="px-4 py-2 text-white bg-gray-400 rounded-md cursor-not-allowed">
+                      Coming Soon
+                    </button>
+                  </div>
+
+                  <div className="p-6 bg-white rounded-lg shadow-sm opacity-50">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-xl font-bold">Komoot Connect</h2>
+                      <img src="https://d21buns5ku92am.cloudfront.net/67683/logo/retina-1593443677.png" alt="Garmin Logo" className="h-8" />
+                    </div>
+                    <p className="mb-4">Coming soon! Connect your Komoot account to sync your activities.</p>
+                    <button disabled className="px-4 py-2 text-white bg-gray-400 rounded-md cursor-not-allowed">
+                      Coming Soon
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

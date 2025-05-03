@@ -1,0 +1,6 @@
+type Query {
+  stravaAuthUrl(state: String): String!
+  stravaConnection: StravaConnection!
+  stravaActivities(page: Int, perPage: Int, before: Int, after: Int): [StravaActivity!]!
+  stravaActivity(id: Int!): StravaActivity
+}

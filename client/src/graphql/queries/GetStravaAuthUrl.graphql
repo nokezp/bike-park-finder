@@ -1,0 +1,3 @@
+query StravaAuthUrl($state: String) {
+  stravaAuthUrl(state: $state)
+}

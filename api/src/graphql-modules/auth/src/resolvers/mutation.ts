@@ -14,8 +14,8 @@ export const mutation = {
       return authProvider.register(args);
     },
 
-    login: async (_: unknown, args: { email: string; password: string; rememberMe?: boolean }) => {
-      return authProvider.login(args.email, args.password, args.rememberMe);
+    login: async (_: unknown, args: { email: string; password: string; rememberMe?: boolean }, req: { req: any }) => {
+      return authProvider.login(args.email, args.password, args.rememberMe, req);
     },
 
     googleLogin: async (_: unknown, args: { idToken: string }) => {
