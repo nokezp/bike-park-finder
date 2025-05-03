@@ -1906,7 +1906,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mapbox/polyline@npm:^1.0.0":
+"@mapbox/polyline@npm:^1.0.0, @mapbox/polyline@npm:^1.2.1":
   version: 1.2.1
   resolution: "@mapbox/polyline@npm:1.2.1"
   dependencies:
@@ -2492,6 +2492,15 @@ __metadata:
   version: 0.1.4
   resolution: "@types/mapbox__point-geometry@npm:0.1.4"
   checksum: 670191664ea0a6ccb4563500fe815a9aba029ba2f0528d42f9eb560ccb44f6542ba8674e2a3f6d41bd10ad8855b4df4782b5340c980ca182ef9fe6752f2737b8
+  languageName: node
+  linkType: hard
+
+"@types/mapbox__polyline@npm:^1":
+  version: 1.0.5
+  resolution: "@types/mapbox__polyline@npm:1.0.5"
+  dependencies:
+    "@types/geojson": "npm:*"
+  checksum: 34c1a1a7fdf0b1f30bc827bf8d671b170527562fea3a785118a9ab2bb0e0cc7ae69d2809d451825e9e4c6da34a6abc1beee47b02f868c04d7b3bbc63eeceb4f1
   languageName: node
   linkType: hard
 
@@ -3243,12 +3252,14 @@ __metadata:
     "@graphql-codegen/typescript-urql": "npm:^3.7.0"
     "@graphql-codegen/typescript-urql-graphcache": "npm:^3.1.0"
     "@graphql-codegen/urql-introspection": "npm:3.0.0"
+    "@mapbox/polyline": "npm:^1.2.1"
     "@math.gl/web-mercator": "npm:^4.1.0"
     "@react-oauth/google": "npm:^0.12.1"
     "@types/leaflet": "npm:^1.9.16"
     "@types/lodash": "npm:^4.17.16"
     "@types/mapbox-gl": "npm:^3.4.0"
     "@types/mapbox__mapbox-sdk": "npm:0.13.4"
+    "@types/mapbox__polyline": "npm:^1"
     "@types/node": "npm:^18.0.0"
     "@types/react": "npm:^18.2.43"
     "@types/react-dom": "npm:^18.2.17"

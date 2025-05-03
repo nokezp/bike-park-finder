@@ -1,0 +1,4 @@
+type Mutation {
+  connectStrava(code: String!): Boolean!
+  disconnectStrava: Boolean!
+}

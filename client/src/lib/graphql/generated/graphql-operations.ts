@@ -236,12 +236,14 @@ export type Mutation = {
   __typename?: 'Mutation';
   approveBikePark: BikePark;
   approveEvent: Event;
+  connectStrava: Scalars['Boolean']['output'];
   createBikePark: BikePark;
   createEvent: Event;
   createReview: Review;
   deleteBikePark: Scalars['Boolean']['output'];
   deleteEvent: Scalars['Boolean']['output'];
   deleteReview: Scalars['Boolean']['output'];
+  disconnectStrava: Scalars['Boolean']['output'];
   forgotPassword: Scalars['Boolean']['output'];
   googleLogin: AuthPayload;
   login: AuthPayload;
@@ -266,6 +268,11 @@ export type MutationApproveBikeParkArgs = {
 
 export type MutationApproveEventArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationConnectStravaArgs = {
+  code: Scalars['String']['input'];
 };
 
 
@@ -512,6 +519,10 @@ export type Query = {
   reviews: PaginatedReviews;
   reviewsByUser: PaginatedReviews;
   searchBikeParks: Array<BikePark>;
+  stravaActivities: Array<StravaActivity>;
+  stravaActivity?: Maybe<StravaActivity>;
+  stravaAuthUrl: Scalars['String']['output'];
+  stravaConnection: StravaConnection;
 };
 
 
@@ -584,6 +595,24 @@ export type QuerySearchBikeParksArgs = {
   query: Scalars['String']['input'];
 };
 
+
+export type QueryStravaActivitiesArgs = {
+  after?: InputMaybe<Scalars['Int']['input']>;
+  before?: InputMaybe<Scalars['Int']['input']>;
+  page?: InputMaybe<Scalars['Int']['input']>;
+  perPage?: InputMaybe<Scalars['Int']['input']>;
+};
+
+
+export type QueryStravaActivityArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type QueryStravaAuthUrlArgs = {
+  state?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Review = {
   __typename?: 'Review';
   bikePark: Scalars['ID']['output'];
@@ -633,6 +662,76 @@ export type Stats = {
   favoriteTrails?: Maybe<Array<Maybe<Scalars['ID']['output']>>>;
   totalReviews?: Maybe<Scalars['Int']['output']>;
   totalRides?: Maybe<Scalars['Int']['output']>;
+};
+
+export type StravaActivity = {
+  __typename?: 'StravaActivity';
+  achievementCount?: Maybe<Scalars['Int']['output']>;
+  athleteCount?: Maybe<Scalars['Int']['output']>;
+  averageHeartrate?: Maybe<Scalars['Float']['output']>;
+  averageSpeed?: Maybe<Scalars['Float']['output']>;
+  averageWatts?: Maybe<Scalars['Float']['output']>;
+  commentCount?: Maybe<Scalars['Int']['output']>;
+  commute?: Maybe<Scalars['Boolean']['output']>;
+  deviceWatts?: Maybe<Scalars['Boolean']['output']>;
+  distance: Scalars['Float']['output'];
+  elapsedTime: Scalars['Int']['output'];
+  endLatlng?: Maybe<Array<Maybe<Scalars['Float']['output']>>>;
+  flagged?: Maybe<Scalars['Boolean']['output']>;
+  gearId?: Maybe<Scalars['String']['output']>;
+  hasHeartrate?: Maybe<Scalars['Boolean']['output']>;
+  id: Scalars['Float']['output'];
+  kilojoules?: Maybe<Scalars['Float']['output']>;
+  kudosCount?: Maybe<Scalars['Int']['output']>;
+  manual?: Maybe<Scalars['Boolean']['output']>;
+  map?: Maybe<StravaMap>;
+  maxHeartrate?: Maybe<Scalars['Float']['output']>;
+  maxSpeed?: Maybe<Scalars['Float']['output']>;
+  movingTime: Scalars['Int']['output'];
+  name: Scalars['String']['output'];
+  photoCount?: Maybe<Scalars['Int']['output']>;
+  private?: Maybe<Scalars['Boolean']['output']>;
+  sportType: Scalars['String']['output'];
+  startDate: Scalars['String']['output'];
+  startDateLocal: Scalars['String']['output'];
+  startLatlng?: Maybe<Array<Maybe<Scalars['Float']['output']>>>;
+  timezone?: Maybe<Scalars['String']['output']>;
+  totalElevationGain: Scalars['Float']['output'];
+  trainer?: Maybe<Scalars['Boolean']['output']>;
+  type: Scalars['String']['output'];
+  visibility?: Maybe<Scalars['String']['output']>;
+};
+
+export type StravaAthlete = {
+  __typename?: 'StravaAthlete';
+  bio?: Maybe<Scalars['String']['output']>;
+  city?: Maybe<Scalars['String']['output']>;
+  country?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['String']['output']>;
+  firstname: Scalars['String']['output'];
+  id: Scalars['Float']['output'];
+  lastname: Scalars['String']['output'];
+  premium?: Maybe<Scalars['Boolean']['output']>;
+  profile?: Maybe<Scalars['String']['output']>;
+  profileMedium?: Maybe<Scalars['String']['output']>;
+  sex?: Maybe<Scalars['String']['output']>;
+  state?: Maybe<Scalars['String']['output']>;
+  summit?: Maybe<Scalars['Boolean']['output']>;
+  updatedAt?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+};
+
+export type StravaConnection = {
+  __typename?: 'StravaConnection';
+  athlete?: Maybe<StravaAthlete>;
+  connected: Scalars['Boolean']['output'];
+};
+
+export type StravaMap = {
+  __typename?: 'StravaMap';
+  id: Scalars['String']['output'];
+  polyline?: Maybe<Scalars['String']['output']>;
+  summaryPolyline?: Maybe<Scalars['String']['output']>;
 };
 
 export type Trail = {
@@ -758,6 +857,13 @@ export type ApproveEventMutationVariables = Exact<{
 
 export type ApproveEventMutation = { __typename?: 'Mutation', approveEvent: { __typename?: 'Event', id: string, title: string, approvalStatus?: ApprovalStatus | null } };
 
+export type ConnectStravaMutationVariables = Exact<{
+  code: Scalars['String']['input'];
+}>;
+
+
+export type ConnectStravaMutation = { __typename?: 'Mutation', connectStrava: boolean };
+
 export type CreateBikeParkMutationVariables = Exact<{
   input: CreateBikeParkInput;
 }>;
@@ -784,6 +890,11 @@ export type DeleteBikeParkMutationVariables = Exact<{
 
 
 export type DeleteBikeParkMutation = { __typename?: 'Mutation', deleteBikePark: boolean };
+
+export type DisconnectStravaMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DisconnectStravaMutation = { __typename?: 'Mutation', disconnectStrava: boolean };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -948,6 +1059,18 @@ export type ReviewsByUserQueryVariables = Exact<{
 
 export type ReviewsByUserQuery = { __typename?: 'Query', reviewsByUser: { __typename?: 'PaginatedReviews', reviews: Array<{ __typename?: 'Review', id: string, createdAt: string, comment: string, rating: number, title?: string | null, createdBy: { __typename?: 'User', id: string, username: string } }> } };
 
+export type StravaAuthUrlQueryVariables = Exact<{
+  state?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type StravaAuthUrlQuery = { __typename?: 'Query', stravaAuthUrl: string };
+
+export type StravaConnectionQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StravaConnectionQuery = { __typename?: 'Query', stravaConnection: { __typename?: 'StravaConnection', connected: boolean, athlete?: { __typename?: 'StravaAthlete', id: number, firstname: string, lastname: string, profile?: string | null } | null } };
+
 export type MostCommonFacilitiesQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;
 }>;
@@ -968,6 +1091,14 @@ export type MostCommonRulesQueryVariables = Exact<{
 
 
 export type MostCommonRulesQuery = { __typename?: 'Query', mostCommonRules?: Array<string> | null };
+
+export type StravaActivitiesQueryVariables = Exact<{
+  page?: InputMaybe<Scalars['Int']['input']>;
+  perPage?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type StravaActivitiesQuery = { __typename?: 'Query', stravaActivities: Array<{ __typename?: 'StravaActivity', id: number, name: string, distance: number, movingTime: number, elapsedTime: number, totalElevationGain: number, type: string, sportType: string, startDate: string, startDateLocal: string, startLatlng?: Array<number | null> | null, endLatlng?: Array<number | null> | null, kudosCount?: number | null, averageSpeed?: number | null, maxSpeed?: number | null, achievementCount?: number | null, map?: { __typename?: 'StravaMap', id: string, summaryPolyline?: string | null } | null }> };
 
 export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __typename: NonNullable<T['__typename']> };
 
@@ -992,6 +1123,10 @@ export type GraphCacheKeysConfig = {
   ScheduleItem?: (data: WithTypename<ScheduleItem>) => null | string,
   SocialMedia?: (data: WithTypename<SocialMedia>) => null | string,
   Stats?: (data: WithTypename<Stats>) => null | string,
+  StravaActivity?: (data: WithTypename<StravaActivity>) => null | string,
+  StravaAthlete?: (data: WithTypename<StravaAthlete>) => null | string,
+  StravaConnection?: (data: WithTypename<StravaConnection>) => null | string,
+  StravaMap?: (data: WithTypename<StravaMap>) => null | string,
   Trail?: (data: WithTypename<Trail>) => null | string,
   User?: (data: WithTypename<User>) => null | string,
   Venue?: (data: WithTypename<Venue>) => null | string,
@@ -1016,7 +1151,11 @@ export type GraphCacheResolvers = {
     popularEventCategories?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<CategoryInfo> | string>>,
     reviews?: GraphCacheResolver<WithTypename<Query>, QueryReviewsArgs, WithTypename<PaginatedReviews> | string>,
     reviewsByUser?: GraphCacheResolver<WithTypename<Query>, QueryReviewsByUserArgs, WithTypename<PaginatedReviews> | string>,
-    searchBikeParks?: GraphCacheResolver<WithTypename<Query>, QuerySearchBikeParksArgs, Array<WithTypename<BikePark> | string>>
+    searchBikeParks?: GraphCacheResolver<WithTypename<Query>, QuerySearchBikeParksArgs, Array<WithTypename<BikePark> | string>>,
+    stravaActivities?: GraphCacheResolver<WithTypename<Query>, QueryStravaActivitiesArgs, Array<WithTypename<StravaActivity> | string>>,
+    stravaActivity?: GraphCacheResolver<WithTypename<Query>, QueryStravaActivityArgs, WithTypename<StravaActivity> | string>,
+    stravaAuthUrl?: GraphCacheResolver<WithTypename<Query>, QueryStravaAuthUrlArgs, Scalars['String'] | string>,
+    stravaConnection?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<StravaConnection> | string>
   },
   AuthPayload?: {
     token?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>,
@@ -1181,6 +1320,68 @@ export type GraphCacheResolvers = {
     totalReviews?: GraphCacheResolver<WithTypename<Stats>, Record<string, never>, Scalars['Int'] | string>,
     totalRides?: GraphCacheResolver<WithTypename<Stats>, Record<string, never>, Scalars['Int'] | string>
   },
+  StravaActivity?: {
+    achievementCount?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Int'] | string>,
+    athleteCount?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Int'] | string>,
+    averageHeartrate?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Float'] | string>,
+    averageSpeed?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Float'] | string>,
+    averageWatts?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Float'] | string>,
+    commentCount?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Int'] | string>,
+    commute?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Boolean'] | string>,
+    deviceWatts?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Boolean'] | string>,
+    distance?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Float'] | string>,
+    elapsedTime?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Int'] | string>,
+    endLatlng?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Array<Scalars['Float'] | string>>,
+    flagged?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Boolean'] | string>,
+    gearId?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['String'] | string>,
+    hasHeartrate?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Boolean'] | string>,
+    id?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Float'] | string>,
+    kilojoules?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Float'] | string>,
+    kudosCount?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Int'] | string>,
+    manual?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Boolean'] | string>,
+    map?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, WithTypename<StravaMap> | string>,
+    maxHeartrate?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Float'] | string>,
+    maxSpeed?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Float'] | string>,
+    movingTime?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Int'] | string>,
+    name?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['String'] | string>,
+    photoCount?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Int'] | string>,
+    private?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Boolean'] | string>,
+    sportType?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['String'] | string>,
+    startDate?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['String'] | string>,
+    startDateLocal?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['String'] | string>,
+    startLatlng?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Array<Scalars['Float'] | string>>,
+    timezone?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['String'] | string>,
+    totalElevationGain?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Float'] | string>,
+    trainer?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['Boolean'] | string>,
+    type?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['String'] | string>,
+    visibility?: GraphCacheResolver<WithTypename<StravaActivity>, Record<string, never>, Scalars['String'] | string>
+  },
+  StravaAthlete?: {
+    bio?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    city?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    country?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    createdAt?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    firstname?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    id?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['Float'] | string>,
+    lastname?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    premium?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['Boolean'] | string>,
+    profile?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    profileMedium?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    sex?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    state?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    summit?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['Boolean'] | string>,
+    updatedAt?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>,
+    username?: GraphCacheResolver<WithTypename<StravaAthlete>, Record<string, never>, Scalars['String'] | string>
+  },
+  StravaConnection?: {
+    athlete?: GraphCacheResolver<WithTypename<StravaConnection>, Record<string, never>, WithTypename<StravaAthlete> | string>,
+    connected?: GraphCacheResolver<WithTypename<StravaConnection>, Record<string, never>, Scalars['Boolean'] | string>
+  },
+  StravaMap?: {
+    id?: GraphCacheResolver<WithTypename<StravaMap>, Record<string, never>, Scalars['String'] | string>,
+    polyline?: GraphCacheResolver<WithTypename<StravaMap>, Record<string, never>, Scalars['String'] | string>,
+    summaryPolyline?: GraphCacheResolver<WithTypename<StravaMap>, Record<string, never>, Scalars['String'] | string>
+  },
   Trail?: {
     description?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['String'] | string>,
     difficulty?: GraphCacheResolver<WithTypename<Trail>, Record<string, never>, Scalars['String'] | string>,
@@ -1232,12 +1433,14 @@ export type GraphCacheResolvers = {
 export type GraphCacheOptimisticUpdaters = {
   approveBikePark?: GraphCacheOptimisticMutationResolver<MutationApproveBikeParkArgs, WithTypename<BikePark>>,
   approveEvent?: GraphCacheOptimisticMutationResolver<MutationApproveEventArgs, WithTypename<Event>>,
+  connectStrava?: GraphCacheOptimisticMutationResolver<MutationConnectStravaArgs, Scalars['Boolean']>,
   createBikePark?: GraphCacheOptimisticMutationResolver<MutationCreateBikeParkArgs, WithTypename<BikePark>>,
   createEvent?: GraphCacheOptimisticMutationResolver<MutationCreateEventArgs, WithTypename<Event>>,
   createReview?: GraphCacheOptimisticMutationResolver<MutationCreateReviewArgs, WithTypename<Review>>,
   deleteBikePark?: GraphCacheOptimisticMutationResolver<MutationDeleteBikeParkArgs, Scalars['Boolean']>,
   deleteEvent?: GraphCacheOptimisticMutationResolver<MutationDeleteEventArgs, Scalars['Boolean']>,
   deleteReview?: GraphCacheOptimisticMutationResolver<MutationDeleteReviewArgs, Scalars['Boolean']>,
+  disconnectStrava?: GraphCacheOptimisticMutationResolver<Record<string, never>, Scalars['Boolean']>,
   forgotPassword?: GraphCacheOptimisticMutationResolver<MutationForgotPasswordArgs, Scalars['Boolean']>,
   googleLogin?: GraphCacheOptimisticMutationResolver<MutationGoogleLoginArgs, WithTypename<AuthPayload>>,
   login?: GraphCacheOptimisticMutationResolver<MutationLoginArgs, WithTypename<AuthPayload>>,
@@ -1271,17 +1474,23 @@ export type GraphCacheUpdaters = {
     popularEventCategories?: GraphCacheUpdateResolver<{ popularEventCategories: Array<WithTypename<CategoryInfo>> }, Record<string, never>>,
     reviews?: GraphCacheUpdateResolver<{ reviews: WithTypename<PaginatedReviews> }, QueryReviewsArgs>,
     reviewsByUser?: GraphCacheUpdateResolver<{ reviewsByUser: WithTypename<PaginatedReviews> }, QueryReviewsByUserArgs>,
-    searchBikeParks?: GraphCacheUpdateResolver<{ searchBikeParks: Array<WithTypename<BikePark>> }, QuerySearchBikeParksArgs>
+    searchBikeParks?: GraphCacheUpdateResolver<{ searchBikeParks: Array<WithTypename<BikePark>> }, QuerySearchBikeParksArgs>,
+    stravaActivities?: GraphCacheUpdateResolver<{ stravaActivities: Array<WithTypename<StravaActivity>> }, QueryStravaActivitiesArgs>,
+    stravaActivity?: GraphCacheUpdateResolver<{ stravaActivity: Maybe<WithTypename<StravaActivity>> }, QueryStravaActivityArgs>,
+    stravaAuthUrl?: GraphCacheUpdateResolver<{ stravaAuthUrl: Scalars['String'] }, QueryStravaAuthUrlArgs>,
+    stravaConnection?: GraphCacheUpdateResolver<{ stravaConnection: WithTypename<StravaConnection> }, Record<string, never>>
   },
   Mutation?: {
     approveBikePark?: GraphCacheUpdateResolver<{ approveBikePark: WithTypename<BikePark> }, MutationApproveBikeParkArgs>,
     approveEvent?: GraphCacheUpdateResolver<{ approveEvent: WithTypename<Event> }, MutationApproveEventArgs>,
+    connectStrava?: GraphCacheUpdateResolver<{ connectStrava: Scalars['Boolean'] }, MutationConnectStravaArgs>,
     createBikePark?: GraphCacheUpdateResolver<{ createBikePark: WithTypename<BikePark> }, MutationCreateBikeParkArgs>,
     createEvent?: GraphCacheUpdateResolver<{ createEvent: WithTypename<Event> }, MutationCreateEventArgs>,
     createReview?: GraphCacheUpdateResolver<{ createReview: WithTypename<Review> }, MutationCreateReviewArgs>,
     deleteBikePark?: GraphCacheUpdateResolver<{ deleteBikePark: Scalars['Boolean'] }, MutationDeleteBikeParkArgs>,
     deleteEvent?: GraphCacheUpdateResolver<{ deleteEvent: Scalars['Boolean'] }, MutationDeleteEventArgs>,
     deleteReview?: GraphCacheUpdateResolver<{ deleteReview: Scalars['Boolean'] }, MutationDeleteReviewArgs>,
+    disconnectStrava?: GraphCacheUpdateResolver<{ disconnectStrava: Scalars['Boolean'] }, Record<string, never>>,
     forgotPassword?: GraphCacheUpdateResolver<{ forgotPassword: Scalars['Boolean'] }, MutationForgotPasswordArgs>,
     googleLogin?: GraphCacheUpdateResolver<{ googleLogin: WithTypename<AuthPayload> }, MutationGoogleLoginArgs>,
     login?: GraphCacheUpdateResolver<{ login: WithTypename<AuthPayload> }, MutationLoginArgs>,
@@ -1461,6 +1670,68 @@ export type GraphCacheUpdaters = {
     totalReviews?: GraphCacheUpdateResolver<Maybe<WithTypename<Stats>>, Record<string, never>>,
     totalRides?: GraphCacheUpdateResolver<Maybe<WithTypename<Stats>>, Record<string, never>>
   },
+  StravaActivity?: {
+    achievementCount?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    athleteCount?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    averageHeartrate?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    averageSpeed?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    averageWatts?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    commentCount?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    commute?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    deviceWatts?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    distance?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    elapsedTime?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    endLatlng?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    flagged?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    gearId?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    hasHeartrate?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    kilojoules?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    kudosCount?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    manual?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    map?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    maxHeartrate?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    maxSpeed?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    movingTime?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    name?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    photoCount?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    private?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    sportType?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    startDate?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    startDateLocal?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    startLatlng?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    timezone?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    totalElevationGain?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    trainer?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    type?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>,
+    visibility?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaActivity>>, Record<string, never>>
+  },
+  StravaAthlete?: {
+    bio?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    city?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    country?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    firstname?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    lastname?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    premium?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    profile?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    profileMedium?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    sex?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    state?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    summit?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>,
+    username?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaAthlete>>, Record<string, never>>
+  },
+  StravaConnection?: {
+    athlete?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaConnection>>, Record<string, never>>,
+    connected?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaConnection>>, Record<string, never>>
+  },
+  StravaMap?: {
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaMap>>, Record<string, never>>,
+    polyline?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaMap>>, Record<string, never>>,
+    summaryPolyline?: GraphCacheUpdateResolver<Maybe<WithTypename<StravaMap>>, Record<string, never>>
+  },
   Trail?: {
     description?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
     difficulty?: GraphCacheUpdateResolver<Maybe<WithTypename<Trail>>, Record<string, never>>,
@@ -1577,6 +1848,15 @@ export const ApproveEventDocument = gql`
 export function useApproveEventMutation() {
   return Urql.useMutation<ApproveEventMutation, ApproveEventMutationVariables>(ApproveEventDocument);
 };
+export const ConnectStravaDocument = gql`
+    mutation ConnectStrava($code: String!) {
+  connectStrava(code: $code)
+}
+    `;
+
+export function useConnectStravaMutation() {
+  return Urql.useMutation<ConnectStravaMutation, ConnectStravaMutationVariables>(ConnectStravaDocument);
+};
 export const CreateBikeParkDocument = gql`
     mutation CreateBikePark($input: CreateBikeParkInput!) {
   createBikePark(input: $input) {
@@ -1628,6 +1908,15 @@ export const DeleteBikeParkDocument = gql`
 
 export function useDeleteBikeParkMutation() {
   return Urql.useMutation<DeleteBikeParkMutation, DeleteBikeParkMutationVariables>(DeleteBikeParkDocument);
+};
+export const DisconnectStravaDocument = gql`
+    mutation DisconnectStrava {
+  disconnectStrava
+}
+    `;
+
+export function useDisconnectStravaMutation() {
+  return Urql.useMutation<DisconnectStravaMutation, DisconnectStravaMutationVariables>(DisconnectStravaDocument);
 };
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
@@ -2177,6 +2466,32 @@ export const ReviewsByUserDocument = gql`
 export function useReviewsByUserQuery(options: Omit<Urql.UseQueryArgs<ReviewsByUserQueryVariables>, 'query'>) {
   return Urql.useQuery<ReviewsByUserQuery, ReviewsByUserQueryVariables>({ query: ReviewsByUserDocument, ...options });
 };
+export const StravaAuthUrlDocument = gql`
+    query StravaAuthUrl($state: String) {
+  stravaAuthUrl(state: $state)
+}
+    `;
+
+export function useStravaAuthUrlQuery(options?: Omit<Urql.UseQueryArgs<StravaAuthUrlQueryVariables>, 'query'>) {
+  return Urql.useQuery<StravaAuthUrlQuery, StravaAuthUrlQueryVariables>({ query: StravaAuthUrlDocument, ...options });
+};
+export const StravaConnectionDocument = gql`
+    query StravaConnection {
+  stravaConnection {
+    connected
+    athlete {
+      id
+      firstname
+      lastname
+      profile
+    }
+  }
+}
+    `;
+
+export function useStravaConnectionQuery(options?: Omit<Urql.UseQueryArgs<StravaConnectionQueryVariables>, 'query'>) {
+  return Urql.useQuery<StravaConnectionQuery, StravaConnectionQueryVariables>({ query: StravaConnectionDocument, ...options });
+};
 export const MostCommonFacilitiesDocument = gql`
     query MostCommonFacilities($limit: Int) {
   mostCommonFacilities(limit: $limit)
@@ -2204,6 +2519,36 @@ export const MostCommonRulesDocument = gql`
 export function useMostCommonRulesQuery(options?: Omit<Urql.UseQueryArgs<MostCommonRulesQueryVariables>, 'query'>) {
   return Urql.useQuery<MostCommonRulesQuery, MostCommonRulesQueryVariables>({ query: MostCommonRulesDocument, ...options });
 };
+export const StravaActivitiesDocument = gql`
+    query StravaActivities($page: Int, $perPage: Int) {
+  stravaActivities(page: $page, perPage: $perPage) {
+    id
+    name
+    distance
+    movingTime
+    elapsedTime
+    totalElevationGain
+    type
+    sportType
+    startDate
+    startDateLocal
+    startLatlng
+    endLatlng
+    kudosCount
+    averageSpeed
+    maxSpeed
+    achievementCount
+    map {
+      id
+      summaryPolyline
+    }
+  }
+}
+    `;
+
+export function useStravaActivitiesQuery(options?: Omit<Urql.UseQueryArgs<StravaActivitiesQueryVariables>, 'query'>) {
+  return Urql.useQuery<StravaActivitiesQuery, StravaActivitiesQueryVariables>({ query: StravaActivitiesDocument, ...options });
+};
 export const namedOperations = {
   Query: {
     BikePark: 'BikePark',
@@ -2218,16 +2563,21 @@ export const namedOperations = {
     PopularEventCategories: 'PopularEventCategories',
     Reviews: 'Reviews',
     ReviewsByUser: 'ReviewsByUser',
+    StravaAuthUrl: 'StravaAuthUrl',
+    StravaConnection: 'StravaConnection',
     MostCommonFacilities: 'MostCommonFacilities',
     MostCommonFeatures: 'MostCommonFeatures',
-    MostCommonRules: 'MostCommonRules'
+    MostCommonRules: 'MostCommonRules',
+    StravaActivities: 'StravaActivities'
   },
   Mutation: {
     ApproveBikePark: 'ApproveBikePark',
     ApproveEvent: 'ApproveEvent',
+    ConnectStrava: 'ConnectStrava',
     CreateBikePark: 'CreateBikePark',
     CreateReview: 'CreateReview',
     DeleteBikePark: 'DeleteBikePark',
+    DisconnectStrava: 'DisconnectStrava',
     ForgotPassword: 'ForgotPassword',
     GoogleLogin: 'GoogleLogin',
     Login: 'Login',

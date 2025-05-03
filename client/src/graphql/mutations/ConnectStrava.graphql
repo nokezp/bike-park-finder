@@ -1,0 +1,3 @@
+mutation ConnectStrava($code: String!) {
+  connectStrava(code: $code)
+}

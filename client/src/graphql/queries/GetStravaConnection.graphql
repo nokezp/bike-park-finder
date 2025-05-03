@@ -1,0 +1,11 @@
+query StravaConnection {
+  stravaConnection {
+    connected
+    athlete {
+      id
+      firstname
+      lastname
+      profile
+    }
+  }
+}
