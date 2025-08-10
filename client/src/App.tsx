@@ -22,6 +22,7 @@ import Settings from './pages/Proflie/Settings';
 import 'react-leaflet-cluster/lib/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
+import EventFormPage from './pages/Admin/EventFormPage';
 
 const App: React.FC = () => {
   return (
@@ -39,6 +40,8 @@ const App: React.FC = () => {
               <Route path="/events" element={<EventsPage />} />
               <Route path="/maps" element={<MapsPage />} />
               <Route path="/event/:id" element={<EventDetailPage />} />
+              <Route path="/event/new" element={<EventFormPage />} />
+              <Route path="/event/edit/:id" element={<EventFormPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/register" element={<CreateUserPage />} />
               <Route path="/login" element={<LoginPage />} />

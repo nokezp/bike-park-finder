@@ -8,7 +8,7 @@ import { useMutation, useQuery } from 'urql';
 import BikeParkFormFeaturesMedia from './FormSections/BikeParkFormFeaturesMedia';
 import BikeParkFormBasicInfo from './FormSections/BikeParkFormBasicInfo';
 import { useForm } from 'react-hook-form';
-import { FormValues } from '../../lib/helpers/common-helper';
+import { CreateBikeParkFormValues } from '../../lib/helpers/common-helper';
 import BikeParkCreatedDalog from './Dialog/BikeParkCreatedDalog';
 import BikeParkUpdatedDalog from './Dialog/BikeParkUpdatedDalog';
 import BikeParkDeletedDialog from './Dialog/BikeParkDeletedDialog';
@@ -37,7 +37,7 @@ const BikeParkForm: React.FC = () => {
   const [updateBikeParkRes, updateBikePark] = useMutation<UpdateBikeParkMutation>(UpdateBikeParkDocument);
   const [deleteBikeParkRes, deleteBikePark] = useMutation<DeleteBikeParkMutation>(DeleteBikeParkDocument)
 
-  const onSubmit = (formData: FormValues) => {
+  const onSubmit = (formData: CreateBikeParkFormValues) => {
     console.log("formData: ", formData);
 
     const input = {
@@ -156,7 +156,7 @@ const BikeParkForm: React.FC = () => {
     });
   };
 
-  const form = useForm<FormValues>({
+  const form = useForm<CreateBikeParkFormValues>({
     defaultValues: {
       difficulty: "beginner",
       status: "open",

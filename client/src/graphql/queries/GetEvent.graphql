@@ -36,6 +36,13 @@ query Event($id: ID!) {
       longitude
     }
     createdAt
+    createdBy {
+      id
+      role
+      username
+      email
+      isVerified
+    }
     updatedAt
   }
 }

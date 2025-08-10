@@ -4,13 +4,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { capitalize } from 'lodash';
 import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
-import { bikeParkStatus, FormValues } from '../../../lib/helpers/common-helper';
+import { bikeParkStatus, CreateBikeParkFormValues } from '../../../lib/helpers/common-helper';
 import { selectedIcon } from '../../Map/Map';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 import { searchAddress } from '../../../lib/helpers/mapbox-search';
 
 export interface BikeParkFormProp {
-  form: UseFormReturn<FormValues, any, FormValues>
+  form: UseFormReturn<CreateBikeParkFormValues, any, CreateBikeParkFormValues>
 }
 
 const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];

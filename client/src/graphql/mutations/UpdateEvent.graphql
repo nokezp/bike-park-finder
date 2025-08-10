@@ -1,0 +1,36 @@
+mutation UpdateEvent($id: ID!, $input: UpdateEventInput!) {
+  updateEvent(id: $id, input: $input) {
+    id
+    title
+    attendeeCount
+    availableTickets
+    capacity
+    category
+    createdAt
+    date
+    description
+    endTime
+    featured
+    imageUrl
+    location
+    organizer {
+      description
+      imageUrl
+      name
+    }
+    price
+    registrationEndDate
+    schedule {
+      description
+      time
+      title
+    }
+    startTime
+    updatedAt
+    venue {
+      address
+      mapImageUrl
+      name
+    }
+  }
+}

@@ -1,0 +1,11 @@
+query SearchBikePark($query: String!) {
+  searchBikeParks(query: $query) {
+    id
+    name
+    location
+    coordinates {
+      latitude
+      longitude
+    }
+  }
+}

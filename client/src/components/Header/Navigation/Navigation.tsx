@@ -9,7 +9,9 @@ import { removeToken } from '../../../lib/graphql/urqlClient';
 const Navigation = () => {
   const location = useLocation();
   const ref = useRef<any>(null);
+  const refCreate = useRef<any>(null);
   const [showMoreLinks, setShowMoreLinks] = useState(false);
+  const [showCreateLinks, setShowCreateLinks] = useState(false);
 
   const [{ data }, refetch] = useQuery<MeQuery>({
     query: MeDocument,
@@ -43,6 +45,19 @@ const Navigation = () => {
     };
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event: any) {
+      if (refCreate.current && !refCreate.current?.contains(event.target)) {
+        setShowMoreLinks(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <nav className="hidden md:flex items-center space-x-8">
       {navItems.map(({ path, label }) => (
@@ -56,16 +71,37 @@ const Navigation = () => {
       ))}
       {data?.me?.id ? (
         <>
-          {location.pathname !== "/bike-park/new" && location.pathname !== "/bike-park/edit" && (
-            <Link to="/bike-park/new">
+          <div
+            className={`text-base font-medium transition-colors duration-200 hover:text-emerald-500`}
+            onClick={() => setShowCreateLinks(!showCreateLinks)}
+          >
+            <div className="relative">
               <button
                 type="submit"
                 className="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700"
               >
-                Create Park
+                <i className="fa-solid fa-plus"></i>
               </button>
-            </Link>
-          )}
+              {showCreateLinks
+                && (
+                  <div ref={refCreate} className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                    {location.pathname !== "/bike-park/new" && location.pathname !== "/bike-park/edit" && (
+                      <Link to="/bike-park/new"
+                        className={`block px-4 py-2 text-gray-700 hover:bg-gray-100 ${isSelected("/bike-park/new")
+                          ? 'bg-gray-200' : 'text-gray-700'}`}>
+                        Create Park
+                      </Link>
+                    )}
+                    {location.pathname !== "/event/new" && location.pathname !== "/event/edit" && (
+                      <Link to="/event/new" className={`block px-4 py-2 text-gray-700 hover:bg-gray-100 ${isSelected("/event/new")
+                        ? 'bg-gray-200' : 'text-gray-700'}`}>
+                        Create Event
+                      </Link>
+                    )}
+                  </div>
+                )}
+            </div>
+          </div>
           <div
             className={`text-base font-medium transition-colors duration-200 hover:text-emerald-500`}
             onClick={() => setShowMoreLinks(!showMoreLinks)}

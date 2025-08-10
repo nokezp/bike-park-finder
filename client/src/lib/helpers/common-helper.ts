@@ -269,6 +269,15 @@ export const featuresObject = [
   { name: "Kids Zone", icon: "child", color: "pink", description: "Special trails and areas tailored for young and beginner kids." }
 ];
 
+export const eventCategories = [
+  { status: "Race", value: "race" },
+  { status: "Workshop", value: "workshop" },
+  { status: "Festival", value: "festival" },
+  { status: "Group Ride", value: "group_ride" },
+  { status: "Competition", value: "competition" },
+  { status: "Charity Ride", value: "carity_ride" },
+];
+
 export type Price = {
   name: string | null;
   price: number | null;
@@ -280,7 +289,7 @@ export type OpeningHoursDay = {
   to?: string;
 };
 
-export type FormValues = {
+export type CreateBikeParkFormValues = {
   name: string;
   description?: string | null;
   location: string;
@@ -314,4 +323,37 @@ export type FormValues = {
   rules?: string[];
   facilities?: string[];
   features?: string[];
+};
+
+export type CreateEventFormValues = {
+  id: string
+  title: string
+  capacity: number
+  category: string
+  date: string
+  description: string
+  endTime: string
+  eventType: string
+  featured: boolean
+  imageUrl: string
+  location: string
+  organizer: {
+    description: string
+    imageUrl: string
+    name: string
+  },
+  price: PriceInput[]
+  registrationEndDate: string
+  availableTickets: number
+  schedule: {
+    description: string
+    time: string
+    title: string
+  },
+  startTime: string
+  venue: {
+    address: string
+    mapImageUrl: string
+    name: string
+  }
 };

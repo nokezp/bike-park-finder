@@ -765,6 +765,13 @@ export type CreateBikeParkMutationVariables = Exact<{
 
 export type CreateBikeParkMutation = { __typename?: 'Mutation', createBikePark: { __typename?: 'BikePark', id: string, name: string, location?: string | null } };
 
+export type CreateEventMutationVariables = Exact<{
+  input: CreateEventInput;
+}>;
+
+
+export type CreateEventMutation = { __typename?: 'Mutation', createEvent: { __typename?: 'Event', id: string, title: string, attendeeCount: number, availableTickets: number, capacity: number, category: EventCategory, createdAt: any, date: any, description: string, endTime: string, featured: boolean, imageUrl: string, location: string, price: number, registrationEndDate: any, startTime: string, updatedAt: any, createdBy?: { __typename?: 'User', id: string, email: string, username: string } | null, organizer: { __typename?: 'Organizer', description: string, imageUrl: string, name: string }, schedule: Array<{ __typename?: 'ScheduleItem', description: string, time: string, title: string }>, venue: { __typename?: 'Venue', address: string, mapImageUrl: string, name: string } } };
+
 export type CreateReviewMutationVariables = Exact<{
   bikeParkId: Scalars['ID']['input'];
   title?: InputMaybe<Scalars['String']['input']>;
@@ -858,6 +865,14 @@ export type UpdateBikeParkMutationVariables = Exact<{
 
 export type UpdateBikeParkMutation = { __typename?: 'Mutation', updateBikePark: { __typename?: 'BikePark', id: string, name: string, location?: string | null } };
 
+export type UpdateEventMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  input: UpdateEventInput;
+}>;
+
+
+export type UpdateEventMutation = { __typename?: 'Mutation', updateEvent: { __typename?: 'Event', id: string, title: string, attendeeCount: number, availableTickets: number, capacity: number, category: EventCategory, createdAt: any, date: any, description: string, endTime: string, featured: boolean, imageUrl: string, location: string, price: number, registrationEndDate: any, startTime: string, updatedAt: any, organizer: { __typename?: 'Organizer', description: string, imageUrl: string, name: string }, schedule: Array<{ __typename?: 'ScheduleItem', description: string, time: string, title: string }>, venue: { __typename?: 'Venue', address: string, mapImageUrl: string, name: string } } };
+
 export type UploadImageMutationVariables = Exact<{
   file: Scalars['Upload']['input'];
 }>;
@@ -892,7 +907,7 @@ export type EventQueryVariables = Exact<{
 }>;
 
 
-export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', id: string, title: string, date: any, startTime: string, endTime: string, location: string, category: EventCategory, price: number, imageUrl: string, description: string, capacity: number, registrationEndDate: any, availableTickets: number, attendeeCount: number, featured: boolean, createdAt: any, updatedAt: any, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string }, schedule: Array<{ __typename?: 'ScheduleItem', title: string, time: string, description: string }>, venue: { __typename?: 'Venue', name: string, address: string, mapImageUrl: string }, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null } | null };
+export type EventQuery = { __typename?: 'Query', event?: { __typename?: 'Event', id: string, title: string, date: any, startTime: string, endTime: string, location: string, category: EventCategory, price: number, imageUrl: string, description: string, capacity: number, registrationEndDate: any, availableTickets: number, attendeeCount: number, featured: boolean, createdAt: any, updatedAt: any, organizer: { __typename?: 'Organizer', name: string, description: string, imageUrl: string }, schedule: Array<{ __typename?: 'ScheduleItem', title: string, time: string, description: string }>, venue: { __typename?: 'Venue', name: string, address: string, mapImageUrl: string }, coordinates?: { __typename?: 'Coordinates', latitude: number, longitude: number } | null, createdBy?: { __typename?: 'User', id: string, role: string, username: string, email: string, isVerified?: boolean | null } | null } | null };
 
 export type EventsQueryVariables = Exact<{
   filter?: InputMaybe<EventFilter>;
@@ -1590,6 +1605,53 @@ export const CreateBikeParkDocument = gql`
 export function useCreateBikeParkMutation() {
   return Urql.useMutation<CreateBikeParkMutation, CreateBikeParkMutationVariables>(CreateBikeParkDocument);
 };
+export const CreateEventDocument = gql`
+    mutation CreateEvent($input: CreateEventInput!) {
+  createEvent(input: $input) {
+    id
+    title
+    attendeeCount
+    availableTickets
+    capacity
+    category
+    createdAt
+    date
+    description
+    endTime
+    featured
+    createdBy {
+      id
+      email
+      username
+    }
+    imageUrl
+    location
+    organizer {
+      description
+      imageUrl
+      name
+    }
+    price
+    registrationEndDate
+    schedule {
+      description
+      time
+      title
+    }
+    startTime
+    updatedAt
+    venue {
+      address
+      mapImageUrl
+      name
+    }
+  }
+}
+    `;
+
+export function useCreateEventMutation() {
+  return Urql.useMutation<CreateEventMutation, CreateEventMutationVariables>(CreateEventDocument);
+};
 export const CreateReviewDocument = gql`
     mutation CreateReview($bikeParkId: ID!, $title: String, $rating: Float!, $comment: String!, $visitDate: String, $trailDifficulty: String, $photos: [String]) {
   createReview(
@@ -1755,6 +1817,48 @@ export const UpdateBikeParkDocument = gql`
 
 export function useUpdateBikeParkMutation() {
   return Urql.useMutation<UpdateBikeParkMutation, UpdateBikeParkMutationVariables>(UpdateBikeParkDocument);
+};
+export const UpdateEventDocument = gql`
+    mutation UpdateEvent($id: ID!, $input: UpdateEventInput!) {
+  updateEvent(id: $id, input: $input) {
+    id
+    title
+    attendeeCount
+    availableTickets
+    capacity
+    category
+    createdAt
+    date
+    description
+    endTime
+    featured
+    imageUrl
+    location
+    organizer {
+      description
+      imageUrl
+      name
+    }
+    price
+    registrationEndDate
+    schedule {
+      description
+      time
+      title
+    }
+    startTime
+    updatedAt
+    venue {
+      address
+      mapImageUrl
+      name
+    }
+  }
+}
+    `;
+
+export function useUpdateEventMutation() {
+  return Urql.useMutation<UpdateEventMutation, UpdateEventMutationVariables>(UpdateEventDocument);
 };
 export const UploadImageDocument = gql`
     mutation UploadImage($file: Upload!) {
@@ -1986,6 +2090,13 @@ export const EventDocument = gql`
       longitude
     }
     createdAt
+    createdBy {
+      id
+      role
+      username
+      email
+      isVerified
+    }
     updatedAt
   }
 }
@@ -2226,6 +2337,7 @@ export const namedOperations = {
     ApproveBikePark: 'ApproveBikePark',
     ApproveEvent: 'ApproveEvent',
     CreateBikePark: 'CreateBikePark',
+    CreateEvent: 'CreateEvent',
     CreateReview: 'CreateReview',
     DeleteBikePark: 'DeleteBikePark',
     ForgotPassword: 'ForgotPassword',
@@ -2237,6 +2349,7 @@ export const namedOperations = {
     ResetPassword: 'ResetPassword',
     ToggleFavoriteBikePark: 'ToggleFavoriteBikePark',
     UpdateBikePark: 'UpdateBikePark',
+    UpdateEvent: 'UpdateEvent',
     UploadImage: 'UploadImage'
   },
   Fragment: {
